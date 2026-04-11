@@ -5,7 +5,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,6 +27,9 @@ const inputError = `${inputBase} border-red-400 focus:shadow-[0_0_0_3px_rgba(239
 
 const LoginForm = () => {
   const [showPw, setShowPw] = useState(false);
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const safeRedirect = redirect && redirect.startsWith('/') ? redirect : '/';
   const router = useRouter();
 
   const {
@@ -46,7 +49,7 @@ const LoginForm = () => {
 
       if (response.success) {
         toast.success(response.message);
-        router.push('/');
+        router.push(safeRedirect);
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -134,7 +137,7 @@ const LoginForm = () => {
                 );
                 if (result.success) {
                   toast.success(result.message);
-                  router.push('/');
+                  router.push(safeRedirect);
                 }
               } catch (error: unknown) {
                 if (axios.isAxiosError(error)) {
