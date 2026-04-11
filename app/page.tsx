@@ -1,7 +1,11 @@
-export default function Home() {
+import Navbar from '../components/shared/Navbar';
+
+const HomePage = () => {
   return (
-    <div>
-      <h1>Bayazid</h1>
-    </div>
+    <main>
+      <Navbar></Navbar>
+    </main>
   );
-}
+};
+
+export default HomePage;
