@@ -1,3 +1,4 @@
+import CTABanner from '../components/home/CTABanner';
 import FAQ from '../components/home/FAQ';
 import Features from '../components/home/Features';
 import Hero from '../components/home/Hero';
@@ -16,6 +17,7 @@ const HomePage = () => {
       <MentorShowcase></MentorShowcase>
       <Testimonials></Testimonials>
       <FAQ></FAQ>
+      <CTABanner></CTABanner>
     </main>
   );
 };
