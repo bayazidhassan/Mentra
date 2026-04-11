@@ -16,7 +16,6 @@ export type RegisterResponse = {
     email: string;
     role: 'learner' | 'mentor';
   } | null;
-  error?: string;
 };
 
 export type LoginPayload = {
@@ -32,9 +31,18 @@ export type LoginResponse = {
     name: string;
     email: string;
     role: 'learner' | 'mentor' | 'admin';
-    token: string;
   } | null;
-  error?: string;
+};
+
+export type GoogleLoginResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    name: string;
+    email: string;
+    role: 'learner' | 'mentor' | 'admin';
+  } | null;
 };
 
 const register = async (
@@ -49,8 +57,18 @@ const register = async (
 
 const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   const response = await axiosInstance.post<LoginResponse>(
-    '/users/login',
+    '/auth/login',
     payload,
+  );
+  return response.data;
+};
+
+const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
+  const response = await axiosInstance.post<GoogleLoginResponse>(
+    '/auth/googleLogin',
+    {
+      idToken,
+    },
   );
   return response.data;
 };
@@ -58,4 +76,5 @@ const login = async (payload: LoginPayload): Promise<LoginResponse> => {
 export const authService = {
   register,
   login,
+  googleLogin,
 };

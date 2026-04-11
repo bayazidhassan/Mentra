@@ -65,8 +65,7 @@ const RegisterForm = () => {
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        //const message = error.response?.data?.message || 'Something went wrong';
-        const message = error.response?.data?.error || 'Something went wrong';
+        const message = error.response?.data?.message || 'Something went wrong';
         toast.error(message);
       }
     }
