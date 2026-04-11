@@ -1,3 +1,4 @@
+import FAQ from '../components/home/FAQ';
 import Features from '../components/home/Features';
 import Hero from '../components/home/Hero';
 import HowItWorks from '../components/home/HowItWorks';
@@ -14,6 +15,7 @@ const HomePage = () => {
       <HowItWorks></HowItWorks>
       <MentorShowcase></MentorShowcase>
       <Testimonials></Testimonials>
+      <FAQ></FAQ>
     </main>
   );
 };
