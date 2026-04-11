@@ -5,7 +5,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Mentra',
-  description: 'AI-Powered Learning & Mentorship Platform',
+  description: 'AI-Powered Learning & Mentorship Platform.',
 };
 
 export default function RootLayout({
