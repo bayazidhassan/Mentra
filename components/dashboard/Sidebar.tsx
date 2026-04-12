@@ -97,8 +97,9 @@ const Sidebar = () => {
       }`}
     >
       {/* Logo */}
-      <div
-        className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-200 ${collapsed ? 'justify-center' : ''}`}
+      <Link
+        href="/"
+        className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-200 hover:opacity-80 transition-opacity ${collapsed ? 'justify-center' : ''}`}
       >
         <Image src="/mentra_logo.svg" alt="Mentra" width={32} height={32} />
         {!collapsed && (
@@ -109,7 +110,7 @@ const Sidebar = () => {
             Mentra
           </span>
         )}
-      </div>
+      </Link>
 
       {/* Nav items */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
