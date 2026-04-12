@@ -3,6 +3,7 @@
 import useUserStore from '@/store/useUserStore';
 import axios from 'axios';
 import { Calendar, Clock, DollarSign, Plus } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -171,7 +172,7 @@ const SessionsPage = () => {
                 <div className="flex items-start gap-4 min-w-0">
                   {/* Avatar */}
                   {other?.profileImage ? (
-                    <img
+                    <Image
                       src={other.profileImage}
                       alt={other.name}
                       className="w-10 h-10 rounded-full object-cover shrink-0"
