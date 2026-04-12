@@ -1,18 +1,26 @@
 'use client';
 
-import DashboardNavbar from '../../components/dashboard/DashboardNavbar';
-import Sidebar from '../../components/dashboard/Sidebar';
-import useMe from '../../hooks/useMe';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
+import Sidebar from '@/components/dashboard/Sidebar';
+import useMe from '@/hooks/useMe';
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  useMe(); //fetches and syncs user on every dashboard page load
+  useMe();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar></Sidebar>
-      <div className="flex-1 flex flex-col min-w-0">
-        <DashboardNavbar></DashboardNavbar>
-        <main className="flex-1 p-6">{children}</main>
+    <div className="h-screen flex overflow-hidden">
+      {/* Sidebar — fixed */}
+      <Sidebar />
+
+      {/* Right side */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Navbar — fixed */}
+        <DashboardNavbar />
+
+        {/* Scrollable content */}
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          {children}
+        </main>
       </div>
     </div>
   );
