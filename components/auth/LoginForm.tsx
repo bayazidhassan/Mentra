@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { authService } from '../../services/auth';
+import useUserStore from '../../store/useUserStore';
 
 const loginSchema = z.object({
   email: z.string().check(z.email('Enter a valid email')),
@@ -29,8 +30,10 @@ const LoginForm = () => {
   const [showPw, setShowPw] = useState(false);
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
-  const safeRedirect = redirect && redirect.startsWith('/') ? redirect : '/';
+  const safeRedirect =
+    redirect && redirect.startsWith('/') ? redirect : '/dashboard/learner';
   const router = useRouter();
+  const { setUser } = useUserStore();
 
   const {
     register,
@@ -47,7 +50,8 @@ const LoginForm = () => {
         password: data.password,
       });
 
-      if (response.success) {
+      if (response.success && response.data) {
+        setUser(response.data);
         toast.success(response.message);
         router.push(safeRedirect);
       }
@@ -135,7 +139,8 @@ const LoginForm = () => {
                 const result = await authService.googleLogin(
                   response.credential as string,
                 );
-                if (result.success) {
+                if (result.success && result.data) {
+                  setUser(result.data);
                   toast.success(result.message);
                   router.push(safeRedirect);
                 }
