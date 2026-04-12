@@ -73,8 +73,13 @@ const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
   return response.data;
 };
 
+const logout = async (): Promise<void> => {
+  await axiosInstance.post('/auth/logout');
+};
+
 export const authService = {
   register,
   login,
   googleLogin,
+  logout,
 };
