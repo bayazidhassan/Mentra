@@ -11,6 +11,7 @@ import {
   Mail,
   User,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -222,7 +223,7 @@ const SessionDetailPage = () => {
         </p>
         <div className="flex items-center gap-3">
           {other?.profileImage ? (
-            <img
+            <Image
               src={other.profileImage}
               alt={other.name}
               className="w-12 h-12 rounded-full object-cover shrink-0"
