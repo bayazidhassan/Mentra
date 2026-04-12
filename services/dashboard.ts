@@ -20,9 +20,12 @@ export type TRoadmap = {
   goal: string;
   totalSteps: number;
   completedSteps: number;
+  isAIGenerated: boolean;
   steps: {
     _id: string;
     title: string;
+     description?: string;
+    resources?: string[];
     status: 'not_started' | 'in_progress' | 'completed';
     order: number;
   }[];
