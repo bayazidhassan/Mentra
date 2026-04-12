@@ -45,6 +45,21 @@ export type GoogleLoginResponse = {
   } | null;
 };
 
+export type MeResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    name: string;
+    email: string;
+    role: 'learner' | 'mentor' | 'admin';
+    profileImage?: string;
+    isVerified: boolean;
+    isApproved: boolean;
+    isBanned: boolean;
+  } | null;
+};
+
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
@@ -77,9 +92,15 @@ const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
 };
 
+const getMe = async (): Promise<MeResponse> => {
+  const response = await axiosInstance.get<MeResponse>('/users/getMe');
+  return response.data;
+};
+
 export const authService = {
   register,
   login,
   googleLogin,
   logout,
+  getMe,
 };

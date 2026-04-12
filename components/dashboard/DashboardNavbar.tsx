@@ -2,6 +2,7 @@
 
 import useUserStore from '@/store/useUserStore';
 import { Bell } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const DashboardNavbar = () => {
@@ -32,9 +33,17 @@ const DashboardNavbar = () => {
           href="/profile"
           className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-indigo-200 transition-all"
         >
-          <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
-            {user?.name?.[0]?.toUpperCase() ?? 'U'}
-          </div>
+          {user?.profileImage ? (
+            <Image
+              src={user.profileImage}
+              alt={user.name}
+              className="w-7 h-7 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
+              {user?.name?.[0]?.toUpperCase() ?? 'U'}
+            </div>
+          )}
           <div className="hidden sm:block">
             <p className="text-xs font-medium text-gray-800 leading-none">
               {user?.name ?? 'User'}

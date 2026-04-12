@@ -144,9 +144,17 @@ const Sidebar = () => {
           }`}
           title={collapsed ? 'Profile' : ''}
         >
-          <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
-            {user?.name?.[0]?.toUpperCase() ?? 'U'}
-          </div>
+          {user?.profileImage ? (
+            <Image
+              src={user.profileImage}
+              alt={user.name}
+              className="w-6 h-6 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
+              {user?.name?.[0]?.toUpperCase() ?? 'U'}
+            </div>
+          )}
           {!collapsed && (
             <span className="truncate">{user?.name ?? 'Profile'}</span>
           )}
