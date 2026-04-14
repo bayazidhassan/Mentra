@@ -142,7 +142,12 @@ const LoginForm = () => {
                 if (result.success && result.data) {
                   setUser(result.data);
                   toast.success(result.message);
-                  router.push(safeRedirect);
+                  //redirect to role selection if new user
+                  if (result.data.isNewUser) {
+                    router.push('/selectRole');
+                  } else {
+                    router.push(safeRedirect);
+                  }
                 }
               } catch (error: unknown) {
                 if (axios.isAxiosError(error)) {

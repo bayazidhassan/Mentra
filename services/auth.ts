@@ -1,5 +1,7 @@
 import axiosInstance from '@/lib/axios';
 
+type TRole = 'learner' | 'mentor' | 'admin';
+
 export type RegisterPayload = {
   name: string;
   email: string;
@@ -30,7 +32,7 @@ export type LoginResponse = {
     _id: string;
     name: string;
     email: string;
-    role: 'learner' | 'mentor' | 'admin';
+    role: TRole;
   } | null;
 };
 
@@ -41,7 +43,19 @@ export type GoogleLoginResponse = {
     _id: string;
     name: string;
     email: string;
-    role: 'learner' | 'mentor' | 'admin';
+    role: TRole;
+    isNewUser: boolean;
+  } | null;
+};
+
+export type SetRoleResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    name: string;
+    email: string;
+    role: 'learner' | 'mentor';
   } | null;
 };
 
@@ -52,11 +66,8 @@ export type MeResponse = {
     _id: string;
     name: string;
     email: string;
-    role: 'learner' | 'mentor' | 'admin';
-    profileImage?: string;
-    isVerified: boolean;
-    isApproved: boolean;
-    isBanned: boolean;
+    role: TRole;
+    profileImage: string | null;
   } | null;
 };
 
@@ -64,7 +75,7 @@ const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
   const response = await axiosInstance.post<RegisterResponse>(
-    '/users/register',
+    '/auth/register',
     payload,
   );
   return response.data;
@@ -88,6 +99,15 @@ const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
   return response.data;
 };
 
+const setRole = async (
+  role: 'learner' | 'mentor',
+): Promise<SetRoleResponse> => {
+  const response = await axiosInstance.post<SetRoleResponse>('/auth/setRole', {
+    role,
+  });
+  return response.data;
+};
+
 const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
 };
@@ -101,6 +121,7 @@ export const authService = {
   register,
   login,
   googleLogin,
+  setRole,
   logout,
   getMe,
 };

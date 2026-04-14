@@ -8,7 +8,7 @@ type TUser = {
   name: string;
   email: string;
   role: TRole;
-  profileImage?: string;
+  profileImage?: string | null;
 };
 
 type TUserStore = {

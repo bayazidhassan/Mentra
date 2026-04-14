@@ -37,7 +37,9 @@ const DashboardNavbar = () => {
             <Image
               src={user.profileImage}
               alt={user.name}
-              className="w-7 h-7 rounded-full object-cover"
+              width={28}
+              height={28}
+              className="rounded-full object-cover"
             />
           ) : (
             <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
