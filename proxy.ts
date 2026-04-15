@@ -95,5 +95,6 @@ export const config = {
     '/chat/:path*',
     '/login',
     '/register',
+    '/selectRole',
   ],
 };

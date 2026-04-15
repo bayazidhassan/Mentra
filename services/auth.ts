@@ -67,7 +67,11 @@ export type MeResponse = {
     name: string;
     email: string;
     role: TRole;
-    profileImage: string | null;
+    profileImage?: string;
+    google?: {
+      googleId: string;
+      roleUpdated: boolean;
+    };
   } | null;
 };
 

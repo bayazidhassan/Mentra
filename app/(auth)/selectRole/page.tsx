@@ -5,16 +5,58 @@ import useUserStore from '@/store/useUserStore';
 import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { authService } from '../../../services/auth';
 
 const SelectRolePage = () => {
   const [selectedRole, setSelectedRole] = useState<'learner' | 'mentor' | null>(
     null,
   );
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
   const { setUser, user } = useUserStore();
   const router = useRouter();
+
+  useEffect(() => {
+    const protectPage = async () => {
+      try {
+        const res = await authService.getMe();
+
+        if (!res.success || !res.data) {
+          router.replace('/login');
+          return;
+        }
+
+        const userData = res.data;
+
+        //not a google user OR already role updated
+        if (!userData.google?.googleId || userData.google.roleUpdated) {
+          router.replace(
+            userData.role === 'mentor'
+              ? '/dashboard/mentor'
+              : userData.role === 'admin'
+                ? '/dashboard/admin'
+                : '/dashboard/learner',
+          );
+          return;
+        }
+        setChecking(false);
+      } catch {
+        router.replace('/login');
+      }
+    };
+
+    protectPage();
+  }, [router]);
+
+  if (checking) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const handleConfirm = async () => {
     if (!selectedRole) {
@@ -36,7 +78,7 @@ const SelectRolePage = () => {
           profileImage: response.data.data.profileImage,
         });
         toast.success('Welcome to Mentra!');
-        router.push(
+        router.replace(
           selectedRole === 'mentor'
             ? '/dashboard/mentor'
             : '/dashboard/learner',
