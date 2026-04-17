@@ -146,13 +146,15 @@ const Sidebar = () => {
           title={collapsed ? 'Profile' : ''}
         >
           {user?.profileImage ? (
-            <Image
-              src={user.profileImage}
-              alt={user.name}
-              width={24}
-              height={24}
-              className="rounded-full object-cover shrink-0"
-            />
+            <div className="w-6 h-6 rounded-full overflow-hidden shrink-0">
+              <Image
+                src={user.profileImage}
+                alt={user.name}
+                width={24}
+                height={24}
+                className="w-full h-full object-cover"
+              />
+            </div>
           ) : (
             <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
               {user?.name?.[0]?.toUpperCase() ?? 'U'}

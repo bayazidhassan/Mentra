@@ -34,13 +34,15 @@ const DashboardNavbar = () => {
           className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-indigo-200 transition-all"
         >
           {user?.profileImage ? (
-            <Image
-              src={user.profileImage}
-              alt={user.name}
-              width={28}
-              height={28}
-              className="rounded-full object-cover"
-            />
+            <div className="w-7 h-7 rounded-full overflow-hidden shrink-0">
+              <Image
+                src={user.profileImage}
+                alt={user.name}
+                width={28}
+                height={28}
+                className="w-full h-full object-cover"
+              />
+            </div>
           ) : (
             <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
               {user?.name?.[0]?.toUpperCase() ?? 'U'}
