@@ -3,6 +3,7 @@
 import useUserStore, { TUser } from '@/store/useUserStore';
 import axios from 'axios';
 import {
+  Camera,
   Eye,
   EyeOff,
   Lock,
@@ -265,8 +266,14 @@ const ProfilePage = () => {
             </div>
           )}
           {/* Upload button */}
-          <label className="absolute -bottom-1 -right-1 bg-white border border-gray-200 rounded-full p-1.5 cursor-pointer shadow-sm hover:bg-gray-50">
-            <Plus size={14} />
+          <label className="group absolute -bottom-1 -right-1 bg-white border border-gray-200 rounded-full p-1.5 cursor-pointer shadow-sm hover:bg-gray-50">
+            <Camera size={18} />
+
+            {/* Tooltip */}
+            <span className="absolute bottom-full right-1/2 translate-x-1/2 mb-2 whitespace-nowrap text-xs bg-gray-900 text-white px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+              Upload profile image
+            </span>
+
             <input
               type="file"
               accept="image/*"
