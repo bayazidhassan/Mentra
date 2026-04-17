@@ -12,13 +12,10 @@ const useMe = () => {
       try {
         const response = await authService.getMe();
         if (response.success && response.data) {
-          setUser({
-            _id: response.data._id,
-            name: response.data.name,
-            email: response.data.email,
-            role: response.data.role,
-            profileImage: response.data.profileImage,
-          });
+          setUser((prev) => ({
+            ...prev!,
+            ...response.data,
+          }));
         }
       } catch {
         clearUser();

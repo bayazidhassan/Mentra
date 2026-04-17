@@ -1,4 +1,5 @@
 import axiosInstance from '@/lib/axios';
+import { TUser } from '../store/useUserStore';
 
 type TRole = 'learner' | 'mentor' | 'admin';
 
@@ -59,20 +60,10 @@ export type SetRoleResponse = {
   } | null;
 };
 
-export type MeResponse = {
+export type GetMeResponse = {
   success: boolean;
   message: string;
-  data: {
-    _id: string;
-    name: string;
-    email: string;
-    role: TRole;
-    profileImage?: string;
-    google?: {
-      googleId: string;
-      roleUpdated: boolean;
-    };
-  } | null;
+  data: Partial<TUser> | null;
 };
 
 const register = async (
@@ -116,8 +107,8 @@ const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
 };
 
-const getMe = async (): Promise<MeResponse> => {
-  const response = await axiosInstance.get<MeResponse>('/users/getMe');
+const getMe = async (): Promise<GetMeResponse> => {
+  const response = await axiosInstance.get<GetMeResponse>('/users/getMe');
   return response.data;
 };
 
