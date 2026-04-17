@@ -48,17 +48,6 @@ export type GoogleLoginResponse = {
   } | null;
 };
 
-export type SetRoleResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    _id: string;
-    name: string;
-    email: string;
-    role: 'learner' | 'mentor';
-  } | null;
-};
-
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
@@ -87,15 +76,6 @@ const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
   return response.data;
 };
 
-const setRole = async (
-  role: 'learner' | 'mentor',
-): Promise<SetRoleResponse> => {
-  const response = await axiosInstance.post<SetRoleResponse>('/auth/setRole', {
-    role,
-  });
-  return response.data;
-};
-
 const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
 };
@@ -104,6 +84,5 @@ export const authService = {
   register,
   login,
   googleLogin,
-  setRole,
   logout,
 };

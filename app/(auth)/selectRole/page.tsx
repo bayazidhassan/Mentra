@@ -1,13 +1,12 @@
 'use client';
 
-import axiosInstance from '@/lib/axios';
 import useUserStore from '@/store/useUserStore';
 import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { authService } from '../../../services/auth';
+import { userService } from '../../../services/user';
 
 const SelectRolePage = () => {
   const [selectedRole, setSelectedRole] = useState<'learner' | 'mentor' | null>(
@@ -21,7 +20,7 @@ const SelectRolePage = () => {
   useEffect(() => {
     const protectPage = async () => {
       try {
-        const res = await authService.getMe();
+        const res = await userService.getMe();
 
         if (!res.success || !res.data) {
           router.replace('/login');
@@ -65,19 +64,16 @@ const SelectRolePage = () => {
     }
     setLoading(true);
     try {
-      const response = await axiosInstance.patch('/users/updateRole', {
-        role: selectedRole,
-      });
+      const response = await userService.setRole(selectedRole);
 
-      if (response.data.success && response.data.data) {
+      if (response.success && response.data) {
         setUser({
-          _id: response.data.data._id,
-          name: response.data.data.name,
-          email: response.data.data.email,
-          role: response.data.data.role,
-          profileImage: response.data.data.profileImage,
+          _id: response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role,
+          profileImage: response.data.profileImage,
         });
-        toast.success('Welcome to Mentra!');
         router.replace(
           selectedRole === 'mentor'
             ? '/dashboard/mentor'

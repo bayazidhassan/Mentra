@@ -7,6 +7,18 @@ export type GetMeResponse = {
   data: Partial<TUser> | null;
 };
 
+export type SetRoleResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    name: string;
+    email: string;
+    role: 'learner' | 'mentor';
+    profileImage: string;
+  } | null;
+};
+
 export type UpdateProfileResponse = {
   success: boolean;
   message: string;
@@ -15,6 +27,18 @@ export type UpdateProfileResponse = {
 
 const getMe = async (): Promise<GetMeResponse> => {
   const response = await axiosInstance.get<GetMeResponse>('/users/getMe');
+  return response.data;
+};
+
+const setRole = async (
+  role: 'learner' | 'mentor',
+): Promise<SetRoleResponse> => {
+  const response = await axiosInstance.patch<SetRoleResponse>(
+    '/users/setRole',
+    {
+      role,
+    },
+  );
   return response.data;
 };
 
@@ -30,5 +54,6 @@ const updateProfile = async (
 
 export const userService = {
   getMe,
+  setRole,
   updateProfile,
 };
