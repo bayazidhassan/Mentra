@@ -1,5 +1,4 @@
 import axiosInstance from '@/lib/axios';
-import { TUser } from '../store/useUserStore';
 
 type TRole = 'learner' | 'mentor' | 'admin';
 
@@ -60,12 +59,6 @@ export type SetRoleResponse = {
   } | null;
 };
 
-export type GetMeResponse = {
-  success: boolean;
-  message: string;
-  data: Partial<TUser> | null;
-};
-
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
@@ -107,16 +100,10 @@ const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
 };
 
-const getMe = async (): Promise<GetMeResponse> => {
-  const response = await axiosInstance.get<GetMeResponse>('/users/getMe');
-  return response.data;
-};
-
 export const authService = {
   register,
   login,
   googleLogin,
   setRole,
   logout,
-  getMe,
 };

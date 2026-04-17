@@ -1,10 +1,21 @@
 import axiosInstance from '@/lib/axios';
 import { TUser } from '../store/useUserStore';
 
+export type GetMeResponse = {
+  success: boolean;
+  message: string;
+  data: Partial<TUser> | null;
+};
+
 export type UpdateProfileResponse = {
   success: boolean;
   message: string;
   data: Partial<TUser> | null;
+};
+
+const getMe = async (): Promise<GetMeResponse> => {
+  const response = await axiosInstance.get<GetMeResponse>('/users/getMe');
+  return response.data;
 };
 
 const updateProfile = async (
@@ -18,5 +29,6 @@ const updateProfile = async (
 };
 
 export const userService = {
+  getMe,
   updateProfile,
 };

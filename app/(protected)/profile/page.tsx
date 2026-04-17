@@ -1,6 +1,6 @@
 'use client';
 
-import useUserStore from '@/store/useUserStore';
+import useUserStore, { TUser } from '@/store/useUserStore';
 import axios from 'axios';
 import {
   Eye,
@@ -60,8 +60,11 @@ const ProfilePage = () => {
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  const [initialData, setInitialData] = useState<TUser | null>(null);
   useEffect(() => {
     if (user) {
+      setInitialData(user);
+
       setName(user.name ?? '');
       setPhone(user.phone ?? '');
       setSkills(user.skills ?? []);
@@ -140,24 +143,49 @@ const ProfilePage = () => {
     try {
       const formData = new FormData();
 
+      if (!initialData) return;
+
       // user
-      formData.append('name', name);
-      formData.append('phone', phone);
+      if (name !== initialData.name) {
+        formData.append('name', name);
+      }
+      if (phone !== (initialData.phone ?? '')) {
+        formData.append('phone', phone);
+      }
       if (imageFile) {
         formData.append('profileImage', imageFile);
       }
 
       // learner
       if (isLearner) {
-        formData.append('skills', JSON.stringify(skills));
+        const oldSkills = JSON.stringify(initialData.skills ?? []);
+        const newSkills = JSON.stringify(skills);
+        if (oldSkills !== newSkills) {
+          formData.append('skills', newSkills);
+        }
       }
 
       // mentor
       if (isMentor) {
-        formData.append('bio', bio);
-        formData.append('experience', experience);
-        formData.append('hourlyRate', String(hourlyRate));
-        formData.append('availability', JSON.stringify(availability));
+        if (bio !== (initialData.bio ?? '')) {
+          formData.append('bio', bio);
+        }
+        if (experience !== (initialData.experience ?? '')) {
+          formData.append('experience', experience);
+        }
+        if (hourlyRate !== (initialData.hourlyRate?.toString() ?? '')) {
+          formData.append('hourlyRate', hourlyRate);
+        }
+        const oldAvailability = JSON.stringify(initialData.availability ?? []);
+        const newAvailability = JSON.stringify(availability);
+        if (oldAvailability !== newAvailability) {
+          formData.append('availability', newAvailability);
+        }
+      }
+
+      if ([...formData.keys()].length === 0) {
+        toast.info('No changes detected.');
+        return;
       }
 
       const res = await userService.updateProfile(formData);

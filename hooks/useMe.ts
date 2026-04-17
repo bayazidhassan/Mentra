@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { authService } from '../services/auth';
+import { userService } from '../services/user';
 import useUserStore from '../store/useUserStore';
 
 const useMe = () => {
@@ -10,7 +10,7 @@ const useMe = () => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const response = await authService.getMe();
+        const response = await userService.getMe();
         if (response.success && response.data) {
           setUser((prev) => ({
             ...prev!,
