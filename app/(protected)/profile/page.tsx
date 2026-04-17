@@ -223,12 +223,17 @@ const ProfilePage = () => {
     }
     setSavingPassword(true);
     try {
-      // TODO: wire up API
-      // await authService.changePassword({ currentPassword, newPassword });
-      toast.success('Password changed successfully.');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      const res = await userService.changePassword({
+        currentPassword,
+        newPassword,
+      });
+
+      if (res.success) {
+        toast.success(res.message || 'Password changed successfully.');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         toast.error(

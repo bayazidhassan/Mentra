@@ -25,6 +25,17 @@ export type UpdateProfileResponse = {
   data: Partial<TUser> | null;
 };
 
+export type ChangePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export type ChangePasswordResponse = {
+  success: boolean;
+  message: string;
+  data: null;
+};
+
 const getMe = async (): Promise<GetMeResponse> => {
   const response = await axiosInstance.get<GetMeResponse>('/users/getMe');
   return response.data;
@@ -52,8 +63,19 @@ const updateProfile = async (
   return response.data;
 };
 
+const changePassword = async (
+  payload: ChangePasswordPayload,
+): Promise<ChangePasswordResponse> => {
+  const response = await axiosInstance.patch<ChangePasswordResponse>(
+    '/users/changePassword',
+    payload,
+  );
+  return response.data;
+};
+
 export const userService = {
   getMe,
   setRole,
   updateProfile,
+  changePassword,
 };
