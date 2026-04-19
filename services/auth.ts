@@ -59,13 +59,8 @@ export type GoogleLoginResponse = {
 export type SetRoleResponse = {
   success: boolean;
   message: string;
-  data: null;
-};
-
-export type RefreshTokenResponse = {
-  success: boolean;
-  message: string;
   data: {
+    selectedRole: 'learner' | 'mentor';
     accessToken: string;
   } | null;
 };
@@ -107,14 +102,9 @@ const setRole = async (
   return response.data;
 };
 
-const refreshToken = async (): Promise<RefreshTokenResponse> => {
-  const response =
-    await axiosInstance.post<RefreshTokenResponse>('/auth/refreshToken');
+const logout = async () => {
+  const response = await axiosInstance.post('/auth/logout');
   return response.data;
-};
-
-const logout = async (): Promise<void> => {
-  await axiosInstance.post('/auth/logout');
 };
 
 export const authService = {
@@ -122,6 +112,5 @@ export const authService = {
   login,
   googleLogin,
   setRole,
-  refreshToken,
   logout,
 };

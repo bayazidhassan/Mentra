@@ -3,21 +3,27 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { authService } from '../services/auth';
+import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
+import axios from 'axios';
 
 const useLogout = () => {
   const router = useRouter();
   const { clearUser } = useUserStore();
+  const { clearAuth } = useAuthStore();
 
   const logout = async () => {
     try {
-      await authService.logout();
-      clearUser();
-      toast.success('Logged out successfully.');
-      router.push('/login');
-    } catch {
-      toast.error('Something went wrong.');
+    const response = await authService.logout();
+    clearUser();
+    clearAuth();
+    toast.success(response.message || 'Logged out successfully.');
+    router.push('/login');
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data?.message || 'Something went wrong.');
     }
+  }
   };
 
   return { logout };

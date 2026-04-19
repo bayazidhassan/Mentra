@@ -2,10 +2,18 @@ import { create } from 'zustand';
 
 type TAuthStore = {
   accessToken: string | null;
-  setAccessToken: (token: string | null) => void;
+  isAuthReady: boolean;
+  setAccessToken: (token: string) => void;
+  setAuthReady: (ready: boolean) => void;
+  clearAuth: () => void;
 };
 
-export const useAuthStore = create<TAuthStore>((set) => ({
+const useAuthStore = create<TAuthStore>((set) => ({
   accessToken: null,
+  isAuthReady: false,
   setAccessToken: (token) => set({ accessToken: token }),
+  setAuthReady: (ready) => set({ isAuthReady: ready }),
+  clearAuth: () => set({ accessToken: null }),
 }));
+
+export default useAuthStore;

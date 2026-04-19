@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { authService } from '../../services/auth';
-import { useAuthStore } from '../../store/useAuthStore';
+import useAuthStore from '../../store/useAuthStore';
 import useUserStore from '../../store/useUserStore';
 
 const loginSchema = z.object({
@@ -35,7 +35,6 @@ const LoginForm = () => {
     redirect && redirect.startsWith('/') ? redirect : '/dashboard/learner';
   const router = useRouter();
   const { setUser } = useUserStore();
-  const { setAccessToken } = useAuthStore();
 
   const {
     register,
@@ -54,7 +53,7 @@ const LoginForm = () => {
 
       if (response.success && response.data) {
         setUser(response.data.user);
-        setAccessToken(response.data.accessToken);
+        useAuthStore.getState().setAccessToken(response.data.accessToken);
         toast.success(response.message);
         router.replace(safeRedirect);
       }
@@ -144,7 +143,9 @@ const LoginForm = () => {
                 );
                 if (result.success && result.data) {
                   setUser(result.data.user);
-                  setAccessToken(result.data.accessToken);
+                  useAuthStore
+                    .getState()
+                    .setAccessToken(result.data.accessToken);
                   toast.success(result.message);
                   //redirect to role selection if new user
                   if (result.data.isNewUser) {

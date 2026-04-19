@@ -8,14 +8,15 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { authService } from '../../../services/auth';
 import { userService } from '../../../services/user';
+import useAuthStore from '../../../store/useAuthStore';
 
 const SelectRolePage = () => {
   const [selectedRole, setSelectedRole] = useState<'learner' | 'mentor' | null>(
     null,
   );
+  const { user, setUser } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
-  const { user } = useUserStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -67,7 +68,9 @@ const SelectRolePage = () => {
     try {
       const response = await authService.setRole(selectedRole);
 
-      if (response.success) {
+      if (response.success && response.data) {
+        setUser({ ...user!, role: selectedRole });
+        useAuthStore.getState().setAccessToken(response.data.accessToken);
         router.replace(
           selectedRole === 'mentor'
             ? '/dashboard/mentor'
