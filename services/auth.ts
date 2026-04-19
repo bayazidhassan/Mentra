@@ -29,10 +29,14 @@ export type LoginResponse = {
   success: boolean;
   message: string;
   data: {
-    _id: string;
-    name: string;
-    email: string;
-    role: TRole;
+    user: {
+      _id: string;
+      name: string;
+      email: string;
+      role: TRole;
+      profileImage?: string;
+    };
+    accessToken: string;
   } | null;
 };
 
@@ -40,11 +44,29 @@ export type GoogleLoginResponse = {
   success: boolean;
   message: string;
   data: {
-    _id: string;
-    name: string;
-    email: string;
-    role: TRole;
+    user: {
+      _id: string;
+      name: string;
+      email: string;
+      role: TRole;
+      profileImage?: string;
+    };
     isNewUser: boolean;
+    accessToken: string;
+  } | null;
+};
+
+export type SetRoleResponse = {
+  success: boolean;
+  message: string;
+  data: null;
+};
+
+export type RefreshTokenResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
   } | null;
 };
 
@@ -76,6 +98,21 @@ const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
   return response.data;
 };
 
+const setRole = async (
+  role: 'learner' | 'mentor',
+): Promise<SetRoleResponse> => {
+  const response = await axiosInstance.patch<SetRoleResponse>('/auth/setRole', {
+    role,
+  });
+  return response.data;
+};
+
+const refreshToken = async (): Promise<RefreshTokenResponse> => {
+  const response =
+    await axiosInstance.post<RefreshTokenResponse>('/auth/refreshToken');
+  return response.data;
+};
+
 const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
 };
@@ -84,5 +121,7 @@ export const authService = {
   register,
   login,
   googleLogin,
+  setRole,
+  refreshToken,
   logout,
 };

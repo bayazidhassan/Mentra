@@ -33,6 +33,8 @@ type TUserStore = {
   user: TUser | null;
   setUser: (user: TUser | ((prev: TUser | null) => TUser)) => void;
   clearUser: () => void;
+  isLoading: boolean;
+  setLoading: (value: boolean) => void;
 };
 
 const useUserStore = create<TUserStore>()(
@@ -44,6 +46,8 @@ const useUserStore = create<TUserStore>()(
           user: typeof user === 'function' ? user(state.user) : user,
         })),
       clearUser: () => set({ user: null }),
+      isLoading: false,
+      setLoading: (value) => set({ isLoading: value }),
     }),
     {
       name: 'user-store',

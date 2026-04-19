@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { authService } from '../../../services/auth';
 import { userService } from '../../../services/user';
 
 const SelectRolePage = () => {
@@ -14,7 +15,7 @@ const SelectRolePage = () => {
   );
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
-  const { setUser, user } = useUserStore();
+  const { user } = useUserStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -64,16 +65,9 @@ const SelectRolePage = () => {
     }
     setLoading(true);
     try {
-      const response = await userService.setRole(selectedRole);
+      const response = await authService.setRole(selectedRole);
 
-      if (response.success && response.data) {
-        setUser({
-          _id: response.data._id,
-          name: response.data.name,
-          email: response.data.email,
-          role: response.data.role,
-          profileImage: response.data.profileImage,
-        });
+      if (response.success) {
         router.replace(
           selectedRole === 'mentor'
             ? '/dashboard/mentor'
