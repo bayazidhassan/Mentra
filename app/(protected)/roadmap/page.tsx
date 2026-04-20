@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronUp,
   Circle,
+  ExternalLink,
   Loader2,
   Plus,
   Sparkles,
@@ -15,14 +16,24 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { TRoadmap } from '../../../services/dashboard';
 import {
   roadmapService,
   TCreateRoadmapPayload,
+  TRoadmap,
+  TStepStatus,
 } from '../../../services/roadmap';
 
 type TMode = 'ai' | 'manual';
 type TView = 'empty' | 'create' | 'roadmap';
+
+// Local form shape for manual step resources
+type TResourceInput = { title: string; url: string };
+type TManualStep = {
+  title: string;
+  description: string;
+  resources: TResourceInput[];
+  order: number;
+};
 
 const RoadmapPage = () => {
   const [view, setView] = useState<TView>('empty');
@@ -33,12 +44,17 @@ const RoadmapPage = () => {
   const [goal, setGoal] = useState('');
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
 
-  //manual form state
+  // manual form state
   const [manualTitle, setManualTitle] = useState('');
   const [manualGoal, setManualGoal] = useState('');
   const [manualDescription, setManualDescription] = useState('');
-  const [manualSteps, setManualSteps] = useState([
-    { title: '', description: '', resources: '', order: 1 },
+  const [manualSteps, setManualSteps] = useState<TManualStep[]>([
+    {
+      title: '',
+      description: '',
+      resources: [{ title: '', url: '' }],
+      order: 1,
+    },
   ]);
 
   useEffect(() => {
@@ -93,14 +109,13 @@ const RoadmapPage = () => {
     try {
       const payload: TCreateRoadmapPayload = {
         title: manualTitle,
-        description: manualDescription,
+        description: manualDescription || undefined,
         goal: manualGoal,
         steps: manualSteps.map((s, i) => ({
           title: s.title,
-          description: s.description,
-          resources: s.resources
-            ? s.resources.split(',').map((r) => r.trim())
-            : [],
+          description: s.description || undefined,
+          // filter out any resource rows where both title and url are not filled
+          resources: s.resources.filter((r) => r.title.trim() && r.url.trim()),
           order: i + 1,
         })),
       };
@@ -119,18 +134,15 @@ const RoadmapPage = () => {
     }
   };
 
-  const handleStepStatus = async (
-    stepId: string,
-    status: 'not_started' | 'in_progress' | 'completed',
-  ) => {
+  const handleStepStatus = async (stepId: string, status: TStepStatus) => {
     if (!roadmap) return;
     try {
-      const updated = await roadmapService.updateStepStatus(
+      const data = await roadmapService.updateStepStatus(
         roadmap._id,
         stepId,
         status,
       );
-      setRoadmap(updated);
+      setRoadmap(data);
       toast.success('Step updated.');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -158,10 +170,17 @@ const RoadmapPage = () => {
     }
   };
 
+  // ── Manual step helpers ────────────────────────────────────────────────────
+
   const addStep = () => {
     setManualSteps((prev) => [
       ...prev,
-      { title: '', description: '', resources: '', order: prev.length + 1 },
+      {
+        title: '',
+        description: '',
+        resources: [{ title: '', url: '' }],
+        order: prev.length + 1,
+      },
     ]);
   };
 
@@ -169,11 +188,78 @@ const RoadmapPage = () => {
     setManualSteps((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const progressPercent = roadmap
-    ? Math.round((roadmap.completedSteps / roadmap.totalSteps) * 100) || 0
-    : 0;
+  const updateStep = (
+    stepIndex: number,
+    field: keyof Omit<TManualStep, 'resources' | 'order'>,
+    value: string,
+  ) => {
+    setManualSteps((prev) => {
+      const updated = [...prev];
+      updated[stepIndex] = { ...updated[stepIndex], [field]: value };
+      return updated;
+    });
+  };
 
-  const statusConfig = {
+  const addResource = (stepIndex: number) => {
+    setManualSteps((prev) => {
+      const updated = [...prev];
+      updated[stepIndex] = {
+        ...updated[stepIndex],
+        resources: [...updated[stepIndex].resources, { title: '', url: '' }],
+      };
+      return updated;
+    });
+  };
+
+  const updateResource = (
+    stepIndex: number,
+    resourceIndex: number,
+    field: keyof TResourceInput,
+    value: string,
+  ) => {
+    setManualSteps((prev) => {
+      const updated = [...prev];
+      const resources = [...updated[stepIndex].resources];
+      resources[resourceIndex] = {
+        ...resources[resourceIndex],
+        [field]: value,
+      };
+      updated[stepIndex] = { ...updated[stepIndex], resources };
+      return updated;
+    });
+  };
+
+  const removeResource = (stepIndex: number, resourceIndex: number) => {
+    setManualSteps((prev) => {
+      const updated = [...prev];
+      updated[stepIndex] = {
+        ...updated[stepIndex],
+        resources: updated[stepIndex].resources.filter(
+          (_, i) => i !== resourceIndex,
+        ),
+      };
+      return updated;
+    });
+  };
+
+  // ── Derived values ─────────────────────────────────────────────────────────
+
+  // Reads from top-level totalSteps / completedSteps — kept in sync by backend
+  const progressPercent =
+    roadmap && roadmap.totalSteps > 0
+      ? Math.round((roadmap.completedSteps / roadmap.totalSteps) * 100)
+      : 0;
+
+  const statusConfig: Record<
+    TStepStatus,
+    {
+      label: string;
+      color: string;
+      bg: string;
+      border: string;
+      icon: React.ReactNode;
+    }
+  > = {
     not_started: {
       label: 'Not started',
       color: 'text-gray-400',
@@ -205,6 +291,7 @@ const RoadmapPage = () => {
     },
   };
 
+  // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -213,7 +300,7 @@ const RoadmapPage = () => {
     );
   }
 
-  //EMPTY STATE
+  // ── Empty state ────────────────────────────────────────────────────────────
   if (view === 'empty') {
     return (
       <div className="max-w-2xl mx-auto mt-16 text-center">
@@ -256,7 +343,7 @@ const RoadmapPage = () => {
     );
   }
 
-  //CREATE STATE
+  // ── Create state ───────────────────────────────────────────────────────────
   if (view === 'create') {
     return (
       <div className="max-w-2xl mx-auto">
@@ -385,55 +472,107 @@ const RoadmapPage = () => {
                   <Plus size={12} /> Add step
                 </button>
               </div>
+
               <div className="space-y-3">
-                {manualSteps.map((step, index) => (
+                {manualSteps.map((step, stepIndex) => (
                   <div
-                    key={index}
+                    key={stepIndex}
                     className="border border-gray-200 rounded-xl p-4 space-y-2"
                   >
+                    {/* Step header row */}
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-indigo-600">
-                        Step {index + 1}
+                        Step {stepIndex + 1}
                       </span>
                       {manualSteps.length > 1 && (
                         <button
-                          onClick={() => removeStep(index)}
+                          onClick={() => removeStep(stepIndex)}
                           className="text-gray-300 hover:text-red-400 cursor-pointer transition-colors"
                         >
                           <X size={14} />
                         </button>
                       )}
                     </div>
+
+                    {/* Title */}
                     <input
                       value={step.title}
-                      onChange={(e) => {
-                        const updated = [...manualSteps];
-                        updated[index].title = e.target.value;
-                        setManualSteps(updated);
-                      }}
+                      onChange={(e) =>
+                        updateStep(stepIndex, 'title', e.target.value)
+                      }
                       placeholder="Step title"
                       className="w-full h-9 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-indigo-500 transition-all"
                     />
+
+                    {/* Description */}
                     <input
                       value={step.description}
-                      onChange={(e) => {
-                        const updated = [...manualSteps];
-                        updated[index].description = e.target.value;
-                        setManualSteps(updated);
-                      }}
+                      onChange={(e) =>
+                        updateStep(stepIndex, 'description', e.target.value)
+                      }
                       placeholder="Description (optional)"
                       className="w-full h-9 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-indigo-500 transition-all"
                     />
-                    <input
-                      value={step.resources}
-                      onChange={(e) => {
-                        const updated = [...manualSteps];
-                        updated[index].resources = e.target.value;
-                        setManualSteps(updated);
-                      }}
-                      placeholder="Resources (comma separated)"
-                      className="w-full h-9 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-indigo-500 transition-all"
-                    />
+
+                    {/* Resources */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-500">
+                          Resources{' '}
+                          <span className="text-gray-400">(optional)</span>
+                        </span>
+                        <button
+                          onClick={() => addResource(stepIndex)}
+                          className="text-xs text-indigo-500 font-medium flex items-center gap-1 hover:underline cursor-pointer"
+                        >
+                          <Plus size={11} /> Add resource
+                        </button>
+                      </div>
+
+                      {step.resources.map((resource, resourceIndex) => (
+                        <div
+                          key={resourceIndex}
+                          className="flex gap-2 items-center"
+                        >
+                          <input
+                            value={resource.title}
+                            onChange={(e) =>
+                              updateResource(
+                                stepIndex,
+                                resourceIndex,
+                                'title',
+                                e.target.value,
+                              )
+                            }
+                            placeholder="Title (e.g. MDN Docs)"
+                            className="flex-1 h-8 border border-gray-200 rounded-lg px-3 text-xs outline-none focus:border-indigo-500 transition-all"
+                          />
+                          <input
+                            value={resource.url}
+                            onChange={(e) =>
+                              updateResource(
+                                stepIndex,
+                                resourceIndex,
+                                'url',
+                                e.target.value,
+                              )
+                            }
+                            placeholder="URL (https://...)"
+                            className="flex-1 h-8 border border-gray-200 rounded-lg px-3 text-xs outline-none focus:border-indigo-500 transition-all"
+                          />
+                          {step.resources.length > 1 && (
+                            <button
+                              onClick={() =>
+                                removeResource(stepIndex, resourceIndex)
+                              }
+                              className="text-gray-300 hover:text-red-400 cursor-pointer transition-colors shrink-0"
+                            >
+                              <X size={13} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -461,7 +600,7 @@ const RoadmapPage = () => {
     );
   }
 
-  //ROADMAP VIEW
+  // ── Roadmap view ───────────────────────────────────────────────────────────
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
@@ -479,8 +618,18 @@ const RoadmapPage = () => {
                 <Sparkles size={11} /> AI generated
               </span>
             )}
+            {roadmap?.status === 'completed' && (
+              <span className="flex items-center gap-1 text-xs font-medium bg-green-50 text-green-600 px-2 py-1 rounded-full">
+                <Check size={11} /> Completed
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-500">{roadmap?.goal}</p>
+          {roadmap?.description && (
+            <p className="text-xs text-gray-400 mt-0.5">
+              {roadmap.description}
+            </p>
+          )}
         </div>
         <button
           onClick={handleDelete}
@@ -532,15 +681,10 @@ const RoadmapPage = () => {
             Timeline
           </h2>
           <div className="relative">
-            {/* Vertical line */}
             <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gray-200" />
             <div className="space-y-4">
               {roadmap?.steps.map((step, index) => (
-                <div
-                  key={step._id.toString()}
-                  className="flex items-start gap-3 relative"
-                >
-                  {/* Dot */}
+                <div key={step._id} className="flex items-start gap-3 relative">
                   <div
                     className={`w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 z-10 ${
                       step.status === 'completed'
@@ -590,7 +734,7 @@ const RoadmapPage = () => {
           </h2>
           {roadmap?.steps.map((step) => (
             <div
-              key={step._id.toString()}
+              key={step._id}
               className={`bg-white border rounded-2xl overflow-hidden transition-all ${statusConfig[step.status].border}`}
             >
               {/* Step header */}
@@ -610,13 +754,7 @@ const RoadmapPage = () => {
                 <select
                   value={step.status}
                   onChange={(e) =>
-                    handleStepStatus(
-                      step._id.toString(),
-                      e.target.value as
-                        | 'not_started'
-                        | 'in_progress'
-                        | 'completed',
-                    )
+                    handleStepStatus(step._id, e.target.value as TStepStatus)
                   }
                   className={`text-xs font-medium px-2 py-1 rounded-lg border outline-none cursor-pointer ${statusConfig[step.status].bg} ${statusConfig[step.status].color} ${statusConfig[step.status].border}`}
                 >
@@ -625,27 +763,28 @@ const RoadmapPage = () => {
                   <option value="completed">Completed</option>
                 </select>
 
-                {/* Expand toggle */}
-                <button
-                  onClick={() =>
-                    setExpandedStep(
-                      expandedStep === step._id.toString()
-                        ? null
-                        : step._id.toString(),
-                    )
-                  }
-                  className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
-                >
-                  {expandedStep === step._id.toString() ? (
-                    <ChevronUp size={16} />
-                  ) : (
-                    <ChevronDown size={16} />
-                  )}
-                </button>
+                {/* Expand toggle — only shown when there's content to expand */}
+                {(step.description ||
+                  (step.resources && step.resources.length > 0)) && (
+                  <button
+                    onClick={() =>
+                      setExpandedStep(
+                        expandedStep === step._id ? null : step._id,
+                      )
+                    }
+                    className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+                  >
+                    {expandedStep === step._id ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    )}
+                  </button>
+                )}
               </div>
 
               {/* Expanded content */}
-              {expandedStep === step._id.toString() && (
+              {expandedStep === step._id && (
                 <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
                   {step.description && (
                     <p className="text-sm text-gray-500 leading-relaxed">
@@ -659,12 +798,17 @@ const RoadmapPage = () => {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {step.resources.map((resource, i) => (
-                          <span
+                          // Every resource has { title, url } — always render as a link
+                          <a
                             key={i}
-                            className="text-xs bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full"
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full hover:bg-indigo-100 transition-colors"
                           >
-                            {resource}
-                          </span>
+                            {resource.title}
+                            <ExternalLink size={10} />
+                          </a>
                         ))}
                       </div>
                     </div>

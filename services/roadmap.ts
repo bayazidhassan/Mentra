@@ -1,5 +1,39 @@
 import axiosInstance from '@/lib/axios';
-import { TRoadmap } from './dashboard';
+
+export type TStepStatus = 'not_started' | 'in_progress' | 'completed';
+export type TRoadmapStatus = 'active' | 'completed';
+
+export type TResource = {
+  title: string;
+  url: string;
+};
+
+export type TStep = {
+  _id: string;
+  title: string;
+  description?: string;
+  resources?: TResource[];
+  status: TStepStatus;
+  order: number;
+  completedAt?: string;
+};
+
+export type TRoadmap = {
+  _id: string;
+  learner: string;
+  title: string;
+  description?: string;
+  goal: string;
+  steps: TStep[];
+  status: TRoadmapStatus;
+  isAIGenerated: boolean;
+  totalSteps: number;
+  completedSteps: number;
+  currentStep: number;
+  completedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
 
 export type TCreateRoadmapPayload = {
   title: string;
@@ -8,7 +42,7 @@ export type TCreateRoadmapPayload = {
   steps: {
     title: string;
     description?: string;
-    resources?: string[];
+    resources?: TResource[];
     order: number;
   }[];
 };
@@ -45,7 +79,7 @@ const createRoadmap = async (
 const updateStepStatus = async (
   roadmapId: string,
   stepId: string,
-  status: 'not_started' | 'in_progress' | 'completed',
+  status: TStepStatus,
 ): Promise<TRoadmap> => {
   const response = await axiosInstance.patch<RoadmapResponse>(
     `/roadmap/${roadmapId}/steps/${stepId}`,
