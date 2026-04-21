@@ -1,11 +1,23 @@
 'use client';
 
-import { ArrowLeft, Calendar, Mail, MessageSquare } from 'lucide-react';
+import {
+  ArrowLeft,
+  Briefcase,
+  Calendar,
+  Clock,
+  DollarSign,
+  Mail,
+  MessageSquare,
+  Star,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { mentorService, TMentor } from '../../../../services/mentor';
+
+const DAYS_ORDER = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const MentorProfilePage = () => {
   const { id } = useParams() as { id: string };
@@ -50,8 +62,15 @@ const MentorProfilePage = () => {
     );
   }
 
+  // Sort availability by day order
+  const sortedAvailability = mentor.availability
+    ? [...mentor.availability].sort(
+        (a, b) => DAYS_ORDER.indexOf(a.day) - DAYS_ORDER.indexOf(b.day),
+      )
+    : [];
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-5">
       {/* Back button */}
       <Link
         href="/mentors"
@@ -62,13 +81,15 @@ const MentorProfilePage = () => {
 
       {/* Profile card */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8">
-        <div className="flex items-start gap-6">
+        <div className="flex items-start gap-6 flex-wrap sm:flex-nowrap">
           {/* Avatar */}
           {mentor.profileImage ? (
             <Image
               src={mentor.profileImage}
               alt={mentor.name}
-              className="w-20 h-20 rounded-2xl object-cover shrink-0"
+              width={80}
+              height={80}
+              className="rounded-2xl object-cover shrink-0"
             />
           ) : (
             <div
@@ -87,13 +108,33 @@ const MentorProfilePage = () => {
             >
               {mentor.name}
             </h1>
-            <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+            <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
               <Mail size={14} />
               {mentor.email}
             </div>
-            <span className="inline-flex items-center text-xs font-medium bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">
-              Mentor
-            </span>
+
+            {/* Meta pills */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center text-xs font-medium bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">
+                Mentor
+              </span>
+              {mentor.rating > 0 && (
+                <span className="inline-flex items-center gap-1 text-xs font-medium bg-yellow-50 text-yellow-600 px-3 py-1 rounded-full">
+                  <Star size={11} className="fill-yellow-400 text-yellow-400" />
+                  {mentor.rating.toFixed(1)}
+                  {mentor.totalReviews > 0 && (
+                    <span className="text-yellow-500">
+                      ({mentor.totalReviews} reviews)
+                    </span>
+                  )}
+                </span>
+              )}
+              {mentor.hourlyRate !== undefined && (
+                <span className="inline-flex items-center gap-1 text-xs font-medium bg-green-50 text-green-600 px-3 py-1 rounded-full">
+                  <DollarSign size={11} />${mentor.hourlyRate}/hr
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -116,6 +157,70 @@ const MentorProfilePage = () => {
           Send a message
         </Link>
       </div>
+
+      {/* Bio */}
+      {mentor.bio && (
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Users size={16} className="text-indigo-500" />
+            <h2
+              className="text-sm font-semibold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              About
+            </h2>
+          </div>
+          <p className="text-sm text-gray-600 leading-relaxed">{mentor.bio}</p>
+        </div>
+      )}
+
+      {/* Experience */}
+      {mentor.experience && (
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Briefcase size={16} className="text-indigo-500" />
+            <h2
+              className="text-sm font-semibold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              Experience
+            </h2>
+          </div>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {mentor.experience}
+          </p>
+        </div>
+      )}
+
+      {/* Availability */}
+      {sortedAvailability.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock size={16} className="text-indigo-500" />
+            <h2
+              className="text-sm font-semibold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              Availability
+            </h2>
+          </div>
+          <div className="space-y-2">
+            {sortedAvailability.map((slot, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between py-2.5 px-4 bg-gray-50 rounded-xl"
+              >
+                <span className="text-sm font-medium text-gray-700 w-12">
+                  {slot.day}
+                </span>
+                <span className="text-sm text-gray-500">
+                  {slot.startTime} – {slot.endTime}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
