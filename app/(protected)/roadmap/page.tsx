@@ -2,12 +2,14 @@
 
 import axios from 'axios';
 import {
+  ArrowLeft,
   BookOpen,
   Check,
   ChevronDown,
   ChevronUp,
   Circle,
   ExternalLink,
+  History,
   Loader2,
   Plus,
   Sparkles,
@@ -24,9 +26,13 @@ import {
 } from '../../../services/roadmap';
 
 type TMode = 'ai' | 'manual';
-type TView = 'empty' | 'create' | 'roadmap';
+type TView =
+  | 'empty'
+  | 'create'
+  | 'roadmap'
+  | 'completed-list'
+  | 'completed-detail';
 
-// Local form shape for manual step resources
 type TResourceInput = { title: string; url: string };
 type TManualStep = {
   title: string;
@@ -39,7 +45,12 @@ const RoadmapPage = () => {
   const [view, setView] = useState<TView>('empty');
   const [mode, setMode] = useState<TMode>('ai');
   const [roadmap, setRoadmap] = useState<TRoadmap | null>(null);
+  const [completedRoadmaps, setCompletedRoadmaps] = useState<TRoadmap[]>([]);
+  const [selectedCompleted, setSelectedCompleted] = useState<TRoadmap | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
+  const [completedLoading, setCompletedLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [goal, setGoal] = useState('');
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
@@ -75,6 +86,20 @@ const RoadmapPage = () => {
     };
     fetchRoadmap();
   }, []);
+
+  // Fetch completed roadmaps when navigating to that view
+  const handleViewCompleted = async () => {
+    setView('completed-list');
+    setCompletedLoading(true);
+    try {
+      const data = await roadmapService.getCompletedRoadmaps();
+      setCompletedRoadmaps(data);
+    } catch {
+      setCompletedRoadmaps([]);
+    } finally {
+      setCompletedLoading(false);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!goal.trim()) {
@@ -114,7 +139,6 @@ const RoadmapPage = () => {
         steps: manualSteps.map((s, i) => ({
           title: s.title,
           description: s.description || undefined,
-          // filter out any resource rows where both title and url are not filled
           resources: s.resources.filter((r) => r.title.trim() && r.url.trim()),
           order: i + 1,
         })),
@@ -143,7 +167,14 @@ const RoadmapPage = () => {
         status,
       );
       setRoadmap(data);
-      toast.success('Step updated.');
+      // If roadmap just completed, show a prompt and transition to empty
+      if (data.status === 'completed') {
+        toast.success('🎉 Roadmap completed! You can now start a new one.');
+        setRoadmap(null);
+        setView('empty');
+      } else {
+        toast.success('Step updated.');
+      }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         toast.error(err.response?.data?.message || 'Failed to update step.');
@@ -242,13 +273,19 @@ const RoadmapPage = () => {
     });
   };
 
-  // ── Derived values ─────────────────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
-  // Reads from top-level totalSteps / completedSteps — kept in sync by backend
-  const progressPercent =
-    roadmap && roadmap.totalSteps > 0
-      ? Math.round((roadmap.completedSteps / roadmap.totalSteps) * 100)
-      : 0;
+  const getProgressPercent = (r: TRoadmap) =>
+    r.totalSteps > 0 ? Math.round((r.completedSteps / r.totalSteps) * 100) : 0;
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
 
   const statusConfig: Record<
     TStepStatus,
@@ -311,12 +348,12 @@ const RoadmapPage = () => {
           className="text-2xl font-bold text-gray-900 mb-2"
           style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
         >
-          No roadmap yet
+          No active roadmap
         </h1>
         <p className="text-gray-500 text-sm mb-8">
           Create a personalized learning roadmap to track your progress.
         </p>
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
             onClick={() => {
               setMode('ai');
@@ -338,6 +375,13 @@ const RoadmapPage = () => {
             <Plus size={16} />
             Create manually
           </button>
+          <button
+            onClick={handleViewCompleted}
+            className="flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 transition-all"
+          >
+            <History size={16} />
+            Completed Roadmaps
+          </button>
         </div>
       </div>
     );
@@ -347,7 +391,6 @@ const RoadmapPage = () => {
   if (view === 'create') {
     return (
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1
             className="text-2xl font-bold text-gray-900"
@@ -363,7 +406,6 @@ const RoadmapPage = () => {
           </button>
         </div>
 
-        {/* Mode toggle */}
         <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl">
           <button
             onClick={() => setMode('ai')}
@@ -387,7 +429,6 @@ const RoadmapPage = () => {
           </button>
         </div>
 
-        {/* AI mode */}
         {mode === 'ai' && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -421,7 +462,6 @@ const RoadmapPage = () => {
           </div>
         )}
 
-        {/* Manual mode */}
         {mode === 'manual' && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
             <div>
@@ -459,7 +499,6 @@ const RoadmapPage = () => {
               />
             </div>
 
-            {/* Steps */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-medium text-gray-700">
@@ -472,14 +511,12 @@ const RoadmapPage = () => {
                   <Plus size={12} /> Add step
                 </button>
               </div>
-
               <div className="space-y-3">
                 {manualSteps.map((step, stepIndex) => (
                   <div
                     key={stepIndex}
                     className="border border-gray-200 rounded-xl p-4 space-y-2"
                   >
-                    {/* Step header row */}
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-indigo-600">
                         Step {stepIndex + 1}
@@ -493,8 +530,6 @@ const RoadmapPage = () => {
                         </button>
                       )}
                     </div>
-
-                    {/* Title */}
                     <input
                       value={step.title}
                       onChange={(e) =>
@@ -503,8 +538,6 @@ const RoadmapPage = () => {
                       placeholder="Step title"
                       className="w-full h-9 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-indigo-500 transition-all"
                     />
-
-                    {/* Description */}
                     <input
                       value={step.description}
                       onChange={(e) =>
@@ -513,8 +546,6 @@ const RoadmapPage = () => {
                       placeholder="Description (optional)"
                       className="w-full h-9 border border-gray-200 rounded-lg px-3 text-sm outline-none focus:border-indigo-500 transition-all"
                     />
-
-                    {/* Resources */}
                     <div className="space-y-1.5 pt-1">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-500">
@@ -528,7 +559,6 @@ const RoadmapPage = () => {
                           <Plus size={11} /> Add resource
                         </button>
                       </div>
-
                       {step.resources.map((resource, resourceIndex) => (
                         <div
                           key={resourceIndex}
@@ -600,13 +630,320 @@ const RoadmapPage = () => {
     );
   }
 
-  // ── Roadmap view ───────────────────────────────────────────────────────────
+  // ── Completed roadmaps list ────────────────────────────────────────────────
+  if (view === 'completed-list') {
+    return (
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            onClick={() => setView(roadmap ? 'roadmap' : 'empty')}
+            className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1
+              className="text-2xl font-bold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              Completed Roadmaps
+            </h1>
+            {!completedLoading && (
+              <p className="text-xs text-gray-400 mt-0.5">
+                {completedRoadmaps.length} roadmap
+                {completedRoadmaps.length !== 1 ? 's' : ''} completed
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Loading */}
+        {completedLoading && (
+          <div className="flex items-center justify-center h-48">
+            <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {/* Empty */}
+        {!completedLoading && completedRoadmaps.length === 0 && (
+          <div className="text-center py-20">
+            <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <History size={24} className="text-gray-300" />
+            </div>
+            <p className="text-sm font-medium text-gray-500">
+              No completed roadmaps yet
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Complete all steps in a roadmap to see it here.
+            </p>
+          </div>
+        )}
+
+        {/* List */}
+        {!completedLoading && completedRoadmaps.length > 0 && (
+          <div className="space-y-3">
+            {completedRoadmaps.map((r) => (
+              <button
+                key={r._id}
+                onClick={() => {
+                  setSelectedCompleted(r);
+                  setExpandedStep(null);
+                  setView('completed-detail');
+                }}
+                className="w-full text-left bg-white border border-gray-200 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-sm transition-all"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <h3
+                        className="text-sm font-semibold text-gray-900 truncate"
+                        style={{
+                          fontFamily: 'Bricolage Grotesque, sans-serif',
+                        }}
+                      >
+                        {r.title}
+                      </h3>
+                      {r.isAIGenerated && (
+                        <span className="flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full shrink-0">
+                          <Sparkles size={10} /> AI
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 truncate">{r.goal}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="flex items-center gap-1 text-xs font-medium bg-green-50 text-green-600 px-2 py-1 rounded-full">
+                      <Check size={10} /> Completed
+                    </span>
+                    {r.completedAt && (
+                      <p className="text-xs text-gray-400 mt-1.5">
+                        {formatDate(r.completedAt)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mini progress bar — always 100% for completed */}
+                <div className="mt-4">
+                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: '100%',
+                        background: 'linear-gradient(90deg, #22c55e, #16a34a)',
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {r.totalSteps} of {r.totalSteps} steps completed
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Completed roadmap detail (read-only) ───────────────────────────────────
+  if (view === 'completed-detail' && selectedCompleted) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <button
+              onClick={() => setView('completed-list')}
+              className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors mt-1"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h1
+                  className="text-2xl font-bold text-gray-900"
+                  style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+                >
+                  {selectedCompleted.title}
+                </h1>
+                {selectedCompleted.isAIGenerated && (
+                  <span className="flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
+                    <Sparkles size={11} /> AI generated
+                  </span>
+                )}
+                <span className="flex items-center gap-1 text-xs font-medium bg-green-50 text-green-600 px-2 py-1 rounded-full">
+                  <Check size={11} /> Completed
+                </span>
+              </div>
+              <p className="text-sm text-gray-500">{selectedCompleted.goal}</p>
+              {selectedCompleted.description && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {selectedCompleted.description}
+                </p>
+              )}
+              {selectedCompleted.completedAt && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Completed on {formatDate(selectedCompleted.completedAt)}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Progress bar — always 100% */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm font-medium text-gray-700">
+              Overall progress
+            </p>
+            <span
+              className="text-lg font-bold text-green-600"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              100%
+            </span>
+          </div>
+          <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full w-full rounded-full"
+              style={{ background: 'linear-gradient(90deg, #22c55e, #16a34a)' }}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-xs text-gray-400">
+              {selectedCompleted.totalSteps} of {selectedCompleted.totalSteps}{' '}
+              steps completed
+            </p>
+            <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+              🎉 Completed!
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Visual timeline */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <h2
+              className="text-sm font-semibold text-gray-900 mb-4"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              Timeline
+            </h2>
+            <div className="relative">
+              <div className="absolute left-3.5 top-4 bottom-4 w-px bg-green-200" />
+              <div className="space-y-4">
+                {selectedCompleted.steps.map((step) => (
+                  <div
+                    key={step._id}
+                    className="flex items-start gap-3 relative"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-green-500 border-2 border-green-500 flex items-center justify-center shrink-0 z-10">
+                      <Check size={12} className="text-white" />
+                    </div>
+                    <div className="min-w-0 pb-1">
+                      <p className="text-xs font-medium text-gray-400 line-through truncate">
+                        {step.title}
+                      </p>
+                      <p className="text-xs mt-0.5 text-green-600">Completed</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Steps list — read-only, no status selectors */}
+          <div className="lg:col-span-2 space-y-3">
+            <h2
+              className="text-sm font-semibold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              Steps
+            </h2>
+            {selectedCompleted.steps.map((step) => (
+              <div
+                key={step._id}
+                className="bg-white border border-green-200 rounded-2xl overflow-hidden"
+              >
+                <div className="flex items-center gap-3 p-4">
+                  <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <Check size={10} className="text-white" />
+                  </div>
+                  <p className="text-sm font-medium flex-1 text-gray-400 line-through">
+                    {step.title}
+                  </p>
+                  {step.completedAt && (
+                    <span className="text-xs text-gray-400 shrink-0">
+                      {formatDate(step.completedAt)}
+                    </span>
+                  )}
+                  {(step.description ||
+                    (step.resources && step.resources.length > 0)) && (
+                    <button
+                      onClick={() =>
+                        setExpandedStep(
+                          expandedStep === step._id ? null : step._id,
+                        )
+                      }
+                      className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+                    >
+                      {expandedStep === step._id ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      )}
+                    </button>
+                  )}
+                </div>
+                {expandedStep === step._id && (
+                  <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
+                    {step.description && (
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        {step.description}
+                      </p>
+                    )}
+                    {step.resources && step.resources.length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-gray-700 mb-2">
+                          Resources
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {step.resources.map((resource, i) => (
+                            <a
+                              key={i}
+                              href={resource.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-xs bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full hover:bg-indigo-100 transition-colors"
+                            >
+                              {resource.title}
+                              <ExternalLink size={10} />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Active roadmap view ────────────────────────────────────────────────────
+  const progressPercent = getProgressPercent(roadmap!);
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1
               className="text-2xl font-bold text-gray-900"
               style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
@@ -618,11 +955,6 @@ const RoadmapPage = () => {
                 <Sparkles size={11} /> AI generated
               </span>
             )}
-            {roadmap?.status === 'completed' && (
-              <span className="flex items-center gap-1 text-xs font-medium bg-green-50 text-green-600 px-2 py-1 rounded-full">
-                <Check size={11} /> Completed
-              </span>
-            )}
           </div>
           <p className="text-sm text-gray-500">{roadmap?.goal}</p>
           {roadmap?.description && (
@@ -631,12 +963,20 @@ const RoadmapPage = () => {
             </p>
           )}
         </div>
-        <button
-          onClick={handleDelete}
-          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-red-500 border border-red-200 rounded-xl hover:bg-red-50 transition-all cursor-pointer"
-        >
-          <Trash2 size={14} /> Delete
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleViewCompleted}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200 rounded-xl hover:border-indigo-300 hover:text-indigo-600 transition-all cursor-pointer"
+          >
+            <History size={14} /> Completed Roadmaps
+          </button>
+          <button
+            onClick={handleDelete}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-red-500 border border-red-200 rounded-xl hover:bg-red-50 transition-all cursor-pointer"
+          >
+            <Trash2 size={14} /> Delete
+          </button>
+        </div>
       </div>
 
       {/* Progress bar */}
@@ -663,11 +1003,6 @@ const RoadmapPage = () => {
           <p className="text-xs text-gray-400">
             {roadmap?.completedSteps} of {roadmap?.totalSteps} steps completed
           </p>
-          {progressPercent === 100 && (
-            <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-              🎉 Completed!
-            </span>
-          )}
         </div>
       </div>
 
@@ -737,7 +1072,6 @@ const RoadmapPage = () => {
               key={step._id}
               className={`bg-white border rounded-2xl overflow-hidden transition-all ${statusConfig[step.status].border}`}
             >
-              {/* Step header */}
               <div className="flex items-center gap-3 p-4">
                 {statusConfig[step.status].icon}
                 <p
@@ -749,8 +1083,6 @@ const RoadmapPage = () => {
                 >
                   {step.title}
                 </p>
-
-                {/* Status selector */}
                 <select
                   value={step.status}
                   onChange={(e) =>
@@ -762,8 +1094,6 @@ const RoadmapPage = () => {
                   <option value="in_progress">In progress</option>
                   <option value="completed">Completed</option>
                 </select>
-
-                {/* Expand toggle — only shown when there's content to expand */}
                 {(step.description ||
                   (step.resources && step.resources.length > 0)) && (
                   <button
@@ -782,8 +1112,6 @@ const RoadmapPage = () => {
                   </button>
                 )}
               </div>
-
-              {/* Expanded content */}
               {expandedStep === step._id && (
                 <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
                   {step.description && (
@@ -798,7 +1126,6 @@ const RoadmapPage = () => {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {step.resources.map((resource, i) => (
-                          // Every resource has { title, url } — always render as a link
                           <a
                             key={i}
                             href={resource.url}

@@ -29,7 +29,6 @@ export type TRoadmap = {
   isAIGenerated: boolean;
   totalSteps: number;
   completedSteps: number;
-  currentStep: number;
   completedAt?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -53,8 +52,20 @@ type RoadmapResponse = {
   data: TRoadmap | null;
 };
 
+type RoadmapListResponse = {
+  success: boolean;
+  message: string;
+  data: TRoadmap[];
+};
+
 const getMyRoadmap = async (): Promise<TRoadmap | null> => {
   const response = await axiosInstance.get<RoadmapResponse>('/roadmap/me');
+  return response.data.data;
+};
+
+const getCompletedRoadmaps = async (): Promise<TRoadmap[]> => {
+  const response =
+    await axiosInstance.get<RoadmapListResponse>('/roadmap/completed');
   return response.data.data;
 };
 
@@ -94,6 +105,7 @@ const deleteRoadmap = async (roadmapId: string): Promise<void> => {
 
 export const roadmapService = {
   getMyRoadmap,
+  getCompletedRoadmaps,
   generateRoadmap,
   createRoadmap,
   updateStepStatus,
