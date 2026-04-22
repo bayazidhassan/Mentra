@@ -60,14 +60,14 @@ type SlotsResponse = {
 
 const getAvailableSlots = async (mentorProfileId: string) => {
   const response = await axiosInstance.get<SlotsResponse>(
-    `/session/slots/${mentorProfileId}`,
+    `/sessions/slots/${mentorProfileId}`,
   );
   return response.data.data;
 };
 
 const bookSession = async (payload: TBookSessionPayload): Promise<TSession> => {
   const response = await axiosInstance.post<SessionResponse>(
-    '/session/book',
+    '/sessions/book',
     payload,
   );
   return response.data.data as TSession;
