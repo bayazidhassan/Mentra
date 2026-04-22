@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
+import BookSessionModal from '../../../components/modal/BookSessionModal';
 import {
   mentorService,
   TMentor,
@@ -26,6 +27,8 @@ const MentorsPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+
+  const [bookingMentor, setBookingMentor] = useState<TMentor | null>(null);
 
   // ── AI suggestion state ────────────────────────────────────────────────────
   const [suggested, setSuggested] = useState<TSuggestedMentor[]>([]);
@@ -169,13 +172,13 @@ const MentorsPage = () => {
         >
           View profile
         </Link>
-        <Link
-          href={`/sessions/book/${mentor._id}`}
-          className="flex-1 text-center py-2 text-xs font-medium text-white rounded-xl transition-all hover:opacity-90"
+        <button
+          onClick={() => setBookingMentor(mentor)}
+          className="flex-1 text-center py-2 text-xs font-medium text-white rounded-xl transition-all hover:opacity-90 cursor-pointer"
           style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}
         >
           Book session
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -434,6 +437,15 @@ const MentorsPage = () => {
             </>
           )}
         </>
+      )}
+
+      {bookingMentor && (
+        <BookSessionModal
+          mentorProfileId={bookingMentor._id}
+          mentorName={bookingMentor.name}
+          onClose={() => setBookingMentor(null)}
+          onSuccess={() => setBookingMentor(null)}
+        />
       )}
     </div>
   );
