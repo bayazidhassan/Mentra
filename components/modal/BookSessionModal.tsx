@@ -106,6 +106,20 @@ const BookSessionModal = ({
   const selectedEntry =
     selectedDateIndex !== null ? availableDates[selectedDateIndex] : null;
 
+  const maxDuration = useMemo(() => {
+    if (!selectedEntry) return 0;
+
+    const [startH, startM] = selectedEntry.slot.startTime
+      .split(':')
+      .map(Number);
+    const [endH, endM] = selectedEntry.slot.endTime.split(':').map(Number);
+
+    const start = startH * 60 + startM;
+    const end = endH * 60 + endM;
+
+    return end - start;
+  }, [selectedEntry]);
+
   const handleSubmit = async () => {
     if (!title.trim()) {
       toast.error('Please enter a session title.');
@@ -118,6 +132,10 @@ const BookSessionModal = ({
     const dur = parseInt(durationMinutes);
     if (!durationMinutes || isNaN(dur) || dur <= 0) {
       toast.error('Please enter a valid duration.');
+      return;
+    }
+    if (dur > maxDuration) {
+      toast.error(`Maximum allowed duration is ${maxDuration} minutes.`);
       return;
     }
 
@@ -275,9 +293,18 @@ const BookSessionModal = ({
                 <input
                   type="number"
                   value={durationMinutes}
-                  onChange={(e) => setDurationMinutes(e.target.value)}
-                  placeholder="e.g. 30, 60, 90"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const num = parseInt(value);
+                    if (!isNaN(num) && num > maxDuration) {
+                      toast.error(`Max duration is ${maxDuration} min`);
+                      return;
+                    }
+                    setDurationMinutes(value);
+                  }}
+                  placeholder={`Max ${maxDuration || 0} min`}
                   min={15}
+                  max={maxDuration}
                   className="w-full h-10 border border-gray-200 rounded-xl px-3 text-sm outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.08)] transition-all"
                 />
               </div>
