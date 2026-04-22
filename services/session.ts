@@ -4,6 +4,13 @@ import axiosInstance from '@/lib/axios';
 
 export type TSessionStatus = 'pending' | 'accepted' | 'completed' | 'cancelled';
 
+export type TSessionOtherUser = {
+  _id: string;
+  name: string;
+  email: string;
+  profileImage?: string;
+};
+
 export type TSession = {
   _id: string;
   learner: string;
@@ -21,6 +28,7 @@ export type TSession = {
   feedbackByLearner?: string;
   ratingByMentor?: number;
   feedbackByMentor?: string;
+  otherUser: TSessionOtherUser | null; // enriched by backend
   createdAt?: string;
   updatedAt?: string;
 };
@@ -35,7 +43,7 @@ export type TBookSessionPayload = {
   mentorProfileId: string;
   title: string;
   description?: string;
-  scheduledAt: string; // ISO string
+  scheduledAt: string;
   durationMinutes: number;
 };
 
@@ -47,28 +55,52 @@ type SessionResponse = {
   data: TSession | null;
 };
 
+type SessionsResponse = {
+  success: boolean;
+  message: string;
+  data: TSession[];
+};
+
 type SlotsResponse = {
   success: boolean;
   message: string;
-  data: {
-    availability: TAvailabilitySlot[];
-    hourlyRate?: number;
-  };
+  data: { availability: TAvailabilitySlot[]; hourlyRate?: number };
 };
 
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getAvailableSlots = async (mentorProfileId: string) => {
   const response = await axiosInstance.get<SlotsResponse>(
-    `/sessions/slots/${mentorProfileId}`,
+    `/session/slots/${mentorProfileId}`,
   );
   return response.data.data;
 };
 
 const bookSession = async (payload: TBookSessionPayload): Promise<TSession> => {
   const response = await axiosInstance.post<SessionResponse>(
-    '/sessions/book',
+    '/session/book',
     payload,
+  );
+  return response.data.data as TSession;
+};
+
+const getMySessions = async (): Promise<TSession[]> => {
+  const response = await axiosInstance.get<SessionsResponse>(
+    '/session/my-sessions',
+  );
+  return response.data.data ?? [];
+};
+
+const acceptSession = async (sessionId: string): Promise<TSession> => {
+  const response = await axiosInstance.patch<SessionResponse>(
+    `/session/${sessionId}/accept`,
+  );
+  return response.data.data as TSession;
+};
+
+const cancelSession = async (sessionId: string): Promise<TSession> => {
+  const response = await axiosInstance.patch<SessionResponse>(
+    `/session/${sessionId}/cancel`,
   );
   return response.data.data as TSession;
 };
@@ -76,4 +108,7 @@ const bookSession = async (payload: TBookSessionPayload): Promise<TSession> => {
 export const sessionService = {
   getAvailableSlots,
   bookSession,
+  getMySessions,
+  acceptSession,
+  cancelSession,
 };
