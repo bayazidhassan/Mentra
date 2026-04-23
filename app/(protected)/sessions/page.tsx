@@ -30,13 +30,15 @@ const formatDate = (dateStr: string) =>
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: 'UTC',
   });
 
 const formatTime = (dateStr: string) =>
   new Date(dateStr).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-  });
+    timeZone: 'UTC',
+  }) + ' UTC';
 
 const statusConfig: Record<
   TSessionStatus,
