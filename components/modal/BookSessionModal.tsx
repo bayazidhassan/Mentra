@@ -23,7 +23,6 @@ const DAY_MAP: Record<string, number> = {
   Sat: 6,
 };
 
-// Format a time string like "09:00" → "9:00 AM"
 const formatTime = (time: string) => {
   const [h, m] = time.split(':').map(Number);
   const ampm = h >= 12 ? 'PM' : 'AM';
@@ -31,7 +30,6 @@ const formatTime = (time: string) => {
   return `${hour}:${m.toString().padStart(2, '0')} ${ampm}`;
 };
 
-// Get the next N days that fall on available days
 const getAvailableDates = (
   availability: TAvailabilitySlot[],
   count = 30,
@@ -42,7 +40,7 @@ const getAvailableDates = (
   today.setHours(0, 0, 0, 0);
 
   const cursor = new Date(today);
-  cursor.setDate(cursor.getDate() + 1); // start from tomorrow
+  cursor.setDate(cursor.getDate() + 1);
 
   while (results.length < count) {
     const dayNum = cursor.getUTCDay();
@@ -63,6 +61,9 @@ const BookSessionModal = ({
 }: Props) => {
   const [availability, setAvailability] = useState<TAvailabilitySlot[]>([]);
   const [hourlyRate, setHourlyRate] = useState<number | undefined>();
+  const [bookedSlots, setBookedSlots] = useState<
+    { start: string; end: string }[]
+  >([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -74,13 +75,14 @@ const BookSessionModal = ({
   );
   const [durationMinutes, setDurationMinutes] = useState('');
 
-  // Fetch mentor availability
+  // Fetch mentor availability + booked slots
   useEffect(() => {
     const fetchSlots = async () => {
       try {
         const data = await sessionService.getAvailableSlots(mentorProfileId);
         setAvailability(data.availability);
         setHourlyRate(data.hourlyRate);
+        setBookedSlots(data.bookedSlots ?? []);
       } catch {
         toast.error('Failed to load mentor availability.');
       } finally {
@@ -96,6 +98,19 @@ const BookSessionModal = ({
     [availability],
   );
 
+  // Check if a date+slot is already booked
+  const isDateBooked = (date: Date, slot: TAvailabilitySlot): boolean => {
+    const [h, m] = slot.startTime.split(':').map(Number);
+    const slotStart = new Date(date);
+    slotStart.setUTCHours(h, m, 0, 0);
+
+    return bookedSlots.some((booked) => {
+      const bookedStart = new Date(booked.start);
+      const bookedEnd = new Date(booked.end);
+      return slotStart >= bookedStart && slotStart < bookedEnd;
+    });
+  };
+
   // Calculate estimated price
   const estimatedPrice = useMemo(() => {
     const dur = parseInt(durationMinutes);
@@ -106,18 +121,14 @@ const BookSessionModal = ({
   const selectedEntry =
     selectedDateIndex !== null ? availableDates[selectedDateIndex] : null;
 
+  // Max duration based on selected slot's start→end window
   const maxDuration = useMemo(() => {
     if (!selectedEntry) return 0;
-
     const [startH, startM] = selectedEntry.slot.startTime
       .split(':')
       .map(Number);
     const [endH, endM] = selectedEntry.slot.endTime.split(':').map(Number);
-
-    const start = startH * 60 + startM;
-    const end = endH * 60 + endM;
-
-    return end - start;
+    return endH * 60 + endM - (startH * 60 + startM);
   }, [selectedEntry]);
 
   const handleSubmit = async () => {
@@ -139,7 +150,6 @@ const BookSessionModal = ({
       return;
     }
 
-    // Build scheduledAt ISO from selected date + slot startTime
     const entry = availableDates[selectedDateIndex];
     const [hours, minutes] = entry.slot.startTime.split(':').map(Number);
     const scheduledAt = new Date(entry.date);
@@ -168,7 +178,6 @@ const BookSessionModal = ({
   };
 
   return (
-    // Backdrop
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.4)' }}
@@ -247,27 +256,37 @@ const BookSessionModal = ({
                   <div className="grid grid-cols-3 gap-2">
                     {availableDates.slice(0, 12).map((entry, i) => {
                       const isSelected = selectedDateIndex === i;
+                      const booked = isDateBooked(entry.date, entry.slot);
+
                       return (
                         <button
                           key={i}
-                          onClick={() => setSelectedDateIndex(i)}
-                          className={`flex flex-col items-center py-2.5 px-2 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
-                            isSelected
-                              ? 'border-indigo-500 bg-indigo-50 text-indigo-600'
-                              : 'border-gray-200 text-gray-600 hover:border-indigo-300'
+                          onClick={() => !booked && setSelectedDateIndex(i)}
+                          disabled={booked}
+                          className={`flex flex-col items-center py-2.5 px-2 rounded-xl border text-xs font-medium transition-all ${
+                            booked
+                              ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed'
+                              : isSelected
+                                ? 'border-indigo-500 bg-indigo-50 text-indigo-600 cursor-pointer'
+                                : 'border-gray-200 text-gray-600 hover:border-indigo-300 cursor-pointer'
                           }`}
                         >
-                          <span className="text-gray-400 font-normal">
+                          <span className="font-normal opacity-60">
                             {entry.slot.day}
                           </span>
                           <span className="text-base font-bold mt-0.5">
                             {entry.date.getDate()}
                           </span>
-                          <span className="text-gray-400 font-normal">
+                          <span className="font-normal opacity-60">
                             {entry.date.toLocaleString('default', {
                               month: 'short',
                             })}
                           </span>
+                          {booked && (
+                            <span className="text-[9px] text-red-400 font-medium mt-0.5">
+                              Booked
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -302,9 +321,13 @@ const BookSessionModal = ({
                     }
                     setDurationMinutes(value);
                   }}
-                  placeholder={`Max ${maxDuration || 0} min`}
+                  placeholder={
+                    maxDuration > 0
+                      ? `Max ${maxDuration} min (e.g. 30, 60, 90)`
+                      : 'e.g. 30, 60, 90'
+                  }
                   min={15}
-                  max={maxDuration}
+                  max={maxDuration || undefined}
                   className="w-full h-10 border border-gray-200 rounded-xl px-3 text-sm outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.08)] transition-all"
                 />
               </div>

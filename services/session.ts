@@ -64,7 +64,11 @@ type SessionsResponse = {
 type SlotsResponse = {
   success: boolean;
   message: string;
-  data: { availability: TAvailabilitySlot[]; hourlyRate?: number };
+  data: {
+    availability: TAvailabilitySlot[];
+    hourlyRate?: number;
+    bookedSlots: { start: string; end: string }[];
+  };
 };
 
 // ─── Service ──────────────────────────────────────────────────────────────────
