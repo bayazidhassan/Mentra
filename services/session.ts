@@ -28,7 +28,7 @@ export type TSession = {
   feedbackByLearner?: string;
   ratingByMentor?: number;
   feedbackByMentor?: string;
-  otherUser: TSessionOtherUser | null; // enriched by backend
+  otherUser: TSessionOtherUser | null;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -109,10 +109,43 @@ const cancelSession = async (sessionId: string): Promise<TSession> => {
   return response.data.data as TSession;
 };
 
+const addMeetingLink = async (
+  sessionId: string,
+  meetingLink: string,
+): Promise<TSession> => {
+  const response = await axiosInstance.patch<SessionResponse>(
+    `/session/${sessionId}/meeting-link`,
+    { meetingLink },
+  );
+  return response.data.data as TSession;
+};
+
+const completeSession = async (sessionId: string): Promise<TSession> => {
+  const response = await axiosInstance.patch<SessionResponse>(
+    `/session/${sessionId}/complete`,
+  );
+  return response.data.data as TSession;
+};
+
+const rateSession = async (
+  sessionId: string,
+  rating: number,
+  feedback?: string,
+): Promise<TSession> => {
+  const response = await axiosInstance.patch<SessionResponse>(
+    `/session/${sessionId}/rate`,
+    { rating, feedback },
+  );
+  return response.data.data as TSession;
+};
+
 export const sessionService = {
   getAvailableSlots,
   bookSession,
   getMySessions,
   acceptSession,
   cancelSession,
+  addMeetingLink,
+  completeSession,
+  rateSession,
 };
