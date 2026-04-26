@@ -40,7 +40,9 @@ const createCheckoutSession = async (sessionId: string): Promise<string> => {
   return response.data.data.url;
 };
 
-const getPaymentStatus = async (sessionId: string): Promise<TPayment | null> => {
+const getPaymentStatus = async (
+  sessionId: string,
+): Promise<TPayment | null> => {
   const response = await axiosInstance.get<PaymentStatusResponse>(
     `/payment/status/${sessionId}`,
   );

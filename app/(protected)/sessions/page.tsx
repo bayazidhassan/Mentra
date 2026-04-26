@@ -5,14 +5,17 @@ import {
   Calendar,
   Check,
   Clock,
+  CreditCard,
   DollarSign,
+  ExternalLink,
   Loader2,
-  User,
   X,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { paymentService } from '../../../services/payment';
 import {
   sessionService,
   TSession,
@@ -73,21 +76,34 @@ const SessionCard = ({
   role,
   onAccept,
   onCancel,
+  onPay,
   actionLoading,
+  payLoading,
 }: {
   session: TSession;
   role: 'learner' | 'mentor';
   onAccept?: (id: string) => void;
   onCancel?: (id: string) => void;
-  actionLoading: string | null; // sessionId currently loading
+  onPay?: (id: string) => void;
+  actionLoading: string | null;
+  payLoading: string | null;
 }) => {
   const cfg = statusConfig[session.status];
-  const isLoading = actionLoading === session._id;
+  const isActionLoading = actionLoading === session._id;
+  const isPayLoading = payLoading === session._id;
+
+  // Show Pay now if: learner + accepted + unpaid + has price
+  const showPayButton =
+    role === 'learner' &&
+    session.status === 'accepted' &&
+    session.paymentStatus === 'unpaid' &&
+    session.price !== undefined &&
+    session.price > 0;
 
   return (
     <div className={`bg-white border rounded-2xl overflow-hidden ${cfg.bg}`}>
-      {/* Card header */}
       <div className="p-5">
+        {/* Title + status */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <h3
@@ -102,7 +118,6 @@ const SessionCard = ({
               </p>
             )}
           </div>
-          {/* Status badge */}
           <span
             className={`shrink-0 text-xs font-medium px-2.5 py-1 rounded-full border ${cfg.bg} ${cfg.color}`}
           >
@@ -138,7 +153,7 @@ const SessionCard = ({
           </div>
         )}
 
-        {/* Meta info */}
+        {/* Meta */}
         <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Calendar size={13} className="text-indigo-400 shrink-0" />
@@ -149,20 +164,18 @@ const SessionCard = ({
             {formatTime(session.scheduledAt)} · {session.durationMinutes} min
           </div>
           {session.price !== undefined && (
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 col-span-2">
               <DollarSign size={13} className="text-green-500 shrink-0" />$
               {session.price}
-              {session.paymentStatus && (
-                <span
-                  className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
-                    session.paymentStatus === 'paid'
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-gray-100 text-gray-500'
-                  }`}
-                >
-                  {session.paymentStatus}
-                </span>
-              )}
+              <span
+                className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                  session.paymentStatus === 'paid'
+                    ? 'bg-green-100 text-green-600'
+                    : 'bg-gray-100 text-gray-500'
+                }`}
+              >
+                {session.paymentStatus === 'paid' ? '✓ Paid' : 'Unpaid'}
+              </span>
             </div>
           )}
           {session.meetingLink && session.status === 'accepted' && (
@@ -170,56 +183,77 @@ const SessionCard = ({
               href={session.meetingLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-indigo-600 font-medium hover:underline"
+              className="col-span-2 flex items-center gap-1.5 text-xs text-indigo-600 font-medium hover:underline"
             >
-              <User size={13} /> Join meeting
+              <ExternalLink size={13} /> Join meeting
             </a>
           )}
         </div>
       </div>
 
-      {/* Mentor action buttons — only on pending sessions */}
-      {role === 'mentor' && session.status === 'pending' && (
-        <div className="flex gap-2 px-5 pb-5">
+      {/* Action buttons */}
+      <div className="px-5 pb-5 flex flex-col gap-2">
+        {/* Pay now — learner only, accepted + unpaid */}
+        {showPayButton && (
           <button
-            onClick={() => onAccept?.(session._id)}
-            disabled={isLoading}
-            className="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-white rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:opacity-90"
+            onClick={() => onPay?.(session._id)}
+            disabled={isPayLoading}
+            className="w-full h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-white rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:opacity-90"
             style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}
           >
-            {isLoading ? (
+            {isPayLoading ? (
               <Loader2 size={13} className="animate-spin" />
             ) : (
               <>
-                <Check size={13} /> Accept
+                <CreditCard size={13} /> Pay now · ${session.price}
               </>
             )}
           </button>
-          <button
-            onClick={() => onCancel?.(session._id)}
-            disabled={isLoading}
-            className="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-xl hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
-          >
-            {isLoading ? (
-              <Loader2 size={13} className="animate-spin" />
-            ) : (
-              <>
-                <X size={13} /> Decline
-              </>
-            )}
-          </button>
-        </div>
-      )}
+        )}
 
-      {/* Learner cancel button — only on pending sessions */}
-      {role === 'learner' && session.status === 'pending' && (
-        <div className="px-5 pb-5">
+        {/* Mentor: Accept + Decline on pending */}
+        {role === 'mentor' && session.status === 'pending' && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => onAccept?.(session._id)}
+              disabled={isActionLoading}
+              className="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-white rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:opacity-90"
+              style={{
+                background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
+              }}
+            >
+              {isActionLoading ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <>
+                  <Check size={13} /> Accept
+                </>
+              )}
+            </button>
+            <button
+              onClick={() => onCancel?.(session._id)}
+              disabled={isActionLoading}
+              className="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-xl hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+            >
+              {isActionLoading ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <>
+                  <X size={13} /> Decline
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Learner: Cancel on pending */}
+        {role === 'learner' && session.status === 'pending' && (
           <button
             onClick={() => onCancel?.(session._id)}
-            disabled={isLoading}
+            disabled={isActionLoading}
             className="w-full h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-xl hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
           >
-            {isLoading ? (
+            {isActionLoading ? (
               <Loader2 size={13} className="animate-spin" />
             ) : (
               <>
@@ -227,8 +261,8 @@ const SessionCard = ({
               </>
             )}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
@@ -238,11 +272,23 @@ const SessionCard = ({
 const SessionsPage = () => {
   const { user } = useUserStore();
   const role = user?.role as 'learner' | 'mentor';
+  const searchParams = useSearchParams();
 
   const [sessions, setSessions] = useState<TSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TTab>('upcoming');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [payLoading, setPayLoading] = useState<string | null>(null);
+
+  // Show toast on return from Stripe
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    if (payment === 'success') {
+      toast.success('Payment successful! Your session is confirmed.');
+    } else if (payment === 'cancelled') {
+      toast.info('Payment cancelled. You can try again anytime.');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -271,7 +317,7 @@ const SessionsPage = () => {
     cancelled,
   };
 
-  // ── Actions ────────────────────────────────────────────────────────────────
+  // ── Handlers ───────────────────────────────────────────────────────────────
   const handleAccept = async (sessionId: string) => {
     setActionLoading(sessionId);
     try {
@@ -283,11 +329,11 @@ const SessionsPage = () => {
       );
       toast.success('Session accepted!');
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to accept session.');
-      } else {
-        toast.error('Failed to accept session.');
-      }
+      toast.error(
+        axios.isAxiosError(err)
+          ? err.response?.data?.message || 'Failed to accept.'
+          : 'Failed to accept.',
+      );
     } finally {
       setActionLoading(null);
     }
@@ -305,17 +351,34 @@ const SessionsPage = () => {
       );
       toast.success('Session cancelled.');
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to cancel session.');
-      } else {
-        toast.error('Failed to cancel session.');
-      }
+      toast.error(
+        axios.isAxiosError(err)
+          ? err.response?.data?.message || 'Failed to cancel.'
+          : 'Failed to cancel.',
+      );
     } finally {
       setActionLoading(null);
     }
   };
 
-  // ── Tab config ─────────────────────────────────────────────────────────────
+  const handlePay = async (sessionId: string) => {
+    setPayLoading(sessionId);
+    try {
+      const url = await paymentService.createCheckoutSession(sessionId);
+      // Redirect to Stripe hosted checkout
+      window.location.href = url;
+    } catch (err: unknown) {
+      toast.error(
+        axios.isAxiosError(err)
+          ? err.response?.data?.message || 'Failed to initiate payment.'
+          : 'Failed to initiate payment.',
+      );
+      setPayLoading(null);
+    }
+    // Note: don't reset payLoading here — page will redirect away
+  };
+
+  // ── Tabs ───────────────────────────────────────────────────────────────────
   const tabs: { key: TTab; label: string; count: number }[] = [
     { key: 'upcoming', label: 'Upcoming', count: upcoming.length },
     { key: 'completed', label: 'Completed', count: completed.length },
@@ -401,7 +464,9 @@ const SessionsPage = () => {
               role={role}
               onAccept={handleAccept}
               onCancel={handleCancel}
+              onPay={handlePay}
               actionLoading={actionLoading}
+              payLoading={payLoading}
             />
           ))}
         </div>
