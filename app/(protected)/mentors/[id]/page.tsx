@@ -7,7 +7,6 @@ import {
   Clock,
   DollarSign,
   Mail,
-  MessageSquare,
   Star,
   Users,
 } from 'lucide-react';
@@ -140,22 +139,15 @@ const MentorProfilePage = () => {
         </div>
 
         {/* Action buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
           <button
             onClick={() => setShowBookModal(true)}
-            className="flex items-center justify-center gap-2 py-3.5 text-sm font-medium text-white rounded-xl transition-all hover:opacity-90 hover:-translate-y-0.5 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-medium text-white rounded-xl transition-all hover:opacity-90 hover:-translate-y-0.5 cursor-pointer"
             style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}
           >
             <Calendar size={16} />
             Book a session
           </button>
-          <Link
-            href={`/chat?mentorId=${mentor._id}`}
-            className="flex items-center justify-center gap-2 py-3.5 text-sm font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-all"
-          >
-            <MessageSquare size={16} />
-            Send a message
-          </Link>
         </div>
 
         {/* Bio */}
