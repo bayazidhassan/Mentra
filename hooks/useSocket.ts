@@ -53,3 +53,10 @@ export const useSocket = () => {
 
 // Use outside React components (e.g. in ConversationPage event handlers)
 export const getSocket = () => socketInstance;
+
+export const disconnectSocket = () => {
+  if (socketInstance) {
+    socketInstance.disconnect();
+    socketInstance = null;
+  }
+};
