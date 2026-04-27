@@ -90,7 +90,7 @@ const ConversationList = ({
                     className="rounded-full object-cover shrink-0"
                   />
                 ) : (
-                  <div className="w-[42px] h-[42px] rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
+                  <div className="w-10.5 h-10.5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
                     {conv.otherUser?.name[0].toUpperCase() ?? '?'}
                   </div>
                 )}
