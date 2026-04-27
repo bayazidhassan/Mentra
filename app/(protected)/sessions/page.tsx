@@ -11,11 +11,12 @@ import {
   ExternalLink,
   Link as LinkIcon,
   Loader2,
+  MessageSquare,
   Star,
   X,
 } from 'lucide-react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import RatingModal from '../../../components/modal/RatingModal';
@@ -26,6 +27,7 @@ import {
   TSessionStatus,
 } from '../../../services/session';
 import useUserStore from '../../../store/useUserStore';
+import { buildConversationId } from '../../../utils/chat_utils';
 
 type TTab = 'upcoming' | 'completed' | 'cancelled';
 
@@ -178,6 +180,8 @@ const SessionCard = ({
   payLoading: string | null;
   completeLoading: string | null;
 }) => {
+  const router = useRouter();
+
   const cfg = statusConfig[session.status];
   const isActionLoading = actionLoading === session._id;
   const isPayLoading = payLoading === session._id;
@@ -376,6 +380,23 @@ const SessionCard = ({
             )}
           </button>
         )}
+
+        {/* Send a message — accepted + paid */}
+        {(session.status === 'accepted' || session.status === 'completed') &&
+          session.paymentStatus === 'paid' && (
+            <button
+              onClick={() => {
+                const convId = buildConversationId(
+                  session.learner,
+                  session.mentor,
+                );
+                router.push(`/chat/${convId}`);
+              }}
+              className="w-full h-9 flex items-center justify-center gap-1.5 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-all cursor-pointer"
+            >
+              <MessageSquare size={13} /> Send a message
+            </button>
+          )}
 
         {/* Mark as completed — mentor only */}
         {showCompleteButton && (
