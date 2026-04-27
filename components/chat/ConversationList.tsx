@@ -82,13 +82,15 @@ const ConversationList = ({
               >
                 {/* Avatar */}
                 {conv.otherUser?.profileImage ? (
-                  <Image
-                    src={conv.otherUser.profileImage}
-                    alt={conv.otherUser.name}
-                    width={42}
-                    height={42}
-                    className="rounded-full object-cover shrink-0"
-                  />
+                  <div className="w-10.5 h-10.5 rounded-full overflow-hidden shrink-0">
+                    <Image
+                      src={conv.otherUser.profileImage}
+                      alt={conv.otherUser.name}
+                      width={42}
+                      height={42}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="w-10.5 h-10.5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
                     {conv.otherUser?.name[0].toUpperCase() ?? '?'}

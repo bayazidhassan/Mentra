@@ -273,13 +273,15 @@ const ConversationPage = () => {
             <ArrowLeft size={18} />
           </button>
           {activeConv?.otherUser?.profileImage ? (
-            <Image
-              src={activeConv.otherUser.profileImage}
-              alt={activeConv.otherUser.name}
-              width={38}
-              height={38}
-              className="rounded-full object-cover"
-            />
+            <div className="w-9.5 h-9.5 rounded-full overflow-hidden shrink-0">
+              <Image
+                src={activeConv.otherUser.profileImage}
+                alt={activeConv.otherUser.name}
+                width={38}
+                height={38}
+                className="w-full h-full object-cover"
+              />
+            </div>
           ) : (
             <div className="w-9.5 h-9.5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
               {activeConv?.otherUser?.name[0].toUpperCase() ?? '?'}
