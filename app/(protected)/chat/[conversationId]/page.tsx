@@ -100,10 +100,24 @@ const ConversationPage = () => {
 
     const handleNewMessage = (msg: TMessage) => {
       if (msg.conversationId !== conversationId) return;
-      setMessages((prev) => [...prev, msg]);
-      // If receiver, mark as read immediately
-      if (msg.senderId !== user?._id) {
-        socket.emit('mark_read', otherUserId);
+
+      if (msg.senderId === user?._id) {
+        // Replace the optimistic temp message with the real one from server
+        setMessages((prev) => {
+          const hasTempMsg = prev.some((m) => m._id.startsWith('temp_'));
+          if (hasTempMsg) {
+            // Replace the last temp message
+            return prev.map((m) =>
+              m._id.startsWith('temp_') && m.text === msg.text ? { ...msg } : m,
+            );
+          }
+          // No temp message found — just add it (fallback)
+          return [...prev, msg];
+        });
+      } else {
+        // Message from the other person — always add
+        setMessages((prev) => [...prev, msg]);
+        socket?.emit('mark_read', otherUserId);
       }
     };
 
