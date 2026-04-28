@@ -7,49 +7,73 @@ import {
   ChevronRight,
   Clock,
   Map,
+  Star,
   Users,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import {
-  dashboardService,
-  TRecommendedMentor,
-  TRoadmap,
-  TUpcomingSession,
-} from '../../../../services/dashboard';
+import { mentorService, TMentor } from '../../../../services/mentor';
+import { roadmapService, TRoadmap } from '../../../../services/roadmap';
+import { sessionService, TSession } from '../../../../services/session';
 
 const LearnerDashboard = () => {
   const { user } = useUserStore();
-  const [sessions, setSessions] = useState<TUpcomingSession[]>([]);
+
+  const [sessions, setSessions] = useState<TSession[]>([]);
   const [roadmap, setRoadmap] = useState<TRoadmap | null>(null);
-  const [mentors, setMentors] = useState<TRecommendedMentor[]>([]);
+  const [mentors, setMentors] = useState<TMentor[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [sessionsData, roadmapData, mentorsData] = await Promise.all([
-          dashboardService.getUpcomingSessions(),
-          dashboardService.getMyRoadmap(),
-          dashboardService.getRecommendedMentors(),
+          sessionService.getMySessions(),
+          roadmapService.getMyRoadmap(),
+          mentorService.getMentors({ page: 1, limit: 3 }),
         ]);
         setSessions(sessionsData);
         setRoadmap(roadmapData);
-        setMentors(mentorsData);
+        setMentors(mentorsData.mentors);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  const progressPercent = roadmap
-    ? Math.round((roadmap.completedSteps / roadmap.totalSteps) * 100) || 0
-    : 0;
+  // Upcoming = pending or accepted sessions, sorted by date, max 3
+  const upcomingSessions = sessions
+    .filter((s) => s.status === 'pending' || s.status === 'accepted')
+    .sort(
+      (a, b) =>
+        new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime(),
+    )
+    .slice(0, 3);
+
+  const progressPercent =
+    roadmap && roadmap.totalSteps > 0
+      ? Math.round((roadmap.completedSteps / roadmap.totalSteps) * 100)
+      : 0;
+
+  const statusConfig: Record<
+    string,
+    { label: string; bg: string; color: string }
+  > = {
+    pending: {
+      label: 'Pending',
+      bg: 'bg-amber-50',
+      color: 'text-amber-600',
+    },
+    accepted: {
+      label: 'Confirmed',
+      bg: 'bg-green-50',
+      color: 'text-green-600',
+    },
+  };
 
   if (loading) {
     return (
@@ -88,7 +112,7 @@ const LearnerDashboard = () => {
         {[
           {
             label: 'Upcoming sessions',
-            value: sessions.length,
+            value: upcomingSessions.length,
             icon: <Calendar size={18} />,
             iconBg: 'bg-indigo-50',
             iconColor: 'text-indigo-600',
@@ -108,8 +132,8 @@ const LearnerDashboard = () => {
             iconColor: 'text-green-600',
           },
           {
-            label: 'Available mentors',
-            value: mentors.length,
+            label: 'Sessions completed',
+            value: sessions.filter((s) => s.status === 'completed').length,
             icon: <Users size={18} />,
             iconBg: 'bg-amber-50',
             iconColor: 'text-amber-600',
@@ -158,10 +182,10 @@ const LearnerDashboard = () => {
               {/* Progress bar */}
               <div className="mb-5">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-700">
+                  <p className="text-sm font-medium text-gray-700 truncate mr-4">
                     {roadmap.title}
                   </p>
-                  <span className="text-xs text-indigo-600 font-medium">
+                  <span className="text-xs text-indigo-600 font-medium shrink-0">
                     {progressPercent}%
                   </span>
                 </div>
@@ -180,7 +204,7 @@ const LearnerDashboard = () => {
                 </p>
               </div>
 
-              {/* Steps preview */}
+              {/* Steps preview — first 4 */}
               <div className="space-y-2">
                 {roadmap.steps.slice(0, 4).map((step) => (
                   <div
@@ -217,7 +241,7 @@ const LearnerDashboard = () => {
                       )}
                     </div>
                     <p
-                      className={`text-sm ${
+                      className={`text-sm flex-1 truncate ${
                         step.status === 'completed'
                           ? 'text-gray-400 line-through'
                           : 'text-gray-700'
@@ -226,7 +250,7 @@ const LearnerDashboard = () => {
                       {step.title}
                     </p>
                     {step.status === 'in_progress' && (
-                      <span className="ml-auto text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                      <span className="shrink-0 text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
                         In progress
                       </span>
                     )}
@@ -275,53 +299,70 @@ const LearnerDashboard = () => {
             </Link>
           </div>
 
-          {sessions.length > 0 ? (
+          {upcomingSessions.length > 0 ? (
             <div className="space-y-3">
-              {sessions.map((session) => (
-                <div
-                  key={session._id}
-                  className="p-3 rounded-xl bg-gray-50 border border-gray-100"
-                >
-                  <p className="text-sm font-medium text-gray-800 mb-1">
-                    {session.title}
-                  </p>
-                  <div className="flex items-center gap-1 text-xs text-gray-400 mb-2">
-                    <Clock size={12} />
-                    {new Date(session.scheduledAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                    <span>· {session.duration} min</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {session.mentor.profileImage ? (
-                      <Image
-                        src={session.mentor.profileImage}
-                        alt={session.mentor.name}
-                        className="w-5 h-5 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
-                        {session.mentor.name[0]}
-                      </div>
-                    )}
-                    <p className="text-xs text-gray-500">
-                      {session.mentor.name}
+              {upcomingSessions.map((session) => {
+                const cfg =
+                  statusConfig[session.status] ?? statusConfig.pending;
+                return (
+                  <div
+                    key={session._id}
+                    className="p-3 rounded-xl bg-gray-50 border border-gray-100"
+                  >
+                    <p className="text-sm font-medium text-gray-800 mb-1 truncate">
+                      {session.title}
                     </p>
-                    <span
-                      className={`ml-auto text-xs px-2 py-0.5 rounded-full ${
-                        session.status === 'confirmed'
-                          ? 'bg-green-50 text-green-600'
-                          : 'bg-amber-50 text-amber-600'
-                      }`}
-                    >
-                      {session.status}
-                    </span>
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mb-2">
+                      <Clock size={12} />
+                      {new Date(session.scheduledAt).toLocaleDateString(
+                        undefined,
+                        {
+                          weekday: 'short',
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        },
+                      )}
+                      {' · '}
+                      {new Date(session.scheduledAt).toLocaleTimeString(
+                        undefined,
+                        {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true,
+                        },
+                      )}
+                      {' · '}
+                      {session.durationMinutes} min
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {session.otherUser?.profileImage ? (
+                        <div className="w-5 h-5 rounded-full overflow-hidden shrink-0">
+                          <Image
+                            src={session.otherUser.profileImage}
+                            alt={session.otherUser.name}
+                            width={20}
+                            height={20}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
+                          {session.otherUser?.name[0] ?? 'M'}
+                        </div>
+                      )}
+                      <p className="text-xs text-gray-500 truncate flex-1">
+                        {session.otherUser?.name ?? 'Mentor'}
+                      </p>
+                      <span
+                        className={`shrink-0 text-xs px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.color}`}
+                      >
+                        {cfg.label}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-center">
@@ -355,7 +396,7 @@ const LearnerDashboard = () => {
             className="text-base font-semibold text-gray-900"
             style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
           >
-            Recommended mentors
+            Browse mentors
           </h2>
           <Link
             href="/mentors"
@@ -373,23 +414,39 @@ const LearnerDashboard = () => {
                 className="flex items-center gap-3 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 transition-all"
               >
                 {mentor.profileImage ? (
-                  <Image
-                    src={mentor.profileImage}
-                    alt={mentor.name}
-                    className="w-10 h-10 rounded-full object-cover shrink-0"
-                  />
+                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                    <Image
+                      src={mentor.profileImage}
+                      alt={mentor.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">
                     {mentor.name[0]}
                   </div>
                 )}
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-800 truncate">
                     {mentor.name}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">
-                    {mentor.email}
-                  </p>
+                  {mentor.rating > 0 ? (
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Star
+                        size={11}
+                        className="fill-yellow-400 text-yellow-400"
+                      />
+                      <span className="text-xs text-gray-400">
+                        {mentor.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 truncate">
+                      {mentor.email}
+                    </p>
+                  )}
                 </div>
                 <Link
                   href={`/mentors/${mentor._id}`}
