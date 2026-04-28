@@ -3,6 +3,7 @@
 import { Bell, Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useSocket } from '../../hooks/useSocket';
 import {
   notificationService,
   TNotification,
@@ -18,22 +19,26 @@ const typeColors: Record<string, string> = {
 const NotificationBell = () => {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<TNotification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [polledUnreadCount, setPolledUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Fetch unread count on mount and every 30 seconds
+  // Real-time unread count from Socket.IO
+  const { unreadNotificationCount, resetNotificationCount } = useSocket();
+
+  // Total badge = existing unread from DB + real-time arrivals since mount
+  const totalUnread = polledUnreadCount + unreadNotificationCount;
+
+  // Fetch existing unread count once on mount (for offline notifications)
   useEffect(() => {
     const fetchCount = async () => {
       try {
         const count = await notificationService.getUnreadCount();
-        setUnreadCount(count);
+        setPolledUnreadCount(count);
       } catch {}
     };
     fetchCount();
-    const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   // Close dropdown on outside click
@@ -53,12 +58,15 @@ const NotificationBell = () => {
   const handleOpen = async () => {
     setOpen((prev) => !prev);
     if (!open) {
+      // Reset real-time count when opening
+      resetNotificationCount();
+
       setLoading(true);
       try {
         const data = await notificationService.getMyNotifications();
         setNotifications(data);
-        // update unread count from fresh data
-        setUnreadCount(data.filter((n) => !n.isRead).length);
+        // Sync polled count with fresh data
+        setPolledUnreadCount(data.filter((n) => !n.isRead).length);
       } catch {
       } finally {
         setLoading(false);
@@ -75,7 +83,7 @@ const NotificationBell = () => {
             n._id === notification._id ? { ...n, isRead: true } : n,
           ),
         );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+        setPolledUnreadCount((prev) => Math.max(0, prev - 1));
       } catch {}
     }
     if (notification.actionUrl) {
@@ -88,7 +96,8 @@ const NotificationBell = () => {
     try {
       await notificationService.markAllAsRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-      setUnreadCount(0);
+      setPolledUnreadCount(0);
+      resetNotificationCount();
     } catch {}
   };
 
@@ -114,9 +123,9 @@ const NotificationBell = () => {
         className="relative w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all cursor-pointer"
       >
         <Bell size={19} />
-        {unreadCount > 0 && (
+        {totalUnread > 0 && (
           <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-            {unreadCount > 9 ? '9+' : unreadCount}
+            {totalUnread > 9 ? '9+' : totalUnread}
           </span>
         )}
       </button>
@@ -124,7 +133,7 @@ const NotificationBell = () => {
       {/* Dropdown */}
       {open && (
         <div className="absolute right-0 top-11 w-80 bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden">
-          {/* Dropdown header */}
+          {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <h3
               className="text-sm font-semibold text-gray-900"
@@ -132,7 +141,7 @@ const NotificationBell = () => {
             >
               Notifications
             </h3>
-            {unreadCount > 0 && (
+            {totalUnread > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 className="flex items-center gap-1 text-xs text-indigo-600 font-medium hover:underline cursor-pointer"
@@ -167,7 +176,7 @@ const NotificationBell = () => {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Type badge dot */}
+                    {/* Unread dot */}
                     <div className="mt-1 shrink-0">
                       <div
                         className={`w-2 h-2 rounded-full ${
