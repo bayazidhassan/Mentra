@@ -30,6 +30,25 @@ const formatTime = (time: string) => {
   return `${hour}:${m.toString().padStart(2, '0')} ${ampm}`;
 };
 
+const timeToMinutes = (time: string) => {
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
+};
+
+const minutesToTime = (minutes: number) => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+};
+
+// Build a local Date for a given date + "HH:MM" time string (local time)
+const buildLocalDate = (date: Date, time: string): Date => {
+  const [h, m] = time.split(':').map(Number);
+  const d = new Date(date);
+  d.setHours(h, m, 0, 0);
+  return d;
+};
+
 const getAvailableDates = (
   availability: TAvailabilitySlot[],
   count = 30,
@@ -43,7 +62,7 @@ const getAvailableDates = (
   cursor.setDate(cursor.getDate() + 1);
 
   while (results.length < count) {
-    const dayNum = cursor.getUTCDay();
+    const dayNum = cursor.getDay(); // ✅ local day
     if (availableDayNumbers.has(dayNum)) {
       const slot = availability.find((a) => DAY_MAP[a.day] === dayNum)!;
       results.push({ date: new Date(cursor), slot });
@@ -51,6 +70,81 @@ const getAvailableDates = (
     cursor.setDate(cursor.getDate() + 1);
   }
   return results;
+};
+
+/**
+ * Given a date + slot + booked sessions, compute the effective available window.
+ * Returns null if the slot is fully booked.
+ */
+const getEffectiveWindow = (
+  date: Date,
+  slot: TAvailabilitySlot,
+  bookedSlots: { start: string; end: string }[],
+): {
+  effectiveStart: string;
+  effectiveEnd: string;
+  maxMinutes: number;
+} | null => {
+  const slotStartMin = timeToMinutes(slot.startTime);
+  const slotEndMin = timeToMinutes(slot.endTime);
+
+  // Find all bookings that overlap this date's slot
+  const slotStartDate = buildLocalDate(date, slot.startTime);
+  const slotEndDate = buildLocalDate(date, slot.endTime);
+
+  // Collect booked intervals (in minutes from midnight) that fall within this slot
+  const bookedIntervals: { start: number; end: number }[] = [];
+
+  for (const booked of bookedSlots) {
+    const bookedStart = new Date(booked.start);
+    const bookedEnd = new Date(booked.end);
+
+    // Check if this booking overlaps with our slot on this date
+    if (bookedStart < slotEndDate && bookedEnd > slotStartDate) {
+      const overlapStart = Math.max(
+        bookedStart.getHours() * 60 + bookedStart.getMinutes(),
+        slotStartMin,
+      );
+      const overlapEnd = Math.min(
+        bookedEnd.getHours() * 60 + bookedEnd.getMinutes(),
+        slotEndMin,
+      );
+      if (overlapEnd > overlapStart) {
+        bookedIntervals.push({ start: overlapStart, end: overlapEnd });
+      }
+    }
+  }
+
+  if (bookedIntervals.length === 0) {
+    // Nothing booked — full slot available
+    return {
+      effectiveStart: slot.startTime,
+      effectiveEnd: slot.endTime,
+      maxMinutes: slotEndMin - slotStartMin,
+    };
+  }
+
+  // Sort by start time
+  bookedIntervals.sort((a, b) => a.start - b.start);
+
+  // Find the first free gap starting from slotStart
+  let freeFrom = slotStartMin;
+  for (const interval of bookedIntervals) {
+    if (interval.start <= freeFrom) {
+      freeFrom = Math.max(freeFrom, interval.end);
+    } else {
+      break;
+    }
+  }
+
+  const remaining = slotEndMin - freeFrom;
+  if (remaining <= 0) return null; // fully booked
+
+  return {
+    effectiveStart: minutesToTime(freeFrom),
+    effectiveEnd: slot.endTime,
+    maxMinutes: remaining,
+  };
 };
 
 const BookSessionModal = ({
@@ -92,44 +186,31 @@ const BookSessionModal = ({
     fetchSlots();
   }, [mentorProfileId]);
 
-  // Build list of available dates from availability
+  // Build list of available dates
   const availableDates = useMemo(
     () => (availability.length > 0 ? getAvailableDates(availability, 30) : []),
     [availability],
   );
 
-  // Check if a date+slot is already booked
-  const isDateBooked = (date: Date, slot: TAvailabilitySlot): boolean => {
-    const [h, m] = slot.startTime.split(':').map(Number);
-    const slotStart = new Date(date);
-    slotStart.setUTCHours(h, m, 0, 0);
+  // Compute effective window per date (memoized)
+  const effectiveWindows = useMemo(() => {
+    return availableDates
+      .slice(0, 12)
+      .map((entry) => getEffectiveWindow(entry.date, entry.slot, bookedSlots));
+  }, [availableDates, bookedSlots]);
 
-    return bookedSlots.some((booked) => {
-      const bookedStart = new Date(booked.start);
-      const bookedEnd = new Date(booked.end);
-      return slotStart >= bookedStart && slotStart < bookedEnd;
-    });
-  };
+  // Selected entry's effective window
+  const selectedWindow =
+    selectedDateIndex !== null ? effectiveWindows[selectedDateIndex] : null;
 
-  // Calculate estimated price
+  const maxDuration = selectedWindow?.maxMinutes ?? 0;
+
+  // Estimated price
   const estimatedPrice = useMemo(() => {
     const dur = parseInt(durationMinutes);
     if (!hourlyRate || isNaN(dur) || dur <= 0) return null;
     return ((hourlyRate / 60) * dur).toFixed(2);
   }, [hourlyRate, durationMinutes]);
-
-  const selectedEntry =
-    selectedDateIndex !== null ? availableDates[selectedDateIndex] : null;
-
-  // Max duration based on selected slot's start→end window
-  const maxDuration = useMemo(() => {
-    if (!selectedEntry) return 0;
-    const [startH, startM] = selectedEntry.slot.startTime
-      .split(':')
-      .map(Number);
-    const [endH, endM] = selectedEntry.slot.endTime.split(':').map(Number);
-    return endH * 60 + endM - (startH * 60 + startM);
-  }, [selectedEntry]);
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -138,6 +219,10 @@ const BookSessionModal = ({
     }
     if (selectedDateIndex === null) {
       toast.error('Please select a date.');
+      return;
+    }
+    if (!selectedWindow) {
+      toast.error('This slot is fully booked. Please choose another date.');
       return;
     }
     const dur = parseInt(durationMinutes);
@@ -151,9 +236,12 @@ const BookSessionModal = ({
     }
 
     const entry = availableDates[selectedDateIndex];
-    const [hours, minutes] = entry.slot.startTime.split(':').map(Number);
-    const scheduledAt = new Date(entry.date);
-    scheduledAt.setUTCHours(hours, minutes, 0, 0);
+
+    // ✅ Build scheduledAt using effective start time in LOCAL time
+    const scheduledAt = buildLocalDate(
+      entry.date,
+      selectedWindow.effectiveStart,
+    );
 
     setSubmitting(true);
     try {
@@ -249,22 +337,27 @@ const BookSessionModal = ({
 
                 {availability.length === 0 ? (
                   <div className="text-xs text-gray-400 bg-gray-50 rounded-xl px-4 py-3">
-                    This mentor has not set their availability yet. You can
-                    still book — they will confirm the time.
+                    This mentor has not set their availability yet.
                   </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {availableDates.slice(0, 12).map((entry, i) => {
                       const isSelected = selectedDateIndex === i;
-                      const booked = isDateBooked(entry.date, entry.slot);
+                      const window = effectiveWindows[i];
+                      const fullyBooked = window === null;
 
                       return (
                         <button
                           key={i}
-                          onClick={() => !booked && setSelectedDateIndex(i)}
-                          disabled={booked}
+                          onClick={() => {
+                            if (fullyBooked) return;
+                            setSelectedDateIndex(i);
+                            // Reset duration when date changes
+                            setDurationMinutes('');
+                          }}
+                          disabled={fullyBooked}
                           className={`flex flex-col items-center py-2.5 px-2 rounded-xl border text-xs font-medium transition-all ${
-                            booked
+                            fullyBooked
                               ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed'
                               : isSelected
                                 ? 'border-indigo-500 bg-indigo-50 text-indigo-600 cursor-pointer'
@@ -282,23 +375,34 @@ const BookSessionModal = ({
                               month: 'short',
                             })}
                           </span>
-                          {booked && (
+                          {fullyBooked && (
                             <span className="text-[9px] text-red-400 font-medium mt-0.5">
                               Booked
                             </span>
                           )}
+                          {!fullyBooked &&
+                            window &&
+                            window.effectiveStart !== entry.slot.startTime && (
+                              <span className="text-[9px] text-amber-500 font-medium mt-0.5">
+                                Partial
+                              </span>
+                            )}
                         </button>
                       );
                     })}
                   </div>
                 )}
 
-                {/* Show selected slot time */}
-                {selectedEntry && (
+                {/* Show effective available window */}
+                {selectedDateIndex !== null && selectedWindow && (
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg">
                     <Clock size={12} />
-                    Available: {formatTime(selectedEntry.slot.startTime)} –{' '}
-                    {formatTime(selectedEntry.slot.endTime)}
+                    Available: {formatTime(
+                      selectedWindow.effectiveStart,
+                    )} – {formatTime(selectedWindow.effectiveEnd)}
+                    <span className="ml-auto text-indigo-400">
+                      {selectedWindow.maxMinutes} min remaining
+                    </span>
                   </div>
                 )}
               </div>
@@ -324,11 +428,12 @@ const BookSessionModal = ({
                   placeholder={
                     maxDuration > 0
                       ? `Max ${maxDuration} min (e.g. 30, 60, 90)`
-                      : 'e.g. 30, 60, 90'
+                      : 'Select a date first'
                   }
                   min={15}
                   max={maxDuration || undefined}
-                  className="w-full h-10 border border-gray-200 rounded-xl px-3 text-sm outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.08)] transition-all"
+                  disabled={selectedDateIndex === null}
+                  className="w-full h-10 border border-gray-200 rounded-xl px-3 text-sm outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.08)] transition-all disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
 
