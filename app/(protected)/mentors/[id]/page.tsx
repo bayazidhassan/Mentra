@@ -84,13 +84,15 @@ const MentorProfilePage = () => {
         <div className="bg-white border border-gray-200 rounded-2xl p-8">
           <div className="flex items-start gap-6 flex-wrap sm:flex-nowrap">
             {mentor.profileImage ? (
-              <Image
-                src={mentor.profileImage}
-                alt={mentor.name}
-                width={80}
-                height={80}
-                className="rounded-2xl object-cover shrink-0"
-              />
+              <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
+                <Image
+                  src={mentor.profileImage}
+                  alt={mentor.name}
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             ) : (
               <div
                 className="w-20 h-20 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl font-bold shrink-0"
