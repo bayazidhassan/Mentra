@@ -34,20 +34,19 @@ type TTab = 'upcoming' | 'completed' | 'cancelled';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('en-US', {
+  new Date(dateStr).toLocaleDateString(undefined, {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    timeZone: 'UTC',
   });
 
 const formatTime = (dateStr: string) =>
-  new Date(dateStr).toLocaleTimeString('en-US', {
-    hour: '2-digit',
+  new Date(dateStr).toLocaleTimeString(undefined, {
+    hour: 'numeric',
     minute: '2-digit',
-    timeZone: 'UTC',
-  }) + ' UTC';
+    hour12: true,
+  });
 
 const statusConfig: Record<
   TSessionStatus,
