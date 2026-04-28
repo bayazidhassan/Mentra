@@ -251,13 +251,15 @@ const SessionCard = ({
         {session.otherUser && (
           <div className="flex items-center gap-2 mb-4">
             {session.otherUser.profileImage ? (
-              <Image
-                src={session.otherUser.profileImage}
-                alt={session.otherUser.name}
-                width={28}
-                height={28}
-                className="rounded-full object-cover"
-              />
+              <div className="w-7 h-7 rounded-full overflow-hidden shrink-0">
+                <Image
+                  src={session.otherUser.profileImage}
+                  alt={session.otherUser.name}
+                  width={28}
+                  height={28}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             ) : (
               <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
                 {session.otherUser.name[0].toUpperCase()}
