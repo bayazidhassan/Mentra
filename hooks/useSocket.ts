@@ -13,18 +13,17 @@ const SOCKET_URL =
 export const useSocket = () => {
   const { accessToken } = useAuthStore();
   const [connected, setConnected] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
 
   useEffect(() => {
-    // Don't connect if no token
     if (!accessToken) return;
 
-    // Only create one instance
     if (!socketInstance) {
       socketInstance = io(SOCKET_URL, {
-        auth: { token: accessToken }, // backend reads socket.handshake.auth.token
+        auth: { token: accessToken },
         withCredentials: true,
-        transports: ['websocket'],
+        transports: ['websocket', 'polling'],
       });
     }
 
@@ -33,25 +32,37 @@ export const useSocket = () => {
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
 
-    // Increment unread badge when a message arrives outside chat
+    // New chat message — increment message badge
     socket.on('unread_message', () => {
-      setUnreadCount((prev) => prev + 1);
+      setUnreadMessageCount((prev) => prev + 1);
+    });
+
+    // New notification — increment notification badge
+    socket.on('new_notification', () => {
+      setUnreadNotificationCount((prev) => prev + 1);
     });
 
     return () => {
       socket.off('connect');
       socket.off('disconnect');
       socket.off('unread_message');
+      socket.off('new_notification');
     };
   }, [accessToken]);
 
-  // Call this when user opens the chat page to reset badge
-  const resetUnreadCount = () => setUnreadCount(0);
+  const resetMessageCount = () => setUnreadMessageCount(0);
+  const resetNotificationCount = () => setUnreadNotificationCount(0);
 
-  return { socket: socketInstance, connected, unreadCount, resetUnreadCount };
+  return {
+    socket: socketInstance,
+    connected,
+    unreadMessageCount,
+    unreadNotificationCount,
+    resetMessageCount,
+    resetNotificationCount,
+  };
 };
 
-// Use outside React components (e.g. in ConversationPage event handlers)
 export const getSocket = () => socketInstance;
 
 export const disconnectSocket = () => {
