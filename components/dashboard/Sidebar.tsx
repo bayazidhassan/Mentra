@@ -99,7 +99,7 @@ const Sidebar = () => {
       {/* Logo */}
       <Link
         href="/"
-        className={`flex items-center gap-2.5 px-4 py-5 border-b border-gray-200 hover:opacity-80 transition-opacity ${collapsed ? 'justify-center' : ''}`}
+        className={`flex items-center gap-2.5 p-4 border-b border-gray-200 hover:opacity-80 transition-opacity ${collapsed ? 'justify-center' : ''}`}
       >
         <Image src="/mentra_logo.svg" alt="Mentra" width={32} height={32} />
         {!collapsed && (
