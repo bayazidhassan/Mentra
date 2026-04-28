@@ -1,9 +1,9 @@
 'use client';
 
 import useUserStore from '@/store/useUserStore';
-import { Bell } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import NotificationBell from '../modal/NotificationBell';
 
 const DashboardNavbar = () => {
   const { user } = useUserStore();
@@ -23,10 +23,7 @@ const DashboardNavbar = () => {
       {/* Right side */}
       <div className="flex items-center gap-3">
         {/* Notifications */}
-        <button className="relative w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:border-indigo-200 transition-all cursor-pointer">
-          <Bell size={16} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-600 rounded-full" />
-        </button>
+        <NotificationBell></NotificationBell>
 
         {/* Avatar */}
         <Link
