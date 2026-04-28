@@ -1,0 +1,50 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect x="0" y="0" width="32" height="32" rx="6.4" fill="#4F46E5"/>
+
+  <!-- Inner border -->
+  <rect x="0.48" y="0.48" width="31.04" height="31.04" rx="6.08"
+        fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.24"/>
+
+  <!-- Main lines -->
+  <line x1="4.8" y1="25.6" x2="8.64" y2="11.52"
+        stroke="rgba(255,255,255,0.6)" stroke-width="0.64" stroke-linecap="round"/>
+
+  <line x1="8.64" y1="11.52" x2="16" y2="21.12"
+        stroke="rgba(255,255,255,0.6)" stroke-width="0.64" stroke-linecap="round"/>
+
+  <line x1="16" y1="21.12" x2="23.36" y2="11.52"
+        stroke="rgba(255,255,255,0.6)" stroke-width="0.64" stroke-linecap="round"/>
+
+  <line x1="23.36" y1="11.52" x2="27.2" y2="25.6"
+        stroke="rgba(255,255,255,0.6)" stroke-width="0.64" stroke-linecap="round"/>
+
+  <!-- Dotted connections -->
+  <line x1="4.8" y1="25.6" x2="16" y2="21.12"
+        stroke="rgba(255,255,255,0.25)" stroke-width="0.24" stroke-dasharray="1.6 1.6"/>
+
+  <line x1="27.2" y1="25.6" x2="16" y2="21.12"
+        stroke="rgba(255,255,255,0.25)" stroke-width="0.24" stroke-dasharray="1.6 1.6"/>
+
+  <line x1="8.64" y1="11.52" x2="23.36" y2="11.52"
+        stroke="rgba(255,255,255,0.25)" stroke-width="0.24" stroke-dasharray="1.6 1.6"/>
+
+  <!-- Nodes -->
+  <circle cx="4.8" cy="25.6" r="1.6" fill="rgb(165,180,252)"/>
+  <circle cx="4.8" cy="25.6" r="0.96" fill="#fff"/>
+
+  <circle cx="27.2" cy="25.6" r="1.6" fill="rgb(165,180,252)"/>
+  <circle cx="27.2" cy="25.6" r="0.96" fill="#fff"/>
+
+  <circle cx="8.64" cy="11.52" r="1.6" fill="rgb(165,180,252)"/>
+  <circle cx="8.64" cy="11.52" r="0.96" fill="#fff"/>
+
+  <circle cx="23.36" cy="11.52" r="1.6" fill="rgb(165,180,252)"/>
+  <circle cx="23.36" cy="11.52" r="0.96" fill="#fff"/>
+
+  <circle cx="16" cy="21.12" r="2.56" fill="rgb(165,180,252)" opacity="0.45"/>
+  <circle cx="16" cy="21.12" r="1.6" fill="#fff"/>
+  <circle cx="16" cy="21.12" r="0.8" fill="#4F46E5"/>
+
+</svg>
