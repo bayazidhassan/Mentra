@@ -29,9 +29,11 @@ const LearnerDashboard = () => {
     const fetchData = async () => {
       try {
         const [sessionsData, roadmapData, mentorsData] = await Promise.all([
-          sessionService.getMySessions(),
-          roadmapService.getMyRoadmap(),
-          mentorService.getMentors({ page: 1, limit: 3 }),
+          sessionService.getMySessions().catch(() => []),
+          roadmapService.getMyRoadmap().catch(() => null),
+          mentorService
+            .getMentors({ page: 1, limit: 3 })
+            .catch(() => ({ mentors: [] })),
         ]);
         setSessions(sessionsData);
         setRoadmap(roadmapData);
