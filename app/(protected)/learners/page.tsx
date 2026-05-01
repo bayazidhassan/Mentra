@@ -144,13 +144,15 @@ const LearnersPage = () => {
                   className="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl p-5 hover:border-indigo-200 transition-all"
                 >
                   {learner.profileImage ? (
-                    <Image
-                      src={learner.profileImage}
-                      alt={learner.name}
-                      width={44}
-                      height={44}
-                      className="rounded-full object-cover shrink-0"
-                    />
+                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                      <Image
+                        src={learner.profileImage}
+                        alt={learner.name}
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   ) : (
                     <div className="w-11 h-11 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
                       {learner.name[0].toUpperCase()}
@@ -240,13 +242,15 @@ const LearnersPage = () => {
                     className="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl p-5 hover:border-indigo-200 transition-all"
                   >
                     {learner.profileImage ? (
-                      <Image
-                        src={learner.profileImage}
-                        alt={learner.name}
-                        width={44}
-                        height={44}
-                        className="rounded-full object-cover shrink-0"
-                      />
+                      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                        <Image
+                          src={learner.profileImage}
+                          alt={learner.name}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     ) : (
                       <div className="w-11 h-11 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
                         {learner.name[0].toUpperCase()}

@@ -113,13 +113,15 @@ const EarningsPage = () => {
               >
                 {/* Learner avatar */}
                 {payment.learner?.profileImage ? (
-                  <Image
-                    src={payment.learner.profileImage}
-                    alt={payment.learner.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover shrink-0"
-                  />
+                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                    <Image
+                      src={payment.learner.profileImage}
+                      alt={payment.learner.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">
                     {payment.learner?.name[0]?.toUpperCase() ?? 'L'}
@@ -128,38 +130,46 @@ const EarningsPage = () => {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
+                  {/* Session Title */}
                   <p className="text-sm font-medium text-gray-800 truncate">
                     {payment.session?.title ?? 'Session'}
                   </p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-xs text-gray-400">
-                      {payment.learner?.name ?? 'Learner'}
-                    </p>
+
+                  {/* Name */}
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {payment.learner?.name ?? 'Learner'}
+                  </p>
+
+                  {/* Email */}
+                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                    {payment.learner?.email ?? 'No email'}
+                  </p>
+
+                  {/* Date + Time + Duration (below email) */}
+                  <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
                     {payment.session?.scheduledAt && (
-                      <>
-                        <span className="text-gray-300">·</span>
-                        <p className="text-xs text-gray-400">
-                          {new Date(
-                            payment.session.scheduledAt,
-                          ).toLocaleDateString(undefined, {
+                      <span>
+                        {new Date(payment.session.scheduledAt).toLocaleString(
+                          undefined,
+                          {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',
-                          })}
-                        </p>
-                      </>
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          },
+                        )}
+                      </span>
                     )}
+
                     {payment.session?.durationMinutes && (
                       <>
-                        <span className="text-gray-300">·</span>
-                        <p className="text-xs text-gray-400">
-                          {payment.session.durationMinutes} min
-                        </p>
+                        <span className="text-gray-300">|</span>
+                        <span>{payment.session.durationMinutes} min</span>
                       </>
                     )}
                   </div>
                 </div>
-
                 {/* Amount + date */}
                 <div className="text-right shrink-0">
                   <p className="text-base font-bold text-green-600">
@@ -170,6 +180,8 @@ const EarningsPage = () => {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </p>
                 </div>
