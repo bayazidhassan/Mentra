@@ -16,7 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { userService } from '../../../services/user';
 
@@ -252,6 +252,44 @@ const ProfilePage = () => {
     { key: 'password', label: 'Change password', icon: <Lock size={15} /> },
     { key: 'settings', label: 'Settings', icon: <Settings size={15} /> },
   ];
+
+  const hasChanges = useMemo(() => {
+    if (!initialData) return false;
+    if (name !== initialData.name) return true;
+    if (phone !== (initialData.phone ?? '')) return true;
+    if (imageFile) return true;
+    if (isLearner) {
+      if (JSON.stringify(skills) !== JSON.stringify(initialData.skills ?? [])) {
+        return true;
+      }
+    }
+    if (isMentor) {
+      if (bio !== (initialData.bio ?? '')) return true;
+      if (experience !== (initialData.experience ?? '')) return true;
+      if (hourlyRate !== (initialData.hourlyRate?.toString() ?? '')) {
+        return true;
+      }
+      if (
+        JSON.stringify(availability) !==
+        JSON.stringify(initialData.availability ?? [])
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [
+    name,
+    phone,
+    imageFile,
+    skills,
+    bio,
+    experience,
+    hourlyRate,
+    availability,
+    initialData,
+    isLearner,
+    isMentor,
+  ]);
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -542,7 +580,7 @@ const ProfilePage = () => {
 
           <button
             onClick={handleProfileSave}
-            disabled={savingProfile}
+            disabled={savingProfile || !hasChanges}
             className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:opacity-90 cursor-pointer"
             style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}
           >
