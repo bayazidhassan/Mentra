@@ -91,7 +91,7 @@ const MentorDashboard = () => {
             iconColor: 'text-indigo-600',
           },
           {
-            label: 'Completed',
+            label: 'Completed Sessions',
             value: stats?.completedSessions ?? 0,
             icon: <CheckCircle size={18} />,
             iconBg: 'bg-green-50',
@@ -105,7 +105,7 @@ const MentorDashboard = () => {
             iconColor: 'text-emerald-600',
           },
           {
-            label: 'Rating',
+            label: 'Average Rating',
             value:
               stats?.rating && stats.rating > 0
                 ? `${stats.rating.toFixed(1)} ★`
@@ -113,9 +113,6 @@ const MentorDashboard = () => {
             icon: <Star size={18} />,
             iconBg: 'bg-yellow-50',
             iconColor: 'text-yellow-600',
-            sub: stats?.totalReviews
-              ? `${stats.totalReviews} review${stats.totalReviews !== 1 ? 's' : ''}`
-              : null,
           },
         ].map((stat) => (
           <div
@@ -127,16 +124,15 @@ const MentorDashboard = () => {
             >
               {stat.icon}
             </div>
-            <p
-              className="text-2xl font-bold text-gray-900"
-              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
-            >
-              {stat.value}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
-            {'sub' in stat && stat.sub && (
-              <p className="text-xs text-gray-400">{stat.sub}</p>
-            )}
+            <div className="flex flex-col items-center">
+              <p
+                className="text-2xl font-bold text-gray-900"
+                style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+              >
+                {stat.value}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -188,13 +184,15 @@ const MentorDashboard = () => {
                 </Link>
               )}
             </div>
-            <p
-              className="text-2xl font-bold text-gray-900"
-              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
-            >
-              {stat.value}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
+            <div className="flex flex-col items-center">
+              <p
+                className="text-2xl font-bold text-gray-900"
+                style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+              >
+                {stat.value}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -227,13 +225,15 @@ const MentorDashboard = () => {
                 >
                   {/* Learner avatar */}
                   {session.learner?.profileImage ? (
-                    <Image
-                      src={session.learner.profileImage}
-                      alt={session.learner.name}
-                      width={36}
-                      height={36}
-                      className="rounded-full object-cover shrink-0"
-                    />
+                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
+                      <Image
+                        src={session.learner.profileImage}
+                        alt={session.learner.name}
+                        width={36}
+                        height={36}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
                       {session.learner?.name[0]?.toUpperCase() ?? 'L'}
@@ -313,7 +313,7 @@ const MentorDashboard = () => {
           {
             label: 'Availability',
             desc: 'Manage your schedule and hourly rate',
-            href: '/profile',
+            href: '/availability',
             icon: <Clock size={20} className="text-purple-500" />,
           },
         ].map((item) => (
