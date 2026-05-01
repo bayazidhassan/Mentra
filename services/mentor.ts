@@ -50,6 +50,32 @@ type SuggestedMentorsResponse = {
   data: TSuggestedMentor[];
 };
 
+export type TMentorDashboardStats = {
+  totalSessions: number;
+  completedSessions: number;
+  pendingSessions: number;
+  acceptedSessions: number;
+  totalEarnings: number;
+  rating: number;
+  totalReviews: number;
+};
+
+export type TMentorRecentSession = {
+  _id: string;
+  title: string;
+  status: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  price?: number;
+  paymentStatus?: string;
+  learner: {
+    _id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+  } | null;
+};
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getMentors = async ({
@@ -85,8 +111,17 @@ const getSuggestedMentors = async (): Promise<TSuggestedMentor[]> => {
   return response.data.data ?? [];
 };
 
+const getMentorDashboardStats = async (): Promise<{
+  stats: TMentorDashboardStats;
+  recentSessions: TMentorRecentSession[];
+}> => {
+  const response = await axiosInstance.get('/mentor/stats');
+  return response.data.data;
+};
+
 export const mentorService = {
   getMentors,
   getMentorById,
   getSuggestedMentors,
+  getMentorDashboardStats,
 };
