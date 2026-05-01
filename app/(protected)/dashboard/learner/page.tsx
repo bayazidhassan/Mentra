@@ -88,7 +88,7 @@ const LearnerDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Welcome header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <div>
           <h1
             className="text-2xl font-bold text-gray-900"
@@ -100,13 +100,6 @@ const LearnerDashboard = () => {
             Here&apos;s what&apos;s happening with your learning journey.
           </p>
         </div>
-        <Link
-          href="/roadmap"
-          className="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-xl transition-all hover:opacity-90"
-          style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}
-        >
-          View roadmap
-        </Link>
       </div>
 
       {/* Stats cards */}
