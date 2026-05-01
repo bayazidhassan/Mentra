@@ -1,12 +1,7 @@
 import axiosInstance from '@/lib/axios';
+import { TAvailability } from '../store/useUserStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-export type TAvailability = {
-  day: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat';
-  startTime: string;
-  endTime: string;
-};
 
 export type TMentor = {
   _id: string;
@@ -119,9 +114,29 @@ const getMentorDashboardStats = async (): Promise<{
   return response.data.data;
 };
 
+const getAvailability = async (): Promise<{
+  availability: TAvailability[];
+  hourlyRate?: number;
+}> => {
+  const response = await axiosInstance.get('/mentor/availability');
+  return response.data.data;
+};
+
+const updateAvailability = async (
+  availability: TAvailability[],
+  hourlyRate?: number,
+): Promise<void> => {
+  await axiosInstance.patch('/mentor/availability', {
+    availability,
+    hourlyRate,
+  });
+};
+
 export const mentorService = {
   getMentors,
   getMentorById,
   getSuggestedMentors,
   getMentorDashboardStats,
+  getAvailability,
+  updateAvailability,
 };

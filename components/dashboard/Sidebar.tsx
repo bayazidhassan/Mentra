@@ -5,6 +5,7 @@ import useUserStore from '@/store/useUserStore';
 import {
   BookOpen,
   Calendar,
+  CalendarCheck,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
@@ -49,6 +50,11 @@ const mentorNav: TNavItem[] = [
   { label: 'My sessions', href: '/sessions', icon: <Calendar size={18} /> },
   { label: 'Learners', href: '/learners', icon: <BookOpen size={18} /> },
   { label: 'Earnings', href: '/earnings', icon: <Wallet size={18} /> },
+  {
+    label: 'Availability',
+    href: '/availability',
+    icon: <CalendarCheck size={18} />,
+  },
   { label: 'Chat', href: '/chat', icon: <MessageSquare size={18} /> },
 ];
 
