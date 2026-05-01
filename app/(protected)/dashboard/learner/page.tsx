@@ -143,13 +143,15 @@ const LearnerDashboard = () => {
             >
               {stat.icon}
             </div>
-            <p
-              className="text-2xl font-bold text-gray-900"
-              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
-            >
-              {stat.value}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
+            <div className="flex flex-col items-center">
+              <p
+                className="text-2xl font-bold text-gray-900"
+                style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+              >
+                {stat.value}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
+            </div>
           </div>
         ))}
       </div>
