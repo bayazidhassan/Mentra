@@ -30,6 +30,8 @@ const DAY_LABELS: Record<string, string> = {
 const AvailabilityPage = () => {
   const [slots, setSlots] = useState<TAvailability[]>([]);
   const [hourlyRate, setHourlyRate] = useState<string>('');
+  const [initialSlots, setInitialSlots] = useState<TAvailability[]>([]);
+  const [initialRate, setInitialRate] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -37,8 +39,14 @@ const AvailabilityPage = () => {
     const fetch = async () => {
       try {
         const data = await mentorService.getAvailability();
-        setSlots(data.availability ?? []);
-        setHourlyRate(data.hourlyRate?.toString() ?? '');
+        const availability = data.availability ?? [];
+        const rate = data.hourlyRate?.toString() ?? '';
+
+        setSlots(availability);
+        setHourlyRate(rate);
+
+        setInitialSlots(availability);
+        setInitialRate(rate);
       } catch {
         setSlots([]);
       } finally {
@@ -72,6 +80,15 @@ const AvailabilityPage = () => {
   };
 
   const handleSave = async () => {
+    const isSame =
+      JSON.stringify(slots) === JSON.stringify(initialSlots) &&
+      hourlyRate === initialRate;
+
+    if (isSame) {
+      toast.info('No changes detected.');
+      return;
+    }
+
     // Validate all slots
     for (const slot of slots) {
       if (slot.startTime >= slot.endTime) {
@@ -86,6 +103,10 @@ const AvailabilityPage = () => {
     try {
       const rate = hourlyRate ? parseFloat(hourlyRate) : undefined;
       await mentorService.updateAvailability(slots, rate);
+
+      setInitialSlots(slots);
+      setInitialRate(hourlyRate);
+
       toast.success('Availability updated successfully!');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -260,7 +281,11 @@ const AvailabilityPage = () => {
       {/* Save button */}
       <button
         onClick={handleSave}
-        disabled={saving}
+        disabled={
+          saving ||
+          (JSON.stringify(slots) === JSON.stringify(initialSlots) &&
+            hourlyRate === initialRate)
+        }
         className="w-full h-11 flex items-center justify-center gap-2 text-sm font-medium text-white rounded-xl disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:opacity-90"
         style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}
       >
