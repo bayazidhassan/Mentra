@@ -3,18 +3,17 @@
 import useLogout from '@/hooks/useLogout';
 import useUserStore from '@/store/useUserStore';
 import {
-  BookOpen,
   Calendar,
   CalendarCheck,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
   LayoutDashboard,
   LogOut,
   Map,
   MessageSquare,
   Settings,
-  Shield,
-  Users,
+  UserCheck,
   UserSearch,
   Wallet,
 } from 'lucide-react';
@@ -47,14 +46,15 @@ const mentorNav: TNavItem[] = [
     href: '/dashboard/mentor',
     icon: <LayoutDashboard size={18} />,
   },
-  { label: 'My sessions', href: '/sessions', icon: <Calendar size={18} /> },
-  { label: 'Learners', href: '/learners', icon: <BookOpen size={18} /> },
-  { label: 'Earnings', href: '/earnings', icon: <Wallet size={18} /> },
   {
     label: 'Availability',
     href: '/availability',
     icon: <CalendarCheck size={18} />,
   },
+  { label: 'My sessions', href: '/sessions', icon: <Calendar size={18} /> },
+  { label: 'Learners', href: '/learners', icon: <GraduationCap size={18} /> },
+  { label: 'Earnings', href: '/earnings', icon: <Wallet size={18} /> },
+
   { label: 'Chat', href: '/chat', icon: <MessageSquare size={18} /> },
 ];
 
@@ -64,11 +64,15 @@ const adminNav: TNavItem[] = [
     href: '/dashboard/admin',
     icon: <LayoutDashboard size={18} />,
   },
-  { label: 'Users', href: '/dashboard/admin/users', icon: <Users size={18} /> },
+  {
+    label: 'Learners',
+    href: '/dashboard/admin/learners',
+    icon: <GraduationCap size={18} />,
+  },
   {
     label: 'Mentors',
     href: '/dashboard/admin/mentors',
-    icon: <Shield size={18} />,
+    icon: <UserCheck size={18} />,
   },
   {
     label: 'Sessions',
