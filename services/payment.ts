@@ -29,6 +29,25 @@ type PaymentStatusResponse = {
   data: TPayment | null;
 };
 
+export type TEarningPayment = {
+  _id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+  session: {
+    title: string;
+    scheduledAt: string;
+    durationMinutes: number;
+  } | null;
+  learner: {
+    _id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+  } | null;
+};
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 // Creates Stripe checkout session and returns the redirect URL
@@ -49,7 +68,17 @@ const getPaymentStatus = async (
   return response.data.data;
 };
 
+const getEarnings = async (): Promise<{
+  payments: TEarningPayment[];
+  totalEarnings: number;
+  totalPayments: number;
+}> => {
+  const response = await axiosInstance.get('/payment/earnings');
+  return response.data.data;
+};
+
 export const paymentService = {
   createCheckoutSession,
   getPaymentStatus,
+  getEarnings,
 };
