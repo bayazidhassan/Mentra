@@ -23,7 +23,7 @@ import {
   TCreateRoadmapPayload,
   TRoadmap,
   TStepStatus,
-} from '../../../services/roadmap';
+} from '../../../../../services/roadmap';
 
 type TMode = 'ai' | 'manual';
 type TView =

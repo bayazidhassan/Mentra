@@ -1,4 +1,5 @@
 import axiosInstance from '@/lib/axios';
+import { TAvailability } from '../store/useUserStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -33,12 +34,6 @@ export type TSession = {
   updatedAt?: string;
 };
 
-export type TAvailabilitySlot = {
-  day: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat';
-  startTime: string;
-  endTime: string;
-};
-
 export type TBookSessionPayload = {
   mentorProfileId: string;
   title: string;
@@ -65,7 +60,7 @@ type SlotsResponse = {
   success: boolean;
   message: string;
   data: {
-    availability: TAvailabilitySlot[];
+    availability: TAvailability[];
     hourlyRate?: number;
     bookedSlots: { start: string; end: string }[];
   };

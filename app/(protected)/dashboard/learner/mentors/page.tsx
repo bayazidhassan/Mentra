@@ -169,7 +169,7 @@ const MentorsPage = () => {
       {/* Actions */}
       <div className="flex gap-2 mt-auto">
         <Link
-          href={`/mentors/${mentor._id}`}
+          href={`/dashboard/learner/mentors/${mentor._id}`}
           className="flex-1 text-center py-2 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-all"
         >
           View profile

@@ -3,7 +3,10 @@
 import { DollarSign, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { paymentService, TEarningPayment } from '../../../services/payment';
+import {
+  paymentService,
+  TEarningPayment,
+} from '../../../../../services/payment';
 
 const EarningsPage = () => {
   const [payments, setPayments] = useState<TEarningPayment[]>([]);

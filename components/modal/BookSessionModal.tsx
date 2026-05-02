@@ -4,7 +4,8 @@ import axios from 'axios';
 import { Calendar, Clock, DollarSign, Loader2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { sessionService, TAvailabilitySlot } from '../../services/session';
+import { sessionService } from '../../services/session';
+import { TAvailability } from '../../store/useUserStore';
 
 type Props = {
   mentorProfileId: string;
@@ -50,11 +51,11 @@ const buildLocalDate = (date: Date, time: string): Date => {
 };
 
 const getAvailableDates = (
-  availability: TAvailabilitySlot[],
+  availability: TAvailability[],
   count = 30,
-): { date: Date; slot: TAvailabilitySlot }[] => {
+): { date: Date; slot: TAvailability }[] => {
   const availableDayNumbers = new Set(availability.map((a) => DAY_MAP[a.day]));
-  const results: { date: Date; slot: TAvailabilitySlot }[] = [];
+  const results: { date: Date; slot: TAvailability }[] = [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -78,7 +79,7 @@ const getAvailableDates = (
  */
 const getEffectiveWindow = (
   date: Date,
-  slot: TAvailabilitySlot,
+  slot: TAvailability,
   bookedSlots: { start: string; end: string }[],
 ): {
   effectiveStart: string;
@@ -153,7 +154,7 @@ const BookSessionModal = ({
   onClose,
   onSuccess,
 }: Props) => {
-  const [availability, setAvailability] = useState<TAvailabilitySlot[]>([]);
+  const [availability, setAvailability] = useState<TAvailability[]>([]);
   const [hourlyRate, setHourlyRate] = useState<number | undefined>();
   const [bookedSlots, setBookedSlots] = useState<
     { start: string; end: string }[]

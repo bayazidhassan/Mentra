@@ -4,8 +4,8 @@ import axios from 'axios';
 import { Clock, DollarSign, Loader2, Plus, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { mentorService } from '../../../services/mentor';
-import { TAvailability } from '../../../store/useUserStore';
+import { mentorService } from '../../../../../services/mentor';
+import { TAvailability } from '../../../../../store/useUserStore';
 
 const DAYS: TAvailability['day'][] = [
   'Sun',
