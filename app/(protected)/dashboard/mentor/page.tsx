@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Clock,
   DollarSign,
+  GraduationCap,
   Star,
   TrendingUp,
   Users,
@@ -302,7 +303,7 @@ const MentorDashboard = () => {
             label: 'My learners',
             desc: 'View learners you have worked with',
             href: '/learners',
-            icon: <Users size={20} className="text-indigo-500" />,
+            icon: <GraduationCap size={20} className="text-indigo-500" />,
           },
           {
             label: 'Earnings',
