@@ -54,9 +54,7 @@ export const proxy = async (req: NextRequest) => {
 
   let role: string | null = null;
 
-  // ─────────────────────────────
   // Verify token
-  // ─────────────────────────────
   if (token) {
     try {
       const payload = await verifyToken(token);
@@ -68,9 +66,7 @@ export const proxy = async (req: NextRequest) => {
     }
   }
 
-  // ─────────────────────────────
   // Block unauthenticated users
-  // ─────────────────────────────
   if (!role && !isAuthRoute) {
     const loginUrl = new URL('/login', req.url);
     loginUrl.searchParams.set('redirect', pathname);
@@ -78,18 +74,14 @@ export const proxy = async (req: NextRequest) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  // ─────────────────────────────
   // Redirect logged-in users away from auth pages
-  // ─────────────────────────────
   if (role && isAuthRoute) {
     return NextResponse.redirect(
       new URL(roleRedirectMap[role] ?? '/', req.url),
     );
   }
 
-  // ─────────────────────────────
   // Role-based access control
-  // ─────────────────────────────
   if (role) {
     const allowedRoutes = roleAccessMap[role] || [];
 

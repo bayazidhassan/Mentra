@@ -71,11 +71,15 @@ const SelectRolePage = () => {
       if (response.success && response.data) {
         setUser({ ...user!, role: selectedRole });
         useAuthStore.getState().setAccessToken(response.data.accessToken);
-        router.replace(
-          selectedRole === 'mentor'
-            ? '/dashboard/mentor'
-            : '/dashboard/learner',
-        );
+        if (selectedRole === 'mentor') {
+          await authService.logout();
+          toast.success(
+            'Your mentor account has been created! Please wait for admin approval before logging in.',
+          );
+          router.replace('/login');
+        } else {
+          router.replace('/dashboard/learner');
+        }
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
