@@ -7,12 +7,12 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
-import BookSessionModal from '../../../components/modal/BookSessionModal';
+import BookSessionModal from '../../../../../components/modal/BookSessionModal';
 import {
   mentorService,
   TMentor,
   TSuggestedMentor,
-} from '../../../services/mentor';
+} from '../../../../../services/mentor';
 
 type TMode = 'manual' | 'ai';
 

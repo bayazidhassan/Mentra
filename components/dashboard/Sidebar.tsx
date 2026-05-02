@@ -34,8 +34,16 @@ const learnerNav: TNavItem[] = [
     href: '/dashboard/learner',
     icon: <LayoutDashboard size={18} />,
   },
-  { label: 'My roadmap', href: '/roadmap', icon: <Map size={18} /> },
-  { label: 'Find mentors', href: '/mentors', icon: <UserSearch size={18} /> },
+  {
+    label: 'My roadmap',
+    href: '/dashboard/learner/roadmap',
+    icon: <Map size={18} />,
+  },
+  {
+    label: 'Find mentors',
+    href: '/dashboard/learner/mentors',
+    icon: <UserSearch size={18} />,
+  },
   { label: 'Sessions', href: '/sessions', icon: <Calendar size={18} /> },
   { label: 'Chat', href: '/chat', icon: <MessageSquare size={18} /> },
 ];
@@ -48,12 +56,20 @@ const mentorNav: TNavItem[] = [
   },
   {
     label: 'Availability',
-    href: '/availability',
+    href: '/dashboard/mentor/availability',
     icon: <CalendarCheck size={18} />,
   },
   { label: 'My sessions', href: '/sessions', icon: <Calendar size={18} /> },
-  { label: 'Learners', href: '/learners', icon: <GraduationCap size={18} /> },
-  { label: 'Earnings', href: '/earnings', icon: <Wallet size={18} /> },
+  {
+    label: 'Learners',
+    href: '/dashboard/mentor/learners',
+    icon: <GraduationCap size={18} />,
+  },
+  {
+    label: 'Earnings',
+    href: '/dashboard/mentor/earnings',
+    icon: <Wallet size={18} />,
+  },
 
   { label: 'Chat', href: '/chat', icon: <MessageSquare size={18} /> },
 ];
