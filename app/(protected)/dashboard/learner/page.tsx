@@ -167,7 +167,7 @@ const LearnerDashboard = () => {
               My roadmap
             </h2>
             <Link
-              href="/roadmap"
+              href="/dashboard/learner/roadmap"
               className="text-xs text-indigo-600 font-medium flex items-center gap-1 hover:underline"
             >
               View all <ChevronRight size={14} />
@@ -267,7 +267,7 @@ const LearnerDashboard = () => {
                 Generate your personalized AI learning roadmap
               </p>
               <Link
-                href="/roadmap"
+                href="/dashboard/learner/roadmap"
                 className="px-4 py-2 text-xs font-medium text-white rounded-xl"
                 style={{
                   background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
@@ -373,7 +373,7 @@ const LearnerDashboard = () => {
                 Book a session with a mentor
               </p>
               <Link
-                href="/mentors"
+                href="/dashboard/learner/mentors"
                 className="px-4 py-2 text-xs font-medium text-white rounded-xl"
                 style={{
                   background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
@@ -396,7 +396,7 @@ const LearnerDashboard = () => {
             Browse mentors
           </h2>
           <Link
-            href="/mentors"
+            href="/dashboard/learner/mentors"
             className="text-xs text-indigo-600 font-medium flex items-center gap-1 hover:underline"
           >
             Browse all <ChevronRight size={14} />
@@ -446,7 +446,7 @@ const LearnerDashboard = () => {
                   )}
                 </div>
                 <Link
-                  href={`/mentors/${mentor._id}`}
+                  href={`/dashboard/learner/mentors/${mentor._id}`}
                   className="ml-auto shrink-0 px-3 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-all"
                 >
                   View
