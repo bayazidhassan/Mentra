@@ -13,6 +13,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { LearnerDashboardSkeleton } from '../../../../components/dashboard/DashboardSkeleton';
 import { mentorService, TMentor } from '../../../../services/mentor';
 import { roadmapService, TRoadmap } from '../../../../services/roadmap';
 import { sessionService, TSession } from '../../../../services/session';
@@ -77,13 +78,15 @@ const LearnerDashboard = () => {
     },
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-64">
+  //       <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+  //     </div>
+  //   );
+  // }
+
+  if (loading) return <LearnerDashboardSkeleton></LearnerDashboardSkeleton>;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
