@@ -562,7 +562,7 @@ const RoadmapPage = () => {
                       {step.resources.map((resource, resourceIndex) => (
                         <div
                           key={resourceIndex}
-                          className="flex gap-2 items-center"
+                          className="flex flex-col md:flex-row gap-2 md:items-center"
                         >
                           <input
                             value={resource.title}
@@ -575,7 +575,7 @@ const RoadmapPage = () => {
                               )
                             }
                             placeholder="Title (e.g. MDN Docs)"
-                            className="flex-1 h-8 border border-gray-200 rounded-lg px-3 text-xs outline-none focus:border-indigo-500 transition-all"
+                            className="md:flex-1 h-8 border border-gray-200 rounded-lg px-3 text-xs outline-none focus:border-indigo-500 transition-all"
                           />
                           <input
                             value={resource.url}
@@ -588,7 +588,7 @@ const RoadmapPage = () => {
                               )
                             }
                             placeholder="URL (https://...)"
-                            className="flex-1 h-8 border border-gray-200 rounded-lg px-3 text-xs outline-none focus:border-indigo-500 transition-all"
+                            className="md:flex-1 h-8 border border-gray-200 rounded-lg px-3 text-xs outline-none focus:border-indigo-500 transition-all"
                           />
                           {step.resources.length > 1 && (
                             <button
