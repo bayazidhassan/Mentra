@@ -2,18 +2,12 @@
 
 import ErrorPage from '../components/error/ErrorPage';
 
-export default function GlobalError({
+export default function Error({
   error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <html>
-      <body>
-        <ErrorPage error={error} onReset={reset} />
-      </body>
-    </html>
-  );
+  return <ErrorPage error={error} onReset={reset} />;
 }
