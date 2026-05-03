@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { Ban, CheckCircle, Search, UserCheck } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
 import { adminService, TAdminMentor } from '../../../../../services/admin';
@@ -21,27 +21,29 @@ const AdminMentorsPage = () => {
   const [total, setTotal] = useState(0);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
+  const fetchMentors = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.getMentors({
+        search: debouncedSearch,
+        approved: activeTab === 'approved',
+        page,
+        limit: 10,
+      });
+
+      setMentors(data.mentors);
+      setTotal(data.total);
+      setTotalPages(data.totalPages);
+    } catch {
+      setMentors([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [debouncedSearch, activeTab, page]);
+
   useEffect(() => {
-    const fetch = async () => {
-      setLoading(true);
-      try {
-        const data = await adminService.getMentors({
-          search: debouncedSearch,
-          approved: activeTab === 'approved',
-          page,
-          limit: 10,
-        });
-        setMentors(data.mentors);
-        setTotal(data.total);
-        setTotalPages(data.totalPages);
-      } catch {
-        setMentors([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, [activeTab, debouncedSearch, page]);
+    fetchMentors();
+  }, [fetchMentors]);
 
   useEffect(() => {
     setPage(1);
@@ -49,12 +51,26 @@ const AdminMentorsPage = () => {
 
   const handleApprove = async (mentor: TAdminMentor) => {
     if (!mentor.mentorProfileId) return;
+
     setActionLoading(mentor._id);
+
+    // Optimistic update (instant UI)
+    const removedMentor = mentor;
+
+    setMentors((prev) => prev.filter((m) => m._id !== mentor._id));
+    setTotal((prev) => Math.max(0, prev - 1));
+
     try {
       await adminService.approveMentor(mentor.mentorProfileId);
-      setMentors((prev) => prev.filter((m) => m._id !== mentor._id));
       toast.success(`${mentor.name} has been approved as a mentor.`);
+
+      // Background sync
+      fetchMentors();
     } catch (err: unknown) {
+      // Rollback if failed
+      setMentors((prev) => [removedMentor, ...prev]);
+      setTotal((prev) => prev + 1);
+
       toast.error(
         axios.isAxiosError(err)
           ? err.response?.data?.message || 'Failed to approve.'
