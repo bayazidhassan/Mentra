@@ -10,8 +10,11 @@ const DashboardNavbar = () => {
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">
-      {/* Page title placeholder */}
-      <div>
+      {/* Left — spacer for mobile hamburger button (hidden on md+) */}
+      <div className="md:hidden w-9" />
+
+      {/* Welcome text — hidden on very small screens */}
+      <div className="hidden sm:block">
         <p className="text-sm text-gray-400">
           Welcome back,{' '}
           <span className="font-medium text-gray-800">
@@ -21,9 +24,9 @@ const DashboardNavbar = () => {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 ml-auto">
         {/* Notifications */}
-        <NotificationBell></NotificationBell>
+        <NotificationBell />
 
         {/* Avatar */}
         <Link

@@ -9,16 +9,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      {/* Sidebar — fixed */}
+      {/* Sidebar — desktop fixed, mobile drawer */}
       <Sidebar />
 
       {/* Right side */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Navbar — fixed */}
+        {/* Navbar */}
         <DashboardNavbar />
 
         {/* Scrollable content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
           {children}
         </main>
       </div>

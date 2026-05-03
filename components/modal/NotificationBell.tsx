@@ -132,7 +132,7 @@ const NotificationBell = () => {
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-11 w-80 bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden">
+        <div className="absolute right-0 top-11 w-[calc(100vw-1rem)] md:w-80 bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <h3
