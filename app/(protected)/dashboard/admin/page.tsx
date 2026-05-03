@@ -72,7 +72,7 @@ const AdminDashboard = () => {
       {/* Header */}
       <div>
         <h1
-          className="text-2xl font-bold text-gray-900"
+          className="text-xl md:text-2xl font-bold text-gray-900"
           style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
         >
           Welcome back, {user?.name?.split(' ')[0]} 👋
