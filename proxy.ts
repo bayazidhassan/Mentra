@@ -39,7 +39,7 @@ const roleAccessMap: Record<string, string[]> = {
 
 const verifyToken = async (token: string) => {
   const secret = process.env.REFRESH_TOKEN;
-  if (!secret) throw new Error('Refresh token missing');
+  if (!secret) throw new Error('Refresh token missing.');
 
   const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
 
@@ -70,22 +70,35 @@ export const proxy = async (req: NextRequest) => {
   if (!role && !isAuthRoute) {
     const loginUrl = new URL('/login', req.url);
     loginUrl.searchParams.set('redirect', pathname);
-
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect logged-in users away from auth pages
   if (role && isAuthRoute) {
-    return NextResponse.redirect(
-      new URL(roleRedirectMap[role] ?? '/', req.url),
-    );
+    const redirectPath = roleRedirectMap[role];
+
+    if (!redirectPath) {
+      const res = NextResponse.redirect(new URL('/login', req.url));
+      res.cookies.delete('refreshToken');
+      return res;
+    }
+
+    return NextResponse.redirect(new URL(redirectPath, req.url));
   }
 
   // Role-based access control
   if (role) {
-    const allowedRoutes = roleAccessMap[role] || [];
+    const allowedRoutes = roleAccessMap[role];
 
-    const isAllowed = allowedRoutes.some((route) => pathname.startsWith(route));
+    if (!allowedRoutes) {
+      const res = NextResponse.redirect(new URL('/login', req.url));
+      res.cookies.delete('refreshToken');
+      return res;
+    }
+
+    const isAllowed = allowedRoutes.some(
+      (route) => pathname === route || pathname.startsWith(route + '/'),
+    );
 
     if (!isAllowed) {
       return NextResponse.redirect(new URL(roleRedirectMap[role], req.url));
