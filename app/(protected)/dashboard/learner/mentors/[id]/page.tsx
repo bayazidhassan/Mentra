@@ -160,7 +160,7 @@ const MentorProfilePage = () => {
       <div className="max-w-2xl mx-auto space-y-4 pb-10">
         {/* Back */}
         <Link
-          href="/mentors"
+          href="/dashboard/learner/mentors"
           className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-indigo-600 transition-colors group"
         >
           <ArrowLeft
