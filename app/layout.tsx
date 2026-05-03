@@ -1,6 +1,7 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
+import ErrorBoundary from '../components/error/ErrorBoundary';
 import AuthProvider from '../components/providers/AuthProvider';
 import './globals.css';
 
@@ -16,14 +17,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen flex flex-col">
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
         >
           <Toaster position="top-right" richColors />
           <AuthProvider>
             {/*client component wrapper. children can still be server components */}
-            {children}
+            <ErrorBoundary>{children}</ErrorBoundary>
           </AuthProvider>
         </GoogleOAuthProvider>
       </body>
