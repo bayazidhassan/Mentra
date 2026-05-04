@@ -71,6 +71,12 @@ export type ForgotPasswordResponse = {
   data: null;
 };
 
+export type ResetPasswordResponse = {
+  success: boolean;
+  message: string;
+  data: null;
+};
+
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
@@ -91,7 +97,7 @@ const login = async (payload: LoginPayload): Promise<LoginResponse> => {
 
 const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
   const response = await axiosInstance.post<GoogleLoginResponse>(
-    '/auth/googleLogin',
+    '/auth/google-Login',
     {
       idToken,
     },
@@ -120,6 +126,17 @@ const forgotPassword = async (
   return response.data;
 };
 
+const resetPassword = async (
+  token: string,
+  password: string,
+): Promise<ResetPasswordResponse> => {
+  const response = await axiosInstance.post<ResetPasswordResponse>(
+    '/auth/reset-password',
+    { token, password },
+  );
+  return response.data;
+};
+
 const logout = async () => {
   const response = await axiosInstance.post('/auth/logout');
   return response.data;
@@ -131,5 +148,6 @@ export const authService = {
   googleLogin,
   setRole,
   forgotPassword,
+  resetPassword,
   logout,
 };
