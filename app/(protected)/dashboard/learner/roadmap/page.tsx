@@ -941,9 +941,9 @@ const RoadmapPage = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col md:flex-row gap-5 items-start justify-between">
         <div>
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <h1
               className="text-2xl font-bold text-gray-900"
               style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
