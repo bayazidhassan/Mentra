@@ -6,7 +6,6 @@ import {
   ChevronRight,
   DollarSign,
   GraduationCap,
-  Shield,
   TrendingUp,
   UserCheck,
   Users,
@@ -146,7 +145,7 @@ const AdminDashboard = () => {
         <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-              <Shield size={18} className="text-amber-600" />
+              <UserCheck size={18} className="text-amber-600" />
             </div>
             <div>
               <p className="text-sm font-semibold text-amber-800">
