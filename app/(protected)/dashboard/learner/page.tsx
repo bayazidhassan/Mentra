@@ -2,8 +2,9 @@
 
 import useUserStore from '@/store/useUserStore';
 import {
-  BookOpen,
   Calendar,
+  CalendarCheck,
+  CheckSquare,
   ChevronRight,
   Clock,
   Map,
@@ -125,14 +126,14 @@ const LearnerDashboard = () => {
           {
             label: 'Steps completed',
             value: roadmap?.completedSteps ?? 0,
-            icon: <BookOpen size={18} />,
+            icon: <CheckSquare size={18} />,
             iconBg: 'bg-green-50',
             iconColor: 'text-green-600',
           },
           {
             label: 'Sessions completed',
             value: sessions.filter((s) => s.status === 'completed').length,
-            icon: <Users size={18} />,
+            icon: <CalendarCheck size={18} />,
             iconBg: 'bg-amber-50',
             iconColor: 'text-amber-600',
           },
