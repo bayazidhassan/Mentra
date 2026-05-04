@@ -134,8 +134,8 @@ const LearnerDashboard = () => {
             label: 'Sessions completed',
             value: sessions.filter((s) => s.status === 'completed').length,
             icon: <CalendarCheck size={18} />,
-            iconBg: 'bg-amber-50',
-            iconColor: 'text-amber-600',
+            iconBg: 'bg-green-50',
+            iconColor: 'text-green-600',
           },
         ].map((stat) => (
           <div
