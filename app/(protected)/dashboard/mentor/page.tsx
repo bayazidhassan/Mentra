@@ -3,14 +3,14 @@
 import useUserStore from '@/store/useUserStore';
 import {
   Calendar,
-  CheckCircle,
+  CalendarCheck,
+  CalendarClock,
   ChevronRight,
   Clock,
   DollarSign,
   GraduationCap,
+  MessageSquareText,
   Star,
-  TrendingUp,
-  Users,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -97,7 +97,7 @@ const MentorDashboard = () => {
           {
             label: 'Completed Sessions',
             value: stats?.completedSessions ?? 0,
-            icon: <CheckCircle size={18} />,
+            icon: <CalendarCheck size={18} />,
             iconBg: 'bg-green-50',
             iconColor: 'text-green-600',
           },
@@ -113,7 +113,7 @@ const MentorDashboard = () => {
             value:
               stats?.rating && stats.rating > 0
                 ? `${stats.rating.toFixed(1)} ★`
-                : 'No ratings',
+                : '0',
             icon: <Star size={18} />,
             iconBg: 'bg-yellow-50',
             iconColor: 'text-yellow-600',
@@ -155,7 +155,7 @@ const MentorDashboard = () => {
           {
             label: 'Upcoming sessions',
             value: stats?.acceptedSessions ?? 0,
-            icon: <TrendingUp size={18} />,
+            icon: <CalendarClock size={18} />,
             iconBg: 'bg-purple-50',
             iconColor: 'text-purple-600',
             href: '/sessions',
@@ -163,7 +163,7 @@ const MentorDashboard = () => {
           {
             label: 'Total reviews',
             value: stats?.totalReviews ?? 0,
-            icon: <Users size={18} />,
+            icon: <MessageSquareText size={18} />,
             iconBg: 'bg-indigo-50',
             iconColor: 'text-indigo-600',
             href: null,
@@ -305,20 +305,20 @@ const MentorDashboard = () => {
           {
             label: 'My learners',
             desc: 'View learners you have worked with',
-            href: '/learners',
+            href: '/dashboard/mentor/learners',
             icon: <GraduationCap size={20} className="text-indigo-500" />,
           },
           {
             label: 'Earnings',
             desc: 'Track your payment history',
-            href: '/earnings',
+            href: '/dashboard/mentor/earnings',
             icon: <DollarSign size={20} className="text-green-500" />,
           },
           {
             label: 'Availability',
             desc: 'Manage your schedule and hourly rate',
-            href: '/availability',
-            icon: <Clock size={20} className="text-purple-500" />,
+            href: '/dashboard/mentor/availability',
+            icon: <CalendarCheck size={20} className="text-purple-500" />,
           },
         ].map((item) => (
           <Link

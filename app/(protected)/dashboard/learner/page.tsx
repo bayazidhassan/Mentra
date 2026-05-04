@@ -4,9 +4,9 @@ import useUserStore from '@/store/useUserStore';
 import {
   Calendar,
   CalendarCheck,
-  CheckSquare,
   ChevronRight,
   Clock,
+  ListChecks,
   Map,
   Star,
   Users,
@@ -126,7 +126,7 @@ const LearnerDashboard = () => {
           {
             label: 'Steps completed',
             value: roadmap?.completedSteps ?? 0,
-            icon: <CheckSquare size={18} />,
+            icon: <ListChecks size={18} />,
             iconBg: 'bg-green-50',
             iconColor: 'text-green-600',
           },

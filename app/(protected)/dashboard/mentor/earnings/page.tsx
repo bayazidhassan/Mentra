@@ -1,6 +1,6 @@
 'use client';
 
-import { DollarSign, TrendingUp } from 'lucide-react';
+import { CreditCard, DollarSign } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
@@ -62,29 +62,33 @@ const EarningsPage = () => {
             </div>
             <p className="text-sm font-medium text-gray-500">Total earnings</p>
           </div>
-          <p
-            className="text-3xl font-bold text-gray-900"
-            style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
-          >
-            ${totalEarnings.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-400 mt-1">From paid sessions</p>
+          <div className="flex flex-col items-center">
+            <p
+              className="text-3xl font-bold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              ${totalEarnings.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">From paid sessions</p>
+          </div>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-              <TrendingUp size={20} className="text-indigo-600" />
+              <CreditCard size={20} className="text-indigo-600" />
             </div>
             <p className="text-sm font-medium text-gray-500">Paid sessions</p>
           </div>
-          <p
-            className="text-3xl font-bold text-gray-900"
-            style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
-          >
-            {totalPayments}
-          </p>
-          <p className="text-xs text-gray-400 mt-1">Completed payments</p>
+          <div className="flex flex-col items-center">
+            <p
+              className="text-3xl font-bold text-gray-900"
+              style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
+            >
+              {totalPayments}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">Completed payments</p>
+          </div>
         </div>
       </div>
 
