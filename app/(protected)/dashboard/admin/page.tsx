@@ -6,6 +6,7 @@ import {
   ChevronRight,
   DollarSign,
   GraduationCap,
+  Settings,
   TrendingUp,
   UserCheck,
   Users,
@@ -267,7 +268,7 @@ const AdminDashboard = () => {
             label: 'Settings',
             desc: 'Platform configuration',
             href: '/dashboard/admin/settings',
-            icon: <TrendingUp size={20} className="text-green-500" />,
+            icon: <Settings size={20} className="text-green-500" />,
           },
         ].map((item) => (
           <Link
