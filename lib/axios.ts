@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
       if (!refreshed) {
         // Refresh token also expired → force logout
         useAuthStore.getState().clearAuth();
-        window.location.href = '/login';
+        //window.location.href = '/login';
         return Promise.reject(error);
       }
 

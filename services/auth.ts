@@ -65,6 +65,12 @@ export type SetRoleResponse = {
   } | null;
 };
 
+export type ForgotPasswordResponse = {
+  success: boolean;
+  message: string;
+  data: null;
+};
+
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
@@ -102,6 +108,18 @@ const setRole = async (
   return response.data;
 };
 
+const forgotPassword = async (
+  email: string,
+): Promise<ForgotPasswordResponse> => {
+  const response = await axiosInstance.post<ForgotPasswordResponse>(
+    '/auth/forgot-password',
+    {
+      email,
+    },
+  );
+  return response.data;
+};
+
 const logout = async () => {
   const response = await axiosInstance.post('/auth/logout');
   return response.data;
@@ -112,5 +130,6 @@ export const authService = {
   login,
   googleLogin,
   setRole,
+  forgotPassword,
   logout,
 };
