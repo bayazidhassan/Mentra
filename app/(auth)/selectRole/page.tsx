@@ -74,7 +74,7 @@ const SelectRolePage = () => {
         if (selectedRole === 'mentor') {
           await authService.logout();
           toast.success(
-            'Your mentor account has been created! Please wait for admin approval before logging in.',
+            'Account created! Please wait for admin approval and check your email for the approval message.',
           );
           router.replace('/login');
         } else {
