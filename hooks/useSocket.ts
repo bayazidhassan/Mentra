@@ -48,8 +48,6 @@ export const useSocket = () => {
     const handleDisconnect = () => setConnected(false);
 
     const handleUnreadMessage = ({ conversationId }: UnreadMessagePayload) => {
-      if (window.location.pathname.startsWith('/chat')) return;
-
       setUnreadConversations((prev) => {
         const updated = new Set(prev);
         updated.add(conversationId);
