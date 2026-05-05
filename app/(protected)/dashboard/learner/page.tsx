@@ -40,6 +40,7 @@ const LearnerDashboard = () => {
         setSessions(sessionsData);
         setRoadmap(roadmapData);
         setMentors(mentorsData.mentors);
+        console.log(sessionsData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -55,8 +56,7 @@ const LearnerDashboard = () => {
     .sort(
       (a, b) =>
         new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime(),
-    )
-    .slice(0, 3);
+    );
 
   const progressPercent =
     roadmap && roadmap.totalSteps > 0
@@ -302,7 +302,7 @@ const LearnerDashboard = () => {
 
           {upcomingSessions.length > 0 ? (
             <div className="space-y-3">
-              {upcomingSessions.map((session) => {
+              {upcomingSessions.slice(0, 3).map((session) => {
                 const cfg =
                   statusConfig[session.status] ?? statusConfig.pending;
                 return (
