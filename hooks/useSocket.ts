@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { toast } from 'sonner';
 import { messageService } from '../services/message';
 import useAuthStore from '../store/useAuthStore';
 
@@ -79,10 +81,13 @@ export const useSocket = () => {
     const fetchUnread = async () => {
       try {
         const conversationIds = await messageService.getUnreadConversationIds();
-
         setUnreadConversations(new Set(conversationIds));
-      } catch (err) {
-        console.error(err);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          toast.error(
+            err.response?.data?.message || 'Failed to generate roadmap.',
+          );
+        }
       }
     };
 
@@ -92,14 +97,13 @@ export const useSocket = () => {
   // ─────────────────────────────────────────────
   // HELPERS
   // ─────────────────────────────────────────────
-  const removeConversation = (conversationId: string) => {
+  const removeConversation = useCallback((conversationId: string) => {
     setUnreadConversations((prev) => {
       const updated = new Set(prev);
       updated.delete(conversationId);
       return updated;
     });
-  };
-
+  }, []);
   const resetMessageCount = () => setUnreadConversations(new Set());
   const resetNotificationCount = () => setUnreadNotificationCount(0);
 
