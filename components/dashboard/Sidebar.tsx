@@ -23,6 +23,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useSocket } from '../../hooks/useSocket';
 
 type TNavItem = {
   label: string;
@@ -121,6 +122,7 @@ const NavContent = ({
   const { user } = useUserStore();
   const pathname = usePathname();
   const { logout } = useLogout();
+  const { unreadMessageCount, resetMessageCount } = useSocket();
   const navItems = navMap[user?.role ?? 'learner'];
 
   return (
@@ -128,12 +130,18 @@ const NavContent = ({
       {/* Nav items */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname.startsWith(item.href);
+          const isChat = item.href === '/chat';
+
           return (
             <Link
               key={item.href}
               href={item.href}
-              onClick={onNavClick}
+              onClick={() => {
+                // Reset chat badge when navigating to chat
+                if (isChat) resetMessageCount();
+                onNavClick?.();
+              }}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 isActive
                   ? 'bg-indigo-50 text-indigo-600'
@@ -141,10 +149,29 @@ const NavContent = ({
               } ${collapsed ? 'justify-center' : ''}`}
               title={collapsed ? item.label : ''}
             >
-              <span className={isActive ? 'text-indigo-600' : 'text-gray-400'}>
+              {/* Icon with badge for chat */}
+              <span
+                className={`relative ${isActive ? 'text-indigo-600' : 'text-gray-400'}`}
+              >
                 {item.icon}
+                {isChat && unreadMessageCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
+                    {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                  </span>
+                )}
               </span>
-              {!collapsed && item.label}
+
+              {/* Label + inline badge when expanded */}
+              {!collapsed && (
+                <span className="flex items-center gap-2 flex-1">
+                  {item.label}
+                  {isChat && unreadMessageCount > 0 && (
+                    <span className="ml-auto min-w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                      {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                    </span>
+                  )}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -205,7 +232,6 @@ const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close mobile drawer on route change
   useEffect(() => {
     const timer = setTimeout(() => {
       setMobileOpen(false);
@@ -213,7 +239,6 @@ const Sidebar = () => {
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  // Prevent body scroll when mobile drawer is open
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = 'hidden';
@@ -227,7 +252,7 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* ── Mobile hamburger button (shown in navbar area) ─────────────────── */}
+      {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
         className="md:hidden fixed top-4 left-4 z-40 w-9 h-9 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
@@ -235,7 +260,7 @@ const Sidebar = () => {
         <Menu size={18} />
       </button>
 
-      {/* ── Mobile backdrop ────────────────────────────────────────────────── */}
+      {/* Mobile backdrop */}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-40 bg-black/40"
@@ -243,13 +268,12 @@ const Sidebar = () => {
         />
       )}
 
-      {/* ── Mobile drawer ──────────────────────────────────────────────────── */}
+      {/* Mobile drawer */}
       <aside
         className={`md:hidden fixed top-0 left-0 z-50 h-full w-72 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Drawer header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <Link
             href="/"
@@ -271,17 +295,15 @@ const Sidebar = () => {
             <X size={18} />
           </button>
         </div>
-
         <NavContent collapsed={false} onNavClick={() => setMobileOpen(false)} />
       </aside>
 
-      {/* ── Desktop sidebar ────────────────────────────────────────────────── */}
+      {/* Desktop sidebar */}
       <aside
         className={`hidden md:flex relative flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
           collapsed ? 'w-17' : 'w-60'
         }`}
       >
-        {/* Logo */}
         <Link
           href="/"
           className={`flex items-center gap-2.5 p-4 border-b border-gray-200 hover:opacity-80 transition-opacity ${
@@ -301,7 +323,6 @@ const Sidebar = () => {
 
         <NavContent collapsed={collapsed} />
 
-        {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed((p) => !p)}
           className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:border-indigo-300 transition-all cursor-pointer z-10"
