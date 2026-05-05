@@ -3,7 +3,6 @@
 import axios from 'axios';
 import {
   ArrowLeft,
-  BookOpen,
   Check,
   ChevronDown,
   ChevronUp,
@@ -11,6 +10,7 @@ import {
   ExternalLink,
   History,
   Loader2,
+  Map,
   Plus,
   Sparkles,
   Trash2,
@@ -342,7 +342,7 @@ const RoadmapPage = () => {
     return (
       <div className="max-w-2xl mx-auto mt-16 text-center">
         <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <BookOpen size={28} className="text-indigo-500" />
+          <Map size={28} className="text-indigo-500" />
         </div>
         <h1
           className="text-2xl font-bold text-gray-900 mb-2"
