@@ -40,7 +40,6 @@ const LearnerDashboard = () => {
         setSessions(sessionsData);
         setRoadmap(roadmapData);
         setMentors(mentorsData.mentors);
-        console.log(sessionsData);
       } catch (err) {
         console.error(err);
       } finally {

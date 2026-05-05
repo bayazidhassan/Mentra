@@ -40,6 +40,7 @@ const DashboardNavbar = () => {
                 alt={user.name}
                 width={28}
                 height={28}
+                loading="eager"
                 className="w-full h-full object-cover"
               />
             </div>
