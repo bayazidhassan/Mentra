@@ -18,13 +18,6 @@ const ConversationPage = () => {
   const router = useRouter();
   const { user } = useUserStore();
   const { socket } = useSocket();
-  const { removeConversation } = useSocket();
-
-  useEffect(() => {
-    if (!conversationId) return;
-
-    removeConversation(conversationId);
-  }, [conversationId, removeConversation]);
 
   const [conversations, setConversations] = useState<TConversation[]>([]);
   const [convLoading, setConvLoading] = useState(true);

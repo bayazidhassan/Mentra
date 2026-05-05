@@ -51,12 +51,6 @@ type UnreadCountResponse = {
   data: { count: number };
 };
 
-type UnreadConversationsResponse = {
-  success: boolean;
-  message: string;
-  data: { conversationIds: string[] };
-};
-
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getConversations = async (): Promise<TConversation[]> => {
@@ -98,19 +92,10 @@ const getTotalUnreadCount = async (): Promise<number> => {
   return response.data.data?.count ?? 0;
 };
 
-const getUnreadConversationIds = async (): Promise<string[]> => {
-  const response = await axiosInstance.get<UnreadConversationsResponse>(
-    '/message/unread-conversations',
-  );
-
-  return response.data.data?.conversationIds ?? [];
-};
-
 export const messageService = {
   getConversations,
   getMessages,
   sendMessage,
   markAsRead,
   getTotalUnreadCount,
-  getUnreadConversationIds,
 };
