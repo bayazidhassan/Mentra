@@ -13,8 +13,11 @@ const SOCKET_URL =
 export const useSocket = () => {
   const { accessToken } = useAuthStore();
   const [connected, setConnected] = useState(false);
-  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const [unreadConversations, setUnreadConversations] = useState<Set<string>>(
+    new Set(),
+  );
+  const unreadMessageCount = unreadConversations.size;
 
   useEffect(() => {
     if (!accessToken) return;
@@ -33,8 +36,13 @@ export const useSocket = () => {
     socket.on('disconnect', () => setConnected(false));
 
     // New chat message — increment message badge
-    socket.on('unread_message', () => {
-      setUnreadMessageCount((prev) => prev + 1);
+    socket.on('unread_message', ({ conversationId }) => {
+      if (window.location.pathname.startsWith('/chat')) return;
+      setUnreadConversations((prev) => {
+        const updated = new Set(prev);
+        updated.add(conversationId);
+        return updated;
+      });
     });
 
     // New notification — increment notification badge
@@ -50,7 +58,7 @@ export const useSocket = () => {
     };
   }, [accessToken]);
 
-  const resetMessageCount = () => setUnreadMessageCount(0);
+  const resetMessageCount = () => setUnreadConversations(new Set());
   const resetNotificationCount = () => setUnreadNotificationCount(0);
 
   return {
