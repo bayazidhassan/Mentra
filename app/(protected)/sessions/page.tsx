@@ -58,7 +58,7 @@ const statusConfig: Record<
     bg: 'bg-yellow-50 border-yellow-200',
   },
   accepted: {
-    label: 'Confirmed',
+    label: 'Accepted',
     color: 'text-green-700',
     bg: 'bg-green-50 border-green-200',
   },
