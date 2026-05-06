@@ -10,6 +10,7 @@ import {
   ListChecks,
   Map,
   Star,
+  TrendingUp,
   Users,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -119,7 +120,7 @@ const LearnerDashboard = () => {
           {
             label: 'Roadmap progress',
             value: `${progressPercent}%`,
-            icon: <Map size={18} />,
+            icon: <TrendingUp size={18} />,
             iconBg: 'bg-purple-50',
             iconColor: 'text-purple-600',
           },
