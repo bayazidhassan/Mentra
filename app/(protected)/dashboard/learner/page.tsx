@@ -4,6 +4,7 @@ import useUserStore from '@/store/useUserStore';
 import {
   Calendar,
   CalendarCheck,
+  CalendarClock,
   ChevronRight,
   Clock,
   ListChecks,
@@ -111,7 +112,7 @@ const LearnerDashboard = () => {
           {
             label: 'Upcoming sessions',
             value: upcomingSessions.length,
-            icon: <Calendar size={18} />,
+            icon: <CalendarClock size={18} />,
             iconBg: 'bg-indigo-50',
             iconColor: 'text-indigo-600',
           },
