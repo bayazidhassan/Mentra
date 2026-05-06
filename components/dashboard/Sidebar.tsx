@@ -130,7 +130,11 @@ const NavContent = ({
       {/* Nav items */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
         {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive =
+            item.href === `/dashboard/${user?.role}`
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(item.href + '/');
+
           const isChat = item.href === '/chat';
 
           return (
