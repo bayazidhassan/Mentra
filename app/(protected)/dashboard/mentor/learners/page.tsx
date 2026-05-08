@@ -75,7 +75,7 @@ const LearnersPage = () => {
         >
           Learners
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-justify text-gray-500 mt-1">
           View your learners or browse all learners on the platform.
         </p>
       </div>
@@ -141,32 +141,37 @@ const LearnersPage = () => {
               {myLearners.map((learner) => (
                 <div
                   key={learner._id}
-                  className="flex items-center gap-4 bg-white border border-gray-200 rounded-2xl p-5 hover:border-indigo-200 transition-all"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 hover:border-indigo-200 transition-all"
                 >
-                  {learner.profileImage ? (
-                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
-                      <Image
-                        src={learner.profileImage}
-                        alt={learner.name}
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover"
-                      />
+                  {/* Avatar + Info */}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {learner.profileImage ? (
+                      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                        <Image
+                          src={learner.profileImage}
+                          alt={learner.name}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
+                        {learner.name[0].toUpperCase()}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 truncate">
+                        {learner.name}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">
+                        {learner.email}
+                      </p>
                     </div>
-                  ) : (
-                    <div className="w-11 h-11 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-base shrink-0">
-                      {learner.name[0].toUpperCase()}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">
-                      {learner.name}
-                    </p>
-                    <p className="text-xs text-gray-400 truncate">
-                      {learner.email}
-                    </p>
                   </div>
-                  <div className="flex items-center gap-6 shrink-0">
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-4 sm:gap-6 shrink-0 pl-13 sm:pl-0">
                     <div className="text-center">
                       <p
                         className="text-lg font-bold text-gray-900"
