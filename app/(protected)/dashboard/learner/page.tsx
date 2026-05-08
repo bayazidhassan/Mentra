@@ -51,7 +51,7 @@ const LearnerDashboard = () => {
     fetchData();
   }, []);
 
-  // Upcoming = pending or accepted sessions, sorted by date, max 3
+  // Upcoming = pending or accepted sessions, sorted by date
   const upcomingSessions = sessions
     .filter((s) => s.status === 'pending' || s.status === 'accepted')
     .sort(
@@ -74,7 +74,7 @@ const LearnerDashboard = () => {
       color: 'text-amber-600',
     },
     accepted: {
-      label: 'Confirmed',
+      label: 'Accepted',
       bg: 'bg-green-50',
       color: 'text-green-600',
     },
