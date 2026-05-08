@@ -300,7 +300,8 @@ const ProfilePage = () => {
             <Image
               src={preview || user!.profileImage!}
               alt={user!.name}
-              fill
+              width={64}
+              height={64}
               className="rounded-2xl object-cover"
             />
           ) : (
@@ -403,7 +404,7 @@ const ProfilePage = () => {
             <>
               <div className="pt-2 border-t border-gray-100">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-                  Learning info
+                  LEARNER info
                 </p>
 
                 {/* Skills */}
@@ -533,7 +534,7 @@ const ProfilePage = () => {
                   {availability.map((slot, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 p-3 border border-gray-200 rounded-xl"
+                      className="grid grid-cols-1 md:flex items-center gap-2 p-3 border border-gray-200 rounded-xl"
                     >
                       <select
                         value={slot.day}
@@ -556,7 +557,9 @@ const ProfilePage = () => {
                         }
                         className="h-9 border border-gray-200 rounded-lg px-2 text-xs outline-none focus:border-indigo-500 transition-all"
                       />
-                      <span className="text-xs text-gray-400">to</span>
+                      <span className="text-xs text-center text-gray-400">
+                        to
+                      </span>
                       <input
                         type="time"
                         value={slot.endTime}
@@ -595,7 +598,7 @@ const ProfilePage = () => {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
           <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
             <Shield size={16} className="text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-700">
+            <p className="text-xs text-justify text-amber-700">
               If you signed up with Google, you may not have a password set.
               Password change will not work in that case.
             </p>
