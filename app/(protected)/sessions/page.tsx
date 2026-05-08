@@ -289,7 +289,7 @@ const SessionCard = ({
           </div>
           {session.price !== undefined && (
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
-              <DollarSign size={13} className="text-green-500 shrink-0" />$
+              <DollarSign size={13} className="text-green-500 shrink-0" />
               {session.price}
               <span
                 className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
@@ -689,7 +689,7 @@ const SessionsPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+        <div className="grid grid-cols-2 md:flex gap-1 mx-auto bg-gray-100 p-1 rounded-xl w-fit">
           {tabs.map((tab) => (
             <button
               key={tab.key}
