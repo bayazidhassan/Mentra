@@ -139,7 +139,7 @@ const AvailabilityPage = () => {
         >
           Availability
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-justify text-gray-500 mt-1">
           Set your available days and times so learners can book sessions with
           you.
         </p>
@@ -172,7 +172,7 @@ const AvailabilityPage = () => {
           </div>
           <span className="text-sm text-gray-400">per hour</span>
         </div>
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs text-justify text-gray-400 mt-2">
           Session price is calculated as: hourly rate ÷ 60 × duration minutes.
         </p>
       </div>
@@ -223,7 +223,7 @@ const AvailabilityPage = () => {
             {slots.map((slot, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100"
+                className="grid grid-cols-1 md:flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100"
               >
                 {/* Day selector */}
                 <select
@@ -243,28 +243,22 @@ const AvailabilityPage = () => {
                     </option>
                   ))}
                 </select>
-
                 {/* Start time */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="time"
-                    value={slot.startTime}
-                    onChange={(e) =>
-                      updateSlot(index, 'startTime', e.target.value)
-                    }
-                    className="h-9 border border-gray-200 rounded-lg px-2 text-sm text-gray-700 outline-none focus:border-indigo-500 transition-all bg-white"
-                  />
-                  <span className="text-xs text-gray-400">to</span>
-                  <input
-                    type="time"
-                    value={slot.endTime}
-                    onChange={(e) =>
-                      updateSlot(index, 'endTime', e.target.value)
-                    }
-                    className="h-9 border border-gray-200 rounded-lg px-2 text-sm text-gray-700 outline-none focus:border-indigo-500 transition-all bg-white"
-                  />
-                </div>
-
+                <input
+                  type="time"
+                  value={slot.startTime}
+                  onChange={(e) =>
+                    updateSlot(index, 'startTime', e.target.value)
+                  }
+                  className="h-9 border border-gray-200 rounded-lg px-2 text-sm text-gray-700 outline-none focus:border-indigo-500 transition-all bg-white"
+                />
+                <span className="text-xs text-center text-gray-400">to</span>
+                <input
+                  type="time"
+                  value={slot.endTime}
+                  onChange={(e) => updateSlot(index, 'endTime', e.target.value)}
+                  className="h-9 border border-gray-200 rounded-lg px-2 text-sm text-gray-700 outline-none focus:border-indigo-500 transition-all bg-white"
+                />
                 {/* Remove */}
                 <button
                   onClick={() => removeSlot(index)}
