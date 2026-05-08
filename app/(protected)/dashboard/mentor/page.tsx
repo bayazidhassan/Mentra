@@ -88,7 +88,7 @@ const MentorDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            label: 'Total sessions',
+            label: 'Total Sessions',
             value: stats?.totalSessions ?? 0,
             icon: <Calendar size={18} />,
             iconBg: 'bg-indigo-50',
@@ -102,7 +102,7 @@ const MentorDashboard = () => {
             iconColor: 'text-green-600',
           },
           {
-            label: 'Total earnings',
+            label: 'Total Earnings',
             value: `$${(stats?.totalEarnings ?? 0).toFixed(2)}`,
             icon: <DollarSign size={18} />,
             iconBg: 'bg-emerald-50',
@@ -130,7 +130,7 @@ const MentorDashboard = () => {
             </div>
             <div className="flex flex-col items-center">
               <p
-                className="text-2xl font-bold text-gray-900"
+                className="text-lg md:text-2xl font-semibold md:font-bold text-gray-900"
                 style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
               >
                 {stat.value}
@@ -145,7 +145,7 @@ const MentorDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {[
           {
-            label: 'Pending requests',
+            label: 'Pending Requests',
             value: stats?.pendingSessions ?? 0,
             icon: <Clock size={18} />,
             iconBg: 'bg-yellow-50',
@@ -153,7 +153,7 @@ const MentorDashboard = () => {
             href: '/sessions',
           },
           {
-            label: 'Upcoming sessions',
+            label: 'Upcoming Sessions',
             value: stats?.acceptedSessions ?? 0,
             icon: <CalendarClock size={18} />,
             iconBg: 'bg-purple-50',
@@ -161,7 +161,7 @@ const MentorDashboard = () => {
             href: '/sessions',
           },
           {
-            label: 'Total reviews',
+            label: 'Total Reviews',
             value: stats?.totalReviews ?? 0,
             icon: <MessageSquareText size={18} />,
             iconBg: 'bg-indigo-50',
@@ -173,9 +173,9 @@ const MentorDashboard = () => {
             key={stat.label}
             className="bg-white border border-gray-200 rounded-2xl p-5"
           >
-            <div className="flex items-start justify-between">
+            <div className="flex items-center justify-between mb-3">
               <div
-                className={`w-9 h-9 ${stat.iconBg} ${stat.iconColor} rounded-xl flex items-center justify-center mb-3`}
+                className={`w-9 h-9 ${stat.iconBg} ${stat.iconColor} rounded-xl flex items-center justify-center`}
               >
                 {stat.icon}
               </div>
@@ -190,7 +190,7 @@ const MentorDashboard = () => {
             </div>
             <div className="flex flex-col items-center">
               <p
-                className="text-2xl font-bold text-gray-900"
+                className="text-lg md:text-2xl font-semibold md:font-bold text-gray-900"
                 style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
               >
                 {stat.value}
@@ -225,7 +225,7 @@ const MentorDashboard = () => {
               return (
                 <div
                   key={session._id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100"
+                  className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100"
                 >
                   {/* Learner avatar */}
                   {session.learner?.profileImage ? (
@@ -244,12 +244,14 @@ const MentorDashboard = () => {
                     </div>
                   )}
 
-                  {/* Info */}
+                  {/* Info + badges */}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">
                       {session.title}
                     </p>
-                    <div className="flex items-center gap-2 mt-0.5">
+
+                    {/* Meta row — wraps gracefully on small screens */}
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
                       <p className="text-xs text-gray-400">
                         {session.learner?.name ?? 'Learner'}
                       </p>
@@ -257,7 +259,10 @@ const MentorDashboard = () => {
                       <p className="text-xs text-gray-400">
                         {new Date(session.scheduledAt).toLocaleDateString(
                           undefined,
-                          { month: 'short', day: 'numeric' },
+                          {
+                            month: 'short',
+                            day: 'numeric',
+                          },
                         )}
                       </p>
                       <span className="text-gray-300">·</span>
@@ -265,21 +270,35 @@ const MentorDashboard = () => {
                         {session.durationMinutes} min
                       </p>
                     </div>
+
+                    {/* Price + status — stacked under info on mobile */}
+                    <div className="flex items-center gap-2 mt-2 sm:hidden">
+                      {session.price !== undefined && (
+                        <span className="text-sm font-semibold text-gray-700">
+                          ${session.price}
+                        </span>
+                      )}
+                      <span
+                        className={`text-xs font-medium px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.color}`}
+                      >
+                        {cfg.label}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Price */}
-                  {session.price !== undefined && (
-                    <span className="text-sm font-semibold text-gray-700 shrink-0">
-                      ${session.price}
+                  {/* Price + status — inline on sm+ screens */}
+                  <div className="hidden sm:flex items-center gap-2 shrink-0">
+                    {session.price !== undefined && (
+                      <span className="text-sm font-semibold text-gray-700">
+                        ${session.price}
+                      </span>
+                    )}
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.color}`}
+                    >
+                      {cfg.label}
                     </span>
-                  )}
-
-                  {/* Status */}
-                  <span
-                    className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${cfg.bg} ${cfg.color}`}
-                  >
-                    {cfg.label}
-                  </span>
+                  </div>
                 </div>
               );
             })}
@@ -303,6 +322,12 @@ const MentorDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           {
+            label: 'Availability',
+            desc: 'Manage your schedule and hourly rate',
+            href: '/dashboard/mentor/availability',
+            icon: <CalendarCheck size={20} className="text-purple-500" />,
+          },
+          {
             label: 'My learners',
             desc: 'View learners you have worked with',
             href: '/dashboard/mentor/learners',
@@ -313,12 +338,6 @@ const MentorDashboard = () => {
             desc: 'Track your payment history',
             href: '/dashboard/mentor/earnings',
             icon: <DollarSign size={20} className="text-green-500" />,
-          },
-          {
-            label: 'Availability',
-            desc: 'Manage your schedule and hourly rate',
-            href: '/dashboard/mentor/availability',
-            icon: <CalendarCheck size={20} className="text-purple-500" />,
           },
         ].map((item) => (
           <Link
