@@ -7,7 +7,6 @@ import {
   CalendarClock,
   ChevronRight,
   Clock,
-  ListChecks,
   Map,
   Star,
   TrendingUp,
@@ -26,21 +25,25 @@ const LearnerDashboard = () => {
 
   const [sessions, setSessions] = useState<TSession[]>([]);
   const [roadmap, setRoadmap] = useState<TRoadmap | null>(null);
+  const [completedRoadmaps, setCompletedRoadmaps] = useState<TRoadmap[]>([]);
   const [mentors, setMentors] = useState<TMentor[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [sessionsData, roadmapData, mentorsData] = await Promise.all([
-          sessionService.getMySessions().catch(() => []),
-          roadmapService.getMyRoadmap().catch(() => null),
-          mentorService
-            .getMentors({ page: 1, limit: 3 })
-            .catch(() => ({ mentors: [] })),
-        ]);
+        const [sessionsData, roadmapData, completedRoadmaps, mentorsData] =
+          await Promise.all([
+            sessionService.getMySessions().catch(() => []),
+            roadmapService.getMyRoadmap().catch(() => null),
+            roadmapService.getCompletedRoadmaps().catch(() => []),
+            mentorService
+              .getMentors({ page: 1, limit: 3 })
+              .catch(() => ({ mentors: [] })),
+          ]);
         setSessions(sessionsData);
         setRoadmap(roadmapData);
+        setCompletedRoadmaps(completedRoadmaps);
         setMentors(mentorsData.mentors);
       } catch (err) {
         console.error(err);
@@ -109,28 +112,28 @@ const LearnerDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            label: 'Upcoming sessions',
+            label: 'Upcoming Sessions',
             value: upcomingSessions.length,
             icon: <CalendarClock size={18} />,
             iconBg: 'bg-indigo-50',
             iconColor: 'text-indigo-600',
           },
           {
-            label: 'Roadmap progress',
+            label: 'Roadmap Progress',
             value: `${progressPercent}%`,
             icon: <TrendingUp size={18} />,
             iconBg: 'bg-purple-50',
             iconColor: 'text-purple-600',
           },
           {
-            label: 'Steps completed',
-            value: roadmap?.completedSteps ?? 0,
-            icon: <ListChecks size={18} />,
+            label: 'Completed Roadmaps',
+            value: completedRoadmaps.length,
+            icon: <Map size={18} />,
             iconBg: 'bg-green-50',
             iconColor: 'text-green-600',
           },
           {
-            label: 'Sessions completed',
+            label: 'Completed Sessions',
             value: sessions.filter((s) => s.status === 'completed').length,
             icon: <CalendarCheck size={18} />,
             iconBg: 'bg-green-50',
@@ -153,7 +156,9 @@ const LearnerDashboard = () => {
               >
                 {stat.value}
               </p>
-              <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
+              <p className="text-xs text-center text-gray-400 mt-1">
+                {stat.label}
+              </p>
             </div>
           </div>
         ))}
