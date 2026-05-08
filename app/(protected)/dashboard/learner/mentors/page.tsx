@@ -243,7 +243,9 @@ const MentorsPage = () => {
             </div>
             {!loading && (
               <p className="text-sm text-gray-500 shrink-0">
-                {total > 0 ? `${total} mentors available` : 'No mentors found'}
+                {total > 0
+                  ? `${total} mentor${total > 1 ? 's' : ''} available`
+                  : 'No mentors found'}
               </p>
             )}
           </div>
@@ -339,7 +341,7 @@ const MentorsPage = () => {
               >
                 AI Mentor Matching
               </h2>
-              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+              <p className="text-sm text-justify text-gray-500 mb-6 leading-relaxed">
                 AI will analyze your active roadmap goal and match you with
                 mentors whose experience aligns with what you want to learn.
               </p>
@@ -359,7 +361,7 @@ const MentorsPage = () => {
                 ) : (
                   <>
                     <Sparkles size={16} />
-                    Get AI suggestions
+                    Get AI Suggestions
                   </>
                 )}
               </button>
