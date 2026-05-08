@@ -8,8 +8,10 @@ const Skeleton = ({ className = '' }: { className?: string }) => (
 const StatCardSkeleton = () => (
   <div className="bg-white border border-gray-200 rounded-2xl p-5">
     <Skeleton className="w-9 h-9 rounded-xl mb-3" />
-    <Skeleton className="h-8 w-16 mb-2" />
-    <Skeleton className="h-3 w-24" />
+    <div className="flex flex-col items-center">
+      <Skeleton className="h-8 w-16 mb-2" />
+      <Skeleton className="h-3 w-24" />
+    </div>
   </div>
 );
 
@@ -18,7 +20,7 @@ const StatCardSkeleton = () => (
 const SessionCardSkeleton = () => (
   <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-2">
     <Skeleton className="h-4 w-3/4" />
-    <Skeleton className="h-3 w-1/2" />
+    <Skeleton className="h-3 w-3/5" />
     <div className="flex items-center gap-2">
       <Skeleton className="w-5 h-5 rounded-full" />
       <Skeleton className="h-3 w-24" />
@@ -34,9 +36,9 @@ const MentorCardSkeleton = () => (
     <Skeleton className="w-10 h-10 rounded-full shrink-0" />
     <div className="flex-1 space-y-2">
       <Skeleton className="h-4 w-28" />
-      <Skeleton className="h-3 w-20" />
+      <Skeleton className="h-3 w-10" />
     </div>
-    <Skeleton className="h-7 w-14 rounded-lg" />
+    <Skeleton className="h-8 w-14 rounded-lg" />
   </div>
 );
 
@@ -68,8 +70,8 @@ const RecentSessionRowSkeleton = () => (
 export const LearnerDashboardSkeleton = () => (
   <div className="max-w-7xl mx-auto space-y-6">
     {/* Header */}
-    <div className="space-y-2">
-      <Skeleton className="h-8 w-64" />
+    <div className="md:hidden space-y-2">
+      <Skeleton className="h-4 w-64" />
       <Skeleton className="h-4 w-80" />
     </div>
 
@@ -138,8 +140,8 @@ export const LearnerDashboardSkeleton = () => (
 export const MentorDashboardSkeleton = () => (
   <div className="max-w-7xl mx-auto space-y-6">
     {/* Header */}
-    <div className="space-y-2">
-      <Skeleton className="h-8 w-64" />
+    <div className="md:hidden space-y-2">
+      <Skeleton className="h-4 w-64" />
       <Skeleton className="h-4 w-72" />
     </div>
 
@@ -193,8 +195,8 @@ export const MentorDashboardSkeleton = () => (
 export const AdminDashboardSkeleton = () => (
   <div className="max-w-7xl mx-auto space-y-6">
     {/* Header */}
-    <div className="space-y-2">
-      <Skeleton className="h-8 w-64" />
+    <div className="md:hidden space-y-2">
+      <Skeleton className="h-4 w-64" />
       <Skeleton className="h-4 w-72" />
     </div>
 

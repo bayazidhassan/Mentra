@@ -94,9 +94,9 @@ const LearnerDashboard = () => {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Welcome text — hidden on md+ screens */}
       <div className="md:hidden">
-        <p className="text-gray-400">
+        <p className="text-sm text-gray-500">
           Welcome back,{' '}
-          <span className="font-medium text-gray-800">
+          <span className="font-medium text-lg text-gray-800">
             {user?.name ?? 'there'} 👋
           </span>
         </p>

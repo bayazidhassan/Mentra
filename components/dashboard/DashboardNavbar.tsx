@@ -12,9 +12,9 @@ const DashboardNavbar = () => {
     <header className="h-16.25 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">
       {/* Welcome text — visible on md+ screens */}
       <div className="hidden md:block">
-        <p className="text-gray-400">
+        <p className="text-sm text-gray-500">
           Welcome back,{' '}
-          <span className="font-medium text-gray-800">
+          <span className="font-medium text-lg text-gray-800">
             {user?.name ?? 'there'} 👋
           </span>
         </p>
