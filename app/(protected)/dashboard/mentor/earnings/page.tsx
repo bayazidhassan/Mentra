@@ -39,11 +39,11 @@ const EarningsPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4 p-2">
       {/* Header */}
       <div>
         <h1
-          className="text-2xl font-bold text-gray-900"
+          className="text-xl sm:text-2xl font-bold text-gray-900"
           style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
         >
           Earnings
@@ -54,48 +54,46 @@ const EarningsPage = () => {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-              <DollarSign size={20} className="text-green-600" />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-2 mb-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+              <DollarSign size={18} className="text-green-600" />
             </div>
-            <p className="text-sm font-medium text-gray-500">Total earnings</p>
           </div>
           <div className="flex flex-col items-center">
             <p
-              className="text-3xl font-bold text-gray-900"
+              className="text-lg md:text-2xl font-bold text-gray-900"
               style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
             >
               ${totalEarnings.toFixed(2)}
             </p>
-            <p className="text-xs text-gray-400 mt-1">From paid sessions</p>
+            <p className="text-xs text-gray-400 mt-1"> Total Earnings</p>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-              <CreditCard size={20} className="text-indigo-600" />
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0">
+              <CreditCard size={18} className="text-indigo-600" />
             </div>
-            <p className="text-sm font-medium text-gray-500">Paid sessions</p>
           </div>
           <div className="flex flex-col items-center">
             <p
-              className="text-3xl font-bold text-gray-900"
+              className="text-lg md:text-2xl font-bold text-gray-900"
               style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
             >
               {totalPayments}
             </p>
-            <p className="text-xs text-gray-400 mt-1">Completed payments</p>
+            <p className="text-xs text-gray-400 mt-1">Paid Sessions</p>
           </div>
         </div>
       </div>
 
       {/* Payment history */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6">
         <h2
-          className="text-base font-semibold text-gray-900 mb-5"
+          className="text-base font-semibold text-gray-900 mb-4 sm:mb-5"
           style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
         >
           Payment history
@@ -116,11 +114,11 @@ const EarningsPage = () => {
             {payments.map((payment) => (
               <div
                 key={payment._id}
-                className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100"
+                className="flex items-start gap-3 p-3 sm:p-4 rounded-xl bg-gray-50 border border-gray-100"
               >
                 {/* Learner avatar */}
                 {payment.learner?.profileImage ? (
-                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shrink-0">
                     <Image
                       src={payment.learner.profileImage}
                       alt={payment.learner.name}
@@ -130,30 +128,25 @@ const EarningsPage = () => {
                     />
                   </div>
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
                     {payment.learner?.name[0]?.toUpperCase() ?? 'L'}
                   </div>
                 )}
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  {/* Session Title */}
                   <p className="text-sm font-medium text-gray-800 truncate">
                     {payment.session?.title ?? 'Session'}
                   </p>
-
-                  {/* Name */}
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-gray-500 mt-0.5 truncate">
                     {payment.learner?.name ?? 'Learner'}
                   </p>
-
-                  {/* Email */}
                   <p className="text-xs text-gray-400 truncate mt-0.5">
                     {payment.learner?.email ?? 'No email'}
                   </p>
 
-                  {/* Date + Time + Duration (below email) */}
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                  {/* Date + Duration */}
+                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-gray-400 mt-0.5">
                     {payment.session?.scheduledAt && (
                       <span>
                         {new Date(payment.session.scheduledAt).toLocaleString(
@@ -168,7 +161,6 @@ const EarningsPage = () => {
                         )}
                       </span>
                     )}
-
                     {payment.session?.durationMinutes && (
                       <>
                         <span className="text-gray-300">|</span>
@@ -176,9 +168,27 @@ const EarningsPage = () => {
                       </>
                     )}
                   </div>
+
+                  {/* Amount shown below info on mobile only */}
+                  <div className="md:hidden mt-2">
+                    <p className="text-sm font-bold text-green-600">
+                      +${payment.amount.toFixed(2)}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {new Date(payment.createdAt).toLocaleDateString(
+                        undefined,
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        },
+                      )}
+                    </p>
+                  </div>
                 </div>
-                {/* Amount + date */}
-                <div className="text-right shrink-0">
+
+                {/* Amount + date — right side on md+ */}
+                <div className="hidden md:block text-right shrink-0">
                   <p className="text-base font-bold text-green-600">
                     +${payment.amount.toFixed(2)}
                   </p>
@@ -187,8 +197,6 @@ const EarningsPage = () => {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
                     })}
                   </p>
                 </div>
