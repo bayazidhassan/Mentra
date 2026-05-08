@@ -389,7 +389,7 @@ const LearnerDashboard = () => {
         </div>
       </div>
 
-      {/* Recommended mentors */}
+      {/* Browse mentors */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-5">
           <h2
