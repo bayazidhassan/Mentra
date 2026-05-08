@@ -373,11 +373,11 @@ const RoadmapPage = () => {
             className="flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 transition-all"
           >
             <Plus size={16} />
-            Create manually
+            Create Manually
           </button>
           <button
             onClick={handleViewCompleted}
-            className="flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 transition-all"
+            className="flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:border-green-300 transition-all"
           >
             <History size={16} />
             Completed Roadmaps
@@ -396,7 +396,7 @@ const RoadmapPage = () => {
             className="text-2xl font-bold text-gray-900"
             style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
           >
-            {mode === 'ai' ? 'Generate with AI' : 'Create manually'}
+            {mode === 'ai' ? 'Generate with AI' : 'Create Manually'}
           </h1>
           <button
             onClick={() => setView('empty')}
@@ -425,7 +425,7 @@ const RoadmapPage = () => {
                 : 'text-gray-500'
             }`}
           >
-            <Plus size={15} /> Create manually
+            <Plus size={15} /> Create Manually
           </button>
         </div>
 
@@ -455,7 +455,7 @@ const RoadmapPage = () => {
                 </>
               ) : (
                 <>
-                  <Sparkles size={16} /> Generate roadmap
+                  <Sparkles size={16} /> Generate Roadmap
                 </>
               )}
             </button>
@@ -621,7 +621,7 @@ const RoadmapPage = () => {
                   <Loader2 size={16} className="animate-spin" /> Creating...
                 </>
               ) : (
-                'Create roadmap'
+                'Create Roadmap'
               )}
             </button>
           </div>
@@ -633,29 +633,31 @@ const RoadmapPage = () => {
   // ── Completed roadmaps list ────────────────────────────────────────────────
   if (view === 'completed-list') {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <button
-            onClick={() => setView(roadmap ? 'roadmap' : 'empty')}
-            className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
+        <div className="mb-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setView(roadmap ? 'roadmap' : 'empty')}
+              className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+
             <h1
-              className="text-2xl font-bold text-gray-900"
+              className="text-lg md:text-2xl font-bold text-gray-900"
               style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
             >
               Completed Roadmaps
             </h1>
-            {!completedLoading && (
-              <p className="text-xs text-gray-400 mt-0.5">
-                {completedRoadmaps.length} roadmap
-                {completedRoadmaps.length !== 1 ? 's' : ''} completed
-              </p>
-            )}
           </div>
+
+          {!completedLoading && (
+            <p className="text-xs text-gray-400 mt-0.5 ml-8">
+              {completedRoadmaps.length} roadmap
+              {completedRoadmaps.length !== 1 ? 's' : ''} completed
+            </p>
+          )}
         </div>
 
         {/* Loading */}
@@ -691,7 +693,7 @@ const RoadmapPage = () => {
                   setExpandedStep(null);
                   setView('completed-detail');
                 }}
-                className="w-full text-left bg-white border border-gray-200 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-sm transition-all"
+                className="w-full text-left bg-white border border-gray-200 rounded-2xl p-5 hover:border-green-200 hover:cursor-pointer hover:shadow-sm transition-all"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
@@ -706,7 +708,7 @@ const RoadmapPage = () => {
                       </h3>
                       {r.isAIGenerated && (
                         <span className="flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full shrink-0">
-                          <Sparkles size={10} /> AI
+                          <Sparkles size={10} /> AI Generated
                         </span>
                       )}
                     </div>
@@ -761,23 +763,23 @@ const RoadmapPage = () => {
               <ArrowLeft size={20} />
             </button>
             <div>
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h1
-                  className="text-2xl font-bold text-gray-900"
+                  className="text-lg md:text-2xl font-bold text-gray-900"
                   style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
                 >
                   {selectedCompleted.title}
                 </h1>
                 {selectedCompleted.isAIGenerated && (
                   <span className="flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
-                    <Sparkles size={11} /> AI generated
+                    <Sparkles size={11} /> AI Generated
                   </span>
                 )}
                 <span className="flex items-center gap-1 text-xs font-medium bg-green-50 text-green-600 px-2 py-1 rounded-full">
                   <Check size={11} /> Completed
                 </span>
               </div>
-              <p className="text-sm text-gray-500">{selectedCompleted.goal}</p>
+              <p className="text-sm text-gray-600">{selectedCompleted.goal}</p>
               {selectedCompleted.description && (
                 <p className="text-xs text-gray-400 mt-0.5">
                   {selectedCompleted.description}
@@ -900,7 +902,7 @@ const RoadmapPage = () => {
                 {expandedStep === step._id && (
                   <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
                     {step.description && (
-                      <p className="text-sm text-gray-500 leading-relaxed">
+                      <p className="text-sm text-justify text-gray-500 leading-relaxed">
                         {step.description}
                       </p>
                     )}
@@ -945,14 +947,14 @@ const RoadmapPage = () => {
         <div>
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <h1
-              className="text-xl md:text-2xl font-bold text-gray-900"
+              className="text-lg md:text-2xl font-bold text-gray-900"
               style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
             >
               {roadmap?.title}
             </h1>
             {roadmap?.isAIGenerated && (
               <span className="flex items-center gap-1 text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
-                <Sparkles size={11} /> AI generated
+                <Sparkles size={11} /> AI Generated
               </span>
             )}
           </div>
