@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { Calendar, Clock, DollarSign, Loader2, X } from 'lucide-react';
+import { Calendar, Clock, Hourglass, Loader2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { sessionService } from '../../services/session';
@@ -276,7 +276,7 @@ const BookSessionModal = ({
     >
       <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100">
           <div>
             <h2
               className="text-lg font-bold text-gray-900"
@@ -295,7 +295,7 @@ const BookSessionModal = ({
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+        <div className="px-6 py-3 space-y-2 max-h-[70vh] overflow-y-auto">
           {loadingSlots ? (
             <div className="flex items-center justify-center h-32">
               <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
@@ -331,9 +331,9 @@ const BookSessionModal = ({
 
               {/* Date picker */}
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  <Calendar size={13} className="inline mr-1 text-indigo-500" />
-                  Select date <span className="text-red-400">*</span>
+                <label className="flex items-center text-xs font-medium text-gray-700 mb-1.5">
+                  <Calendar size={13} className="mr-1 text-indigo-500" />
+                  Select date <span className="ml-1 text-red-400"> *</span>
                 </label>
 
                 {availability.length === 0 ? (
@@ -396,12 +396,14 @@ const BookSessionModal = ({
 
                 {/* Show effective available window */}
                 {selectedDateIndex !== null && selectedWindow && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg">
-                    <Clock size={12} />
-                    Available: {formatTime(
-                      selectedWindow.effectiveStart,
-                    )} – {formatTime(selectedWindow.effectiveEnd)}
-                    <span className="ml-auto text-indigo-400">
+                  <div className="mt-2 flex flex-col md:flex-row justify-between items-center text-xs text-indigo-600 bg-indigo-50 px-4 py-3 rounded-xl">
+                    <div className="flex items-center gap-1">
+                      <Clock size={12} />
+                      Available: {formatTime(
+                        selectedWindow.effectiveStart,
+                      )} – {formatTime(selectedWindow.effectiveEnd)}
+                    </div>
+                    <span className="text-indigo-400">
                       {selectedWindow.maxMinutes} min remaining
                     </span>
                   </div>
@@ -410,9 +412,10 @@ const BookSessionModal = ({
 
               {/* Duration */}
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  <Clock size={13} className="inline mr-1 text-indigo-500" />
-                  Duration (minutes) <span className="text-red-400">*</span>
+                <label className="flex items-center text-xs font-medium text-gray-700 mb-1.5">
+                  <Hourglass size={13} className="mr-1 text-indigo-500" />
+                  Duration (minutes){' '}
+                  <span className="ml-1 text-red-400">*</span>
                 </label>
                 <input
                   type="number"
@@ -440,17 +443,14 @@ const BookSessionModal = ({
 
               {/* Estimated price */}
               {estimatedPrice && (
-                <div className="flex items-center gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
-                  <DollarSign size={14} className="text-green-500 shrink-0" />
-                  <div>
-                    <p className="text-xs font-medium text-green-700">
-                      Estimated price
-                    </p>
-                    <p className="text-sm font-bold text-green-700">
+                <div className="flex items-center justify-between gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
+                  <p className="text-xs text-green-500">
+                    Estimated price:{' '}
+                    <span className="font-bold text-green-600">
                       ${estimatedPrice}
-                    </p>
-                  </div>
-                  <p className="text-xs text-green-500 ml-auto">
+                    </span>
+                  </p>
+                  <p className="text-xs text-green-500">
                     ${hourlyRate}/hr × {durationMinutes} min
                   </p>
                 </div>
@@ -460,7 +460,7 @@ const BookSessionModal = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
+        <div className="px-6 py-3 border-t border-gray-100 flex gap-3">
           <button
             onClick={onClose}
             className="flex-1 h-10 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:border-gray-300 transition-all cursor-pointer"
