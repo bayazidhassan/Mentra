@@ -18,7 +18,7 @@ const DashboardNavbar = () => {
             {user?.name ?? 'there'} 👋
           </span>
         </p>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-500">
           Here&apos;s what&apos;s happening with your learning journey.
         </p>
       </div>

@@ -71,16 +71,16 @@ const MentorDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1
-          className="text-xl md:text-2xl font-bold text-gray-900"
-          style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
-        >
-          Welcome back, {user?.name?.split(' ')[0]} 👋
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Here&apos;s an overview of your mentoring activity.
+      {/* Welcome text — hidden on md+ screens */}
+      <div className="md:hidden">
+        <p className="text-gray-400">
+          Welcome back,{' '}
+          <span className="font-medium text-gray-800">
+            {user?.name ?? 'there'} 👋
+          </span>
+        </p>
+        <p className="text-sm text-gray-500">
+          Here&apos;s what&apos;s happening with your learning journey.
         </p>
       </div>
 
