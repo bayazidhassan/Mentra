@@ -9,17 +9,17 @@ const DashboardNavbar = () => {
   const { user } = useUserStore();
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">
-      {/* Left — spacer for mobile hamburger button (hidden on md+) */}
-      <div className="md:hidden w-9" />
-
-      {/* Welcome text — hidden on very small screens */}
-      <div className="hidden sm:block">
-        <p className="text-sm text-gray-400">
+    <header className="h-16.25 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">
+      {/* Welcome text — visible on md+ screens */}
+      <div className="hidden md:block">
+        <p className="text-gray-400">
           Welcome back,{' '}
           <span className="font-medium text-gray-800">
             {user?.name ?? 'there'} 👋
           </span>
+        </p>
+        <p className="text-sm text-gray-600">
+          Here&apos;s what&apos;s happening with your learning journey.
         </p>
       </div>
 
