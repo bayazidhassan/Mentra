@@ -396,12 +396,14 @@ const BookSessionModal = ({
 
                 {/* Show effective available window */}
                 {selectedDateIndex !== null && selectedWindow && (
-                  <div className="mt-2 flex flex-col md:flex-row justify-between items-center text-xs text-indigo-600 bg-indigo-50 px-4 py-3 rounded-xl">
+                  <div className="mt-2 flex flex-col md:flex-row justify-between items-center text-xs text-indigo-500 bg-indigo-50 px-4 py-3 rounded-xl">
                     <div className="flex items-center gap-1">
                       <Clock size={12} />
-                      Available: {formatTime(
-                        selectedWindow.effectiveStart,
-                      )} – {formatTime(selectedWindow.effectiveEnd)}
+                      Available:{' '}
+                      <span className="font-bold text-indigo-600">
+                        {formatTime(selectedWindow.effectiveStart)} –{' '}
+                        {formatTime(selectedWindow.effectiveEnd)}
+                      </span>
                     </div>
                     <span className="text-indigo-400">
                       {selectedWindow.maxMinutes} min remaining
@@ -443,14 +445,14 @@ const BookSessionModal = ({
 
               {/* Estimated price */}
               {estimatedPrice && (
-                <div className="flex items-center justify-between gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
-                  <p className="text-xs text-green-500">
+                <div className="flex items-center justify-between gap-2 bg-green-50 border border-green-100 rounded-xl px-4 py-3 text-xs">
+                  <p className="text-green-500">
                     Estimated price:{' '}
                     <span className="font-bold text-green-600">
                       ${estimatedPrice}
                     </span>
                   </p>
-                  <p className="text-xs text-green-500">
+                  <p className="text-green-400">
                     ${hourlyRate}/hr × {durationMinutes} min
                   </p>
                 </div>
