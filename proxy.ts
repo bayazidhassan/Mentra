@@ -1,7 +1,12 @@
 import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
-const authRoutes = ['/login', '/register'];
+const authRoutes = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+];
 
 const roleRedirectMap: Record<string, string> = {
   learner: '/dashboard/learner',
@@ -116,5 +121,7 @@ export const config = {
     '/profile/:path*',
     '/login',
     '/register',
+    '/forgot-password',
+    '/reset-password',
   ],
 };
