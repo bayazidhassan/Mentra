@@ -37,7 +37,7 @@ type TUserStore = {
   setLoading: (value: boolean) => void;
 };
 
-const useUserStore = create<TUserStore>()(
+const userStore = create<TUserStore>()(
   persist(
     (set) => ({
       user: null,
@@ -55,4 +55,4 @@ const useUserStore = create<TUserStore>()(
   ),
 );
 
-export default useUserStore;
+export default userStore;

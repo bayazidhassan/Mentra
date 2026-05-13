@@ -1,7 +1,7 @@
 'use client';
 
 import useLogout from '@/hooks/useLogout';
-import useUserStore from '@/store/useUserStore';
+import userStore from '@/store/userStore';
 import {
   Calendar,
   CalendarCheck,
@@ -119,7 +119,7 @@ const NavContent = ({
   collapsed: boolean;
   onNavClick?: () => void;
 }) => {
-  const { user } = useUserStore();
+  const { user } = userStore();
   const pathname = usePathname();
   const { logout } = useLogout();
   const { unreadMessageCount, resetMessageCount } = useSocket();

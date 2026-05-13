@@ -3,7 +3,7 @@
 import { Calendar, Clock, DollarSign, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { adminService, TAdminSession } from '../../../../../services/admin';
+import { adminService, TAdminSession } from '../../../../../lib/services/admin';
 
 const statusConfig: Record<
   string,

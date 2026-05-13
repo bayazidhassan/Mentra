@@ -9,9 +9,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { authService } from '../../services/auth';
-import useAuthStore from '../../store/useAuthStore';
-import useUserStore from '../../store/useUserStore';
+import { authService } from '../../lib/services/auth';
+import authStore from '../../store/authStore';
+import userStore from '../../store/userStore';
 
 const loginSchema = z.object({
   email: z.string().check(z.email('Enter a valid email')),
@@ -32,7 +32,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
   const safeRedirect =
     redirect && redirect.startsWith('/') ? redirect : '/dashboard/learner';
   const router = useRouter();
-  const { setUser } = useUserStore();
+  const { setUser } = userStore();
 
   const {
     register,
@@ -51,7 +51,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
 
       if (response.success && response.data) {
         setUser(response.data.user);
-        useAuthStore.getState().setAccessToken(response.data.accessToken);
+        authStore.getState().setAccessToken(response.data.accessToken);
         toast.success(response.message);
         router.replace(safeRedirect);
       }
@@ -140,9 +140,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
                 );
                 if (result.success && result.data) {
                   setUser(result.data.user);
-                  useAuthStore
-                    .getState()
-                    .setAccessToken(result.data.accessToken);
+                  authStore.getState().setAccessToken(result.data.accessToken);
                   toast.success(result.message);
                   //redirect to role selection if new user
                   if (result.data.isNewUser) {

@@ -1,4 +1,4 @@
-import useAuthStore from '../store/useAuthStore';
+import authStore from '../store/authStore';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -21,13 +21,13 @@ const refreshAccessToken = async (): Promise<string | null> => {
     });
 
     if (!res.ok) {
-      useAuthStore.getState().clearAuth();
+      authStore.getState().clearAuth();
       window.location.href = '/login';
       return null;
     }
 
     const { data } = await res.json();
-    useAuthStore.getState().setAccessToken(data.accessToken);
+    authStore.getState().setAccessToken(data.accessToken);
     queue.forEach((cb) => cb(data.accessToken));
     return data.accessToken;
   } finally {
@@ -44,7 +44,7 @@ export const fetchClient = async <T = unknown>(
   endpoint: string,
   options: FetchOptions = {},
 ): Promise<T> => {
-  const token = useAuthStore.getState().accessToken;
+  const token = authStore.getState().accessToken;
 
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,

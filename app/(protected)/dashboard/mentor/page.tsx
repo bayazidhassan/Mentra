@@ -1,6 +1,6 @@
 'use client';
 
-import useUserStore from '@/store/useUserStore';
+import userStore from '@/store/userStore';
 import {
   Calendar,
   CalendarCheck,
@@ -20,7 +20,7 @@ import {
   mentorService,
   TMentorDashboardStats,
   TMentorRecentSession,
-} from '../../../../services/mentor';
+} from '../../../../lib/services/mentor';
 
 const statusConfig: Record<
   string,
@@ -37,7 +37,7 @@ const statusConfig: Record<
 };
 
 const MentorDashboard = () => {
-  const { user } = useUserStore();
+  const { user } = userStore();
   const [stats, setStats] = useState<TMentorDashboardStats | null>(null);
   const [recentSessions, setRecentSessions] = useState<TMentorRecentSession[]>(
     [],

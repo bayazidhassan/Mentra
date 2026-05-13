@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
-import { adminService, TAdminMentor } from '../../../../../services/admin';
+import { adminService, TAdminMentor } from '../../../../../lib/services/admin';
 
 type TTab = 'pending' | 'approved';
 

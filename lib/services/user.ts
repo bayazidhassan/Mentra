@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 import { fetchClient } from '@/lib/fetchClient';
-import { TUser } from '../store/useUserStore';
+import { TUser } from '../../store/userStore';
 
 export type GetMeResponse = {
   success: boolean;

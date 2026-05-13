@@ -1,12 +1,12 @@
 'use client';
 
-import useUserStore from '@/store/useUserStore';
 import Image from 'next/image';
 import Link from 'next/link';
+import userStore from '../../store/userStore';
 import NotificationBell from '../modal/NotificationBell';
 
 const DashboardNavbar = () => {
-  const { user } = useUserStore();
+  const { user } = userStore();
 
   return (
     <header className="h-16.25 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">

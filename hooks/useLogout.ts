@@ -3,14 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { disconnectSocket } from '../hooks/useSocket';
-import { authService } from '../services/auth';
-import useAuthStore from '../store/useAuthStore';
-import useUserStore from '../store/useUserStore';
+import { authService } from '../lib/services/auth';
+import authStore from '../store/authStore';
+import userStore from '../store/userStore';
 
 const useLogout = () => {
   const router = useRouter();
-  const { clearUser } = useUserStore();
-  const { clearAuth } = useAuthStore();
+  const { clearUser } = userStore();
+  const { clearAuth } = authStore();
 
   const logout = async () => {
     try {

@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BookSessionModal from '../../../../../../components/modal/BookSessionModal';
-import { mentorService, TMentor } from '../../../../../../services/mentor';
+import { mentorService, TMentor } from '../../../../../../lib/services/mentor';
 
 const DAYS_ORDER = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 

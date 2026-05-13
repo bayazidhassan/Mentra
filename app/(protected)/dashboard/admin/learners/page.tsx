@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
-import { adminService, TAdminLearner } from '../../../../../services/admin';
+import { adminService, TAdminLearner } from '../../../../../lib/services/admin';
 
 const AdminLearnersPage = () => {
   const [learners, setLearners] = useState<TAdminLearner[]>([]);

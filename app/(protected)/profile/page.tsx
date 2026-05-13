@@ -1,6 +1,6 @@
 'use client';
 
-import useUserStore, { TUser } from '@/store/useUserStore';
+import userStore, { TUser } from '@/store/userStore';
 import {
   Camera,
   Eye,
@@ -17,7 +17,7 @@ import {
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { userService } from '../../../services/user';
+import { userService } from '../../../lib/services/user';
 
 type TTab = 'profile' | 'password' | 'settings';
 
@@ -25,7 +25,7 @@ const inputClass =
   'w-full h-11 border border-gray-200 rounded-xl px-3 text-sm outline-none focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.08)] transition-all bg-white';
 
 const ProfilePage = () => {
-  const { user, setUser } = useUserStore();
+  const { user, setUser } = userStore();
   const [activeTab, setActiveTab] = useState<TTab>('profile');
   const isLearner = user?.role === 'learner';
   const isMentor = user?.role === 'mentor';

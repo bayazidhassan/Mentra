@@ -2,8 +2,8 @@
 
 import { MessageSquare } from 'lucide-react';
 import Image from 'next/image';
-import { TConversation } from '../../services/message';
-import useUserStore from '../../store/useUserStore';
+import { TConversation } from '../../lib/services/message';
+import userStore from '../../store/userStore';
 
 type Props = {
   conversations: TConversation[];
@@ -31,7 +31,7 @@ const ConversationList = ({
   activeConversationId,
   onSelect,
 }: Props) => {
-  const { user } = useUserStore();
+  const { user } = userStore();
 
   return (
     <div className="flex flex-col h-full">

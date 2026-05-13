@@ -1,5 +1,5 @@
 import { api } from '@/lib/api';
-import { TAvailability } from '../store/useUserStore';
+import { TAvailability } from '../../store/userStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

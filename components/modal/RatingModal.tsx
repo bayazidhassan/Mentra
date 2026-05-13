@@ -3,7 +3,7 @@
 import { Loader2, Star, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { sessionService } from '../../services/session';
+import { sessionService } from '../../lib/services/session';
 
 type Props = {
   sessionId: string;

@@ -19,13 +19,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import RatingModal from '../../../components/modal/RatingModal';
-import { paymentService } from '../../../services/payment';
+import { paymentService } from '../../../lib/services/payment';
 import {
   sessionService,
   TSession,
   TSessionStatus,
-} from '../../../services/session';
-import useUserStore from '../../../store/useUserStore';
+} from '../../../lib/services/session';
+import userStore from '../../../store/userStore';
 import { buildConversationId } from '../../../utils/chat_utils';
 
 type TTab = 'upcoming' | 'completed' | 'cancelled';
@@ -490,7 +490,7 @@ const SessionCard = ({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 const SessionsPage = () => {
-  const { user } = useUserStore();
+  const { user } = userStore();
   const role = user?.role as 'learner' | 'mentor';
   const searchParams = useSearchParams();
 

@@ -1,11 +1,11 @@
 'use client';
 
 import { silentRefresh } from '@/lib/silentRefresh';
-import useAuthStore from '@/store/useAuthStore';
+import authStore from '@/store/authStore';
 import { useEffect } from 'react';
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const isAuthReady = useAuthStore((s) => s.isAuthReady);
+  const isAuthReady = authStore((s) => s.isAuthReady);
 
   useEffect(() => {
     silentRefresh();

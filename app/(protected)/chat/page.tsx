@@ -4,7 +4,7 @@ import { MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ConversationList from '../../../components/chat/ConversationList';
-import { messageService, TConversation } from '../../../services/message';
+import { messageService, TConversation } from '../../../lib/services/message';
 
 const ChatPage = () => {
   const router = useRouter();

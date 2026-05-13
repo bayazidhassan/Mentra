@@ -1,5 +1,5 @@
-import useAuthStore from '../store/useAuthStore';
-import useUserStore from '../store/useUserStore';
+import authStore from '../store/authStore';
+import userStore from '../store/userStore';
 
 export const silentRefresh = async (): Promise<boolean> => {
   try {
@@ -12,19 +12,19 @@ export const silentRefresh = async (): Promise<boolean> => {
     );
 
     if (!res.ok) {
-      useAuthStore.getState().clearAuth();
-      useUserStore.getState().clearUser();
+      authStore.getState().clearAuth();
+      userStore.getState().clearUser();
       return false;
     }
 
     const { data } = await res.json();
-    useAuthStore.getState().setAccessToken(data.accessToken);
+    authStore.getState().setAccessToken(data.accessToken);
     return true;
   } catch {
-    useAuthStore.getState().clearAuth();
-    useUserStore.getState().clearUser();
+    authStore.getState().clearAuth();
+    userStore.getState().clearUser();
     return false;
   } finally {
-    useAuthStore.getState().setAuthReady(true);
+    authStore.getState().setAuthReady(true);
   }
 };

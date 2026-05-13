@@ -8,7 +8,7 @@ type TAuthStore = {
   clearAuth: () => void;
 };
 
-const useAuthStore = create<TAuthStore>((set) => ({
+const authStore = create<TAuthStore>((set) => ({
   accessToken: null,
   isAuthReady: false,
   setAccessToken: (token) => set({ accessToken: token }),
@@ -16,4 +16,4 @@ const useAuthStore = create<TAuthStore>((set) => ({
   clearAuth: () => set({ accessToken: null }),
 }));
 
-export default useAuthStore;
+export default authStore;

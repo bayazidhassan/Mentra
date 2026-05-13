@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { authService } from '../../services/auth';
+import { authService } from '../../lib/services/auth';
 
 const registerSchema = z
   .object({

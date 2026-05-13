@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   paymentService,
   TEarningPayment,
-} from '../../../../../services/payment';
+} from '../../../../../lib/services/payment';
 
 const EarningsPage = () => {
   const [payments, setPayments] = useState<TEarningPayment[]>([]);

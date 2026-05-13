@@ -3,8 +3,8 @@
 import { Calendar, Clock, Hourglass, Loader2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { sessionService } from '../../services/session';
-import { TAvailability } from '../../store/useUserStore';
+import { sessionService } from '../../lib/services/session';
+import { TAvailability } from '../../store/userStore';
 
 type Props = {
   mentorProfileId: string;

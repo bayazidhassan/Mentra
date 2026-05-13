@@ -10,13 +10,13 @@ import {
   messageService,
   TConversation,
   TMessage,
-} from '../../../../services/message';
-import useUserStore from '../../../../store/useUserStore';
+} from '../../../../lib/services/message';
+import userStore from '../../../../store/userStore';
 
 const ConversationPage = () => {
   const { conversationId } = useParams() as { conversationId: string };
   const router = useRouter();
-  const { user } = useUserStore();
+  const { user } = userStore();
   const { socket } = useSocket();
 
   const [conversations, setConversations] = useState<TConversation[]>([]);

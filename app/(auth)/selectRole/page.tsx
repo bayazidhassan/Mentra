@@ -1,19 +1,19 @@
 'use client';
 
-import useUserStore from '@/store/useUserStore';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { authService } from '../../../services/auth';
-import { userService } from '../../../services/user';
-import useAuthStore from '../../../store/useAuthStore';
+import { authService } from '../../../lib/services/auth';
+import { userService } from '../../../lib/services/user';
+import authStore from '../../../store/authStore';
+import userStore from '../../../store/userStore';
 
 const SelectRolePage = () => {
   const [selectedRole, setSelectedRole] = useState<'learner' | 'mentor' | null>(
     null,
   );
-  const { user, setUser } = useUserStore();
+  const { user, setUser } = userStore();
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const router = useRouter();
@@ -69,7 +69,7 @@ const SelectRolePage = () => {
 
       if (response.success && response.data) {
         setUser({ ...user!, role: selectedRole });
-        useAuthStore.getState().setAccessToken(response.data.accessToken);
+        authStore.getState().setAccessToken(response.data.accessToken);
         if (selectedRole === 'mentor') {
           await authService.logout();
           toast.success(

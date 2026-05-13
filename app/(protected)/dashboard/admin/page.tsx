@@ -1,6 +1,6 @@
 'use client';
 
-import useUserStore from '@/store/useUserStore';
+import userStore from '@/store/userStore';
 import {
   Calendar,
   ChevronRight,
@@ -18,7 +18,7 @@ import {
   adminService,
   TAdminRecentSession,
   TAdminStats,
-} from '../../../../services/admin';
+} from '../../../../lib/services/admin';
 
 const statusConfig: Record<
   string,
@@ -35,7 +35,7 @@ const statusConfig: Record<
 };
 
 const AdminDashboard = () => {
-  const { user } = useUserStore();
+  const { user } = userStore();
   const [stats, setStats] = useState<TAdminStats | null>(null);
   const [recentSessions, setRecentSessions] = useState<TAdminRecentSession[]>(
     [],

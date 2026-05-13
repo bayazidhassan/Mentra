@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { userService } from '../services/user';
-import useUserStore from '../store/useUserStore';
+import { userService } from '../lib/services/user';
+import userStore from '../store/userStore';
 
 const useMe = () => {
-  const { setUser, clearUser, setLoading } = useUserStore();
+  const { setUser, clearUser, setLoading } = userStore();
 
   useEffect(() => {
     const fetchMe = async () => {

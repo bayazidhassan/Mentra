@@ -8,7 +8,7 @@ import {
   learnerService,
   TAllLearner,
   TMyLearner,
-} from '../../../../../services/learner';
+} from '../../../../../lib/services/learner';
 
 type TTab = 'my' | 'all';
 

@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import useAuthStore from '../store/useAuthStore';
+import authStore from '../store/authStore';
 
 let socketInstance: Socket | null = null;
 
@@ -11,7 +11,7 @@ const SOCKET_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
 
 export const useSocket = () => {
-  const { accessToken } = useAuthStore();
+  const { accessToken } = authStore();
   const pathname = usePathname();
   const [connected, setConnected] = useState(false);
   const [unreadSenders, setUnreadSenders] = useState<Set<string>>(new Set());

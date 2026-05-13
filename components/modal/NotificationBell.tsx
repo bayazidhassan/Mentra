@@ -7,7 +7,7 @@ import { useSocket } from '../../hooks/useSocket';
 import {
   notificationService,
   TNotification,
-} from '../../services/notification';
+} from '../../lib/services/notification';
 
 const typeColors: Record<string, string> = {
   session: 'bg-indigo-100 text-indigo-600',

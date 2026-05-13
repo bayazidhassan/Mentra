@@ -11,7 +11,7 @@ import {
   mentorService,
   TMentor,
   TSuggestedMentor,
-} from '../../../../../services/mentor';
+} from '../../../../../lib/services/mentor';
 
 type TMode = 'manual' | 'ai';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import useUserStore from '@/store/useUserStore';
+import userStore from '@/store/userStore';
 import {
   Calendar,
   CalendarCheck,
@@ -16,12 +16,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { LearnerDashboardSkeleton } from '../../../../components/dashboard/DashboardSkeleton';
-import { mentorService, TMentor } from '../../../../services/mentor';
-import { roadmapService, TRoadmap } from '../../../../services/roadmap';
-import { sessionService, TSession } from '../../../../services/session';
+import { mentorService, TMentor } from '../../../../lib/services/mentor';
+import { roadmapService, TRoadmap } from '../../../../lib/services/roadmap';
+import { sessionService, TSession } from '../../../../lib/services/session';
 
 const LearnerDashboard = () => {
-  const { user } = useUserStore();
+  const { user } = userStore();
 
   const [sessions, setSessions] = useState<TSession[]>([]);
   const [roadmap, setRoadmap] = useState<TRoadmap | null>(null);
