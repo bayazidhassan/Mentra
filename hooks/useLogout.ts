@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { disconnectSocket } from '../hooks/useSocket';
@@ -21,10 +20,10 @@ const useLogout = () => {
       clearAuth();
       toast.success(response.message || 'Logged out successfully.');
       router.push('/login');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || 'Something went wrong.');
-      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Something went wrong.';
+      toast.error(message);
     }
   };
 

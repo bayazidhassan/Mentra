@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Ban, CheckCircle, Search, UserCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
@@ -71,11 +70,8 @@ const AdminMentorsPage = () => {
       setMentors((prev) => [removedMentor, ...prev]);
       setTotal((prev) => prev + 1);
 
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || 'Failed to approve.'
-          : 'Failed to approve.',
-      );
+      const message = err instanceof Error ? err.message : 'Failed to approve.';
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }
@@ -98,11 +94,9 @@ const AdminMentorsPage = () => {
       );
       toast.success(`Mentor ${action}ned successfully.`);
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || `Failed to ${action}.`
-          : `Failed to ${action}.`,
-      );
+      const message =
+        err instanceof Error ? err.message : `Failed to ${action}.`;
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }

@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '@/lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,45 +51,48 @@ type UnreadCountResponse = {
   data: { count: number };
 };
 
+type SendMessageResponse = {
+  success: boolean;
+  data: TMessage;
+};
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getConversations = async (): Promise<TConversation[]> => {
-  const response = await axiosInstance.get<ConversationsResponse>(
+  const response = await api.get<ConversationsResponse>(
     '/message/conversations',
   );
-  return response.data.data ?? [];
+  return response.data ?? [];
 };
 
 const getMessages = async (
   otherUserId: string,
   page = 1,
 ): Promise<TMessage[]> => {
-  const response = await axiosInstance.get<MessagesResponse>(
+  const response = await api.get<MessagesResponse>(
     `/message/${otherUserId}?page=${page}`,
   );
-  return response.data.data ?? [];
+  return response.data ?? [];
 };
 
 const sendMessage = async (
   receiverId: string,
   text: string,
 ): Promise<TMessage> => {
-  const response = await axiosInstance.post<{
-    success: boolean;
-    data: TMessage;
-  }>('/message/send', { receiverId, text });
-  return response.data.data;
+  const response = await api.post<SendMessageResponse>('/message/send', {
+    receiverId,
+    text,
+  });
+  return response.data;
 };
 
 const markAsRead = async (otherUserId: string): Promise<void> => {
-  await axiosInstance.patch(`/message/read/${otherUserId}`);
+  await api.patch(`/message/read/${otherUserId}`);
 };
 
 const getTotalUnreadCount = async (): Promise<number> => {
-  const response = await axiosInstance.get<UnreadCountResponse>(
-    '/message/unread-count',
-  );
-  return response.data.data?.count ?? 0;
+  const response = await api.get<UnreadCountResponse>('/message/unread-count');
+  return response.data?.count ?? 0;
 };
 
 export const messageService = {

@@ -1,7 +1,6 @@
 'use client';
 
 import useUserStore from '@/store/useUserStore';
-import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -82,11 +81,9 @@ const SelectRolePage = () => {
         }
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to update role.');
-      } else {
-        toast.error('Failed to update role.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Something went wrong.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

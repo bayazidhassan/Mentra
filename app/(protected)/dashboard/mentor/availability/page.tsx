@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Clock, DollarSign, Loader2, Plus, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -109,13 +108,9 @@ const AvailabilityPage = () => {
 
       toast.success('Availability updated successfully!');
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(
-          err.response?.data?.message || 'Failed to update availability.',
-        );
-      } else {
-        toast.error('Failed to update availability.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to update availability.';
+      toast.error(message);
     } finally {
       setSaving(false);
     }

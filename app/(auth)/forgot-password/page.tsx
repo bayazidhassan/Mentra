@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Mail } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -30,9 +29,9 @@ export default function ForgotPasswordPage() {
         setEmail('');
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Something went wrong');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Something went wrong.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

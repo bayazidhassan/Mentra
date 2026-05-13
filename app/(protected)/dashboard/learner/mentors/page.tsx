@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Brain, Search, Sparkles, Star, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -76,13 +75,9 @@ const MentorsPage = () => {
         );
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(
-          err.response?.data?.message || 'Failed to get suggestions.',
-        );
-      } else {
-        toast.error('Failed to get suggestions.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to get suggestions.';
+      toast.error(message);
     } finally {
       setSuggesting(false);
     }

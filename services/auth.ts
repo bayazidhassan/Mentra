@@ -77,6 +77,12 @@ export type ResetPasswordResponse = {
   data: null;
 };
 
+export type LogoutResponse = {
+  success: boolean;
+  message: string;
+  data: null;
+};
+
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
@@ -113,8 +119,8 @@ const resetPassword = async (
   });
 };
 
-const logout = async () => {
-  return api.post('/auth/logout');
+const logout = async (): Promise<LogoutResponse> => {
+  return api.post<LogoutResponse>('/auth/logout');
 };
 
 export const authService = {

@@ -15,7 +15,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
   isRefreshing = true;
 
   try {
-    const res = await fetch(`${BASE_URL}/auth/refresh`, {
+    const res = await fetch(`${BASE_URL}/auth/refreshToken`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -50,7 +50,9 @@ export const fetchClient = async <T = unknown>(
     ...options,
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
+      ...(options.body instanceof FormData
+        ? {}
+        : { 'Content-Type': 'application/json' }),
       ...options.headers,
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },

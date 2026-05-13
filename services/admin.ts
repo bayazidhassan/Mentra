@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '@/lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -88,8 +88,8 @@ type SessionsResponse = {
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getDashboardStats = async () => {
-  const res = await axiosInstance.get<StatsResponse>('/admin/stats');
-  return res.data.data;
+  const res = await api.get<StatsResponse>('/admin/stats');
+  return res.data;
 };
 
 const getLearners = async ({
@@ -105,18 +105,17 @@ const getLearners = async ({
   if (search) params.set('search', search);
   params.set('page', String(page));
   params.set('limit', String(limit));
-  const res = await axiosInstance.get<LearnersResponse>(
-    `/admin/learners?${params}`,
-  );
-  return res.data.data;
+
+  const res = await api.get<LearnersResponse>(`/admin/learners?${params}`);
+  return res.data;
 };
 
 const banUser = async (id: string) => {
-  await axiosInstance.patch(`/admin/learners/${id}/ban`);
+  await api.patch(`/admin/learners/${id}/ban`);
 };
 
 const unbanUser = async (id: string) => {
-  await axiosInstance.patch(`/admin/learners/${id}/unban`);
+  await api.patch(`/admin/learners/${id}/unban`);
 };
 
 const getMentors = async ({
@@ -135,22 +134,21 @@ const getMentors = async ({
   params.set('approved', String(approved));
   params.set('page', String(page));
   params.set('limit', String(limit));
-  const res = await axiosInstance.get<MentorsResponse>(
-    `/admin/mentors?${params}`,
-  );
-  return res.data.data;
+
+  const res = await api.get<MentorsResponse>(`/admin/mentors?${params}`);
+  return res.data;
 };
 
 const approveMentor = async (mentorProfileId: string) => {
-  await axiosInstance.patch(`/admin/mentors/${mentorProfileId}/approve`);
+  await api.patch(`/admin/mentors/${mentorProfileId}/approve`);
 };
 
 const banMentor = async (id: string) => {
-  await axiosInstance.patch(`/admin/mentors/${id}/ban`);
+  await api.patch(`/admin/mentors/${id}/ban`);
 };
 
 const unbanMentor = async (id: string) => {
-  await axiosInstance.patch(`/admin/mentors/${id}/unban`);
+  await api.patch(`/admin/mentors/${id}/unban`);
 };
 
 const getSessions = async ({
@@ -169,10 +167,9 @@ const getSessions = async ({
   if (status) params.set('status', status);
   params.set('page', String(page));
   params.set('limit', String(limit));
-  const res = await axiosInstance.get<SessionsResponse>(
-    `/admin/sessions?${params}`,
-  );
-  return res.data.data;
+
+  const res = await api.get<SessionsResponse>(`/admin/sessions?${params}`);
+  return res.data;
 };
 
 export const adminService = {

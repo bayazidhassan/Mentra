@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import {
   ArrowLeft,
   Check,
@@ -113,13 +112,9 @@ const RoadmapPage = () => {
       setView('roadmap');
       toast.success('Roadmap generated successfully!');
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(
-          err.response?.data?.message || 'Failed to generate roadmap.',
-        );
-      } else {
-        toast.error('Failed to generate roadmap.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to generate roadmap.';
+      toast.error(message);
     } finally {
       setGenerating(false);
     }
@@ -148,11 +143,9 @@ const RoadmapPage = () => {
       setView('roadmap');
       toast.success('Roadmap created successfully!');
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to create roadmap.');
-      } else {
-        toast.error('Failed to create roadmap.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to create roadmap.';
+      toast.error(message);
     } finally {
       setGenerating(false);
     }
@@ -176,11 +169,9 @@ const RoadmapPage = () => {
         toast.success('Step updated.');
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to update step.');
-      } else {
-        toast.error('Failed to update step.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to update step.';
+      toast.error(message);
     }
   };
 
@@ -193,11 +184,9 @@ const RoadmapPage = () => {
       setView('empty');
       toast.success('Roadmap deleted.');
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to delete roadmap.');
-      } else {
-        toast.error('Failed to delete roadmap.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to delete roadmap.';
+      toast.error(message);
     }
   };
 

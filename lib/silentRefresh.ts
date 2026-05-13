@@ -1,16 +1,24 @@
-import axios from 'axios';
 import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
 
 export const silentRefresh = async (): Promise<boolean> => {
   try {
-    const res = await axios.post(
+    const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/refreshToken`,
-      {},
-      { withCredentials: true },
+      {
+        method: 'POST',
+        credentials: 'include',
+      },
     );
 
-    useAuthStore.getState().setAccessToken(res.data.data.accessToken);
+    if (!res.ok) {
+      useAuthStore.getState().clearAuth();
+      useUserStore.getState().clearUser();
+      return false;
+    }
+
+    const { data } = await res.json();
+    useAuthStore.getState().setAccessToken(data.accessToken);
     return true;
   } catch {
     useAuthStore.getState().clearAuth();

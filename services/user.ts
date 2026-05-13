@@ -1,4 +1,5 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '@/lib/api';
+import { fetchClient } from '@/lib/fetchClient';
 import { TUser } from '../store/useUserStore';
 
 export type GetMeResponse = {
@@ -25,28 +26,25 @@ export type ChangePasswordResponse = {
 };
 
 const getMe = async (): Promise<GetMeResponse> => {
-  const response = await axiosInstance.get<GetMeResponse>('/users/getMe');
-  return response.data;
+  return api.get<GetMeResponse>('/users/getMe');
 };
 
 const updateProfile = async (
   formData: FormData,
 ): Promise<UpdateProfileResponse> => {
-  const response = await axiosInstance.patch<UpdateProfileResponse>(
-    '/users/updateProfile',
-    formData,
-  );
-  return response.data;
+  // FormData must NOT have Content-Type header — browser sets it automatically
+  // with the correct multipart boundary
+  return fetchClient<UpdateProfileResponse>('/users/updateProfile', {
+    method: 'PATCH',
+    body: formData,
+    headers: {}, // override fetchClient's default Content-Type: application/json
+  });
 };
 
 const changePassword = async (
   payload: ChangePasswordPayload,
 ): Promise<ChangePasswordResponse> => {
-  const response = await axiosInstance.patch<ChangePasswordResponse>(
-    '/users/changePassword',
-    payload,
-  );
-  return response.data;
+  return api.patch<ChangePasswordResponse>('/users/changePassword', payload);
 };
 
 export const userService = {

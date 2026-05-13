@@ -38,8 +38,8 @@ const roleAccessMap: Record<string, string[]> = {
 };
 
 const verifyToken = async (token: string) => {
-  const secret = process.env.REFRESH_TOKEN;
-  if (!secret) throw new Error('Refresh token missing.');
+  const secret = process.env.ACCESS_TOKEN;
+  if (!secret) throw new Error('Access token missing.');
 
   const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
 
@@ -47,7 +47,7 @@ const verifyToken = async (token: string) => {
 };
 
 export const proxy = async (req: NextRequest) => {
-  const token = req.cookies.get('refreshToken')?.value;
+  const token = req.cookies.get('accessToken')?.value;
   const { pathname } = req.nextUrl;
 
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
@@ -61,7 +61,7 @@ export const proxy = async (req: NextRequest) => {
       role = payload.role as string;
     } catch {
       const res = NextResponse.redirect(new URL('/login', req.url));
-      res.cookies.delete('refreshToken');
+      res.cookies.delete('accessToken');
       return res;
     }
   }
@@ -79,7 +79,7 @@ export const proxy = async (req: NextRequest) => {
 
     if (!redirectPath) {
       const res = NextResponse.redirect(new URL('/login', req.url));
-      res.cookies.delete('refreshToken');
+      res.cookies.delete('accessToken');
       return res;
     }
 
@@ -92,7 +92,7 @@ export const proxy = async (req: NextRequest) => {
 
     if (!allowedRoutes) {
       const res = NextResponse.redirect(new URL('/login', req.url));
-      res.cookies.delete('refreshToken');
+      res.cookies.delete('accessToken');
       return res;
     }
 

@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import {
   Calendar,
   Check,
@@ -116,11 +115,9 @@ const MeetingLinkInput = ({
       onSaved(session._id, link.trim());
       toast.success('Meeting link saved!');
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || 'Failed to save link.'
-          : 'Failed to save link.',
-      );
+      const message =
+        err instanceof Error ? err.message : 'Failed to save link.';
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -554,11 +551,8 @@ const SessionsPage = () => {
       );
       toast.success('Session accepted!');
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || 'Failed to accept.'
-          : 'Failed to accept.',
-      );
+      const message = err instanceof Error ? err.message : 'Failed to accept.';
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }
@@ -576,11 +570,8 @@ const SessionsPage = () => {
       );
       toast.success('Session cancelled.');
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || 'Failed to cancel.'
-          : 'Failed to cancel.',
-      );
+      const message = err instanceof Error ? err.message : 'Failed to cancel.';
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }
@@ -592,11 +583,9 @@ const SessionsPage = () => {
       const url = await paymentService.createCheckoutSession(sessionId);
       window.location.href = url;
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || 'Failed to initiate payment.'
-          : 'Failed to initiate payment.',
-      );
+      const message =
+        err instanceof Error ? err.message : 'Failed to initiate payment.';
+      toast.error(message);
       setPayLoading(null);
     }
   };
@@ -614,11 +603,9 @@ const SessionsPage = () => {
       toast.success('Session marked as completed!');
       setActiveTab('completed');
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || 'Failed to complete.'
-          : 'Failed to complete.',
-      );
+      const message =
+        err instanceof Error ? err.message : 'Failed to complete.';
+      toast.error(message);
     } finally {
       setCompleteLoading(null);
     }

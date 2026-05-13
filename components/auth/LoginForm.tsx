@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -152,12 +151,10 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
                     router.replace(safeRedirect);
                   }
                 }
-              } catch (error: unknown) {
-                if (axios.isAxiosError(error)) {
-                  const message =
-                    error.response?.data?.message || 'Google login failed';
-                  toast.error(message);
-                }
+              } catch (err: unknown) {
+                const message =
+                  err instanceof Error ? err.message : 'Google login failed.';
+                toast.error(message);
               }
             }}
             onError={() => toast.error('Google login failed')}

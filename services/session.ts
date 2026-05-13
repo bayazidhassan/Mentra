@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '@/lib/api';
 import { TAvailability } from '../store/useUserStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -69,57 +69,52 @@ type SlotsResponse = {
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getAvailableSlots = async (mentorProfileId: string) => {
-  const response = await axiosInstance.get<SlotsResponse>(
+  const response = await api.get<SlotsResponse>(
     `/session/slots/${mentorProfileId}`,
   );
-  return response.data.data;
+  return response.data;
 };
 
 const bookSession = async (payload: TBookSessionPayload): Promise<TSession> => {
-  const response = await axiosInstance.post<SessionResponse>(
-    '/session/book',
-    payload,
-  );
-  return response.data.data as TSession;
+  const response = await api.post<SessionResponse>('/session/book', payload);
+  return response.data as TSession;
 };
 
 const getMySessions = async (): Promise<TSession[]> => {
-  const response = await axiosInstance.get<SessionsResponse>(
-    '/session/my-sessions',
-  );
-  return response.data.data ?? [];
+  const response = await api.get<SessionsResponse>('/session/my-sessions');
+  return response.data ?? [];
 };
 
 const acceptSession = async (sessionId: string): Promise<TSession> => {
-  const response = await axiosInstance.patch<SessionResponse>(
+  const response = await api.patch<SessionResponse>(
     `/session/${sessionId}/accept`,
   );
-  return response.data.data as TSession;
+  return response.data as TSession;
 };
 
 const cancelSession = async (sessionId: string): Promise<TSession> => {
-  const response = await axiosInstance.patch<SessionResponse>(
+  const response = await api.patch<SessionResponse>(
     `/session/${sessionId}/cancel`,
   );
-  return response.data.data as TSession;
+  return response.data as TSession;
 };
 
 const addMeetingLink = async (
   sessionId: string,
   meetingLink: string,
 ): Promise<TSession> => {
-  const response = await axiosInstance.patch<SessionResponse>(
+  const response = await api.patch<SessionResponse>(
     `/session/${sessionId}/meeting-link`,
     { meetingLink },
   );
-  return response.data.data as TSession;
+  return response.data as TSession;
 };
 
 const completeSession = async (sessionId: string): Promise<TSession> => {
-  const response = await axiosInstance.patch<SessionResponse>(
+  const response = await api.patch<SessionResponse>(
     `/session/${sessionId}/complete`,
   );
-  return response.data.data as TSession;
+  return response.data as TSession;
 };
 
 const rateSession = async (
@@ -127,11 +122,11 @@ const rateSession = async (
   rating: number,
   feedback?: string,
 ): Promise<TSession> => {
-  const response = await axiosInstance.patch<SessionResponse>(
+  const response = await api.patch<SessionResponse>(
     `/session/${sessionId}/rate`,
     { rating, feedback },
   );
-  return response.data.data as TSession;
+  return response.data as TSession;
 };
 
 export const sessionService = {

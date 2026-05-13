@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '@/lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -33,24 +33,23 @@ type UnreadCountResponse = {
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getMyNotifications = async (): Promise<TNotification[]> => {
-  const response =
-    await axiosInstance.get<NotificationsResponse>('/notification');
-  return response.data.data ?? [];
+  const response = await api.get<NotificationsResponse>('/notification');
+  return response.data ?? [];
 };
 
 const getUnreadCount = async (): Promise<number> => {
-  const response = await axiosInstance.get<UnreadCountResponse>(
+  const response = await api.get<UnreadCountResponse>(
     '/notification/unread-count',
   );
-  return response.data.data?.count ?? 0;
+  return response.data?.count ?? 0;
 };
 
 const markAsRead = async (id: string): Promise<void> => {
-  await axiosInstance.patch(`/notification/${id}/read`);
+  await api.patch(`/notification/${id}/read`);
 };
 
 const markAllAsRead = async (): Promise<void> => {
-  await axiosInstance.patch('/notification/mark-all-read');
+  await api.patch('/notification/mark-all-read');
 };
 
 export const notificationService = {

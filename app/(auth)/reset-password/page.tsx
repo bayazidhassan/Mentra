@@ -1,6 +1,4 @@
 'use client';
-
-import axios from 'axios';
 import { Eye, EyeOff, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -45,9 +43,9 @@ export default function ResetPasswordPage() {
         router.replace('/login');
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Something went wrong');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Something went wrong.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

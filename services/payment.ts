@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '@/lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,24 +48,33 @@ export type TEarningPayment = {
   } | null;
 };
 
+type EarningsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    payments: TEarningPayment[];
+    totalEarnings: number;
+    totalPayments: number;
+  };
+};
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
-// Creates Stripe checkout session and returns the redirect URL
 const createCheckoutSession = async (sessionId: string): Promise<string> => {
-  const response = await axiosInstance.post<CheckoutResponse>(
+  const response = await api.post<CheckoutResponse>(
     '/payment/create-checkout-session',
     { sessionId },
   );
-  return response.data.data.url;
+  return response.data.url;
 };
 
 const getPaymentStatus = async (
   sessionId: string,
 ): Promise<TPayment | null> => {
-  const response = await axiosInstance.get<PaymentStatusResponse>(
+  const response = await api.get<PaymentStatusResponse>(
     `/payment/status/${sessionId}`,
   );
-  return response.data.data;
+  return response.data;
 };
 
 const getEarnings = async (): Promise<{
@@ -73,8 +82,8 @@ const getEarnings = async (): Promise<{
   totalEarnings: number;
   totalPayments: number;
 }> => {
-  const response = await axiosInstance.get('/payment/earnings');
-  return response.data.data;
+  const response = await api.get<EarningsResponse>('/payment/earnings');
+  return response.data;
 };
 
 export const paymentService = {

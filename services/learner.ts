@@ -1,6 +1,6 @@
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { api } from '@/lib/api';
 
-import axiosInstance from '../lib/axios';
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type TMyLearner = {
   _id: string;
@@ -18,11 +18,27 @@ export type TAllLearner = {
   profileImage?: string;
 };
 
+type MyLearnersResponse = {
+  success: boolean;
+  message: string;
+  data: TMyLearner[];
+};
+
+type AllLearnersResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    learners: TAllLearner[];
+    total: number;
+    totalPages: number;
+  };
+};
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const getMyLearners = async (): Promise<TMyLearner[]> => {
-  const response = await axiosInstance.get('/learner/my-learners');
-  return response.data.data ?? [];
+  const response = await api.get<MyLearnersResponse>('/learner/my-learners');
+  return response.data ?? [];
 };
 
 const getAllLearners = async ({
@@ -42,10 +58,11 @@ const getAllLearners = async ({
   if (search) params.set('search', search);
   params.set('page', String(page));
   params.set('limit', String(limit));
-  const response = await axiosInstance.get(
+
+  const response = await api.get<AllLearnersResponse>(
     `/learner/all-learners?${params.toString()}`,
   );
-  return response.data.data;
+  return response.data;
 };
 
 export const learnerService = {

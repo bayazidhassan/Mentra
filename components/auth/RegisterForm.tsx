@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -63,11 +62,10 @@ const RegisterForm = () => {
         toast.success(response.message);
         router.push('/login');
       }
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || 'Something went wrong';
-        toast.error(message);
-      }
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Something went wrong.';
+      toast.error(message);
     }
   };
 

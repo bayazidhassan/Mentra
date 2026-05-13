@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Ban, Search, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -60,11 +59,9 @@ const AdminLearnersPage = () => {
       );
       toast.success(`User ${action}ned successfully.`);
     } catch (err: unknown) {
-      toast.error(
-        axios.isAxiosError(err)
-          ? err.response?.data?.message || `Failed to ${action}.`
-          : `Failed to ${action}.`,
-      );
+      const message =
+        err instanceof Error ? err.message : `Failed to ${action}.`;
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }

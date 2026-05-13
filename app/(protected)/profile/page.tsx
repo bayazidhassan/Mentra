@@ -1,7 +1,6 @@
 'use client';
 
 import useUserStore, { TUser } from '@/store/useUserStore';
-import axios from 'axios';
 import {
   Camera,
   Eye,
@@ -198,11 +197,9 @@ const ProfilePage = () => {
         toast.success('Profile updated successfully.');
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to update profile.');
-      } else {
-        toast.error('Failed to update profile.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to update profile.';
+      toast.error(message);
     } finally {
       setSavingProfile(false);
     }
@@ -235,13 +232,9 @@ const ProfilePage = () => {
         setConfirmPassword('');
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(
-          err.response?.data?.message || 'Failed to change password.',
-        );
-      } else {
-        toast.error('Failed to change password.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to change password.';
+      toast.error(message);
     } finally {
       setSavingPassword(false);
     }

@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Calendar, Clock, Hourglass, Loader2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -256,11 +255,9 @@ const BookSessionModal = ({
       toast.success('Session booked! Waiting for mentor to accept.');
       onSuccess();
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to book session.');
-      } else {
-        toast.error('Failed to book session.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to book session.';
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }

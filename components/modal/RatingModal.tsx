@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { Loader2, Star, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -44,11 +43,9 @@ const RatingModal = ({
       toast.success('Review submitted!');
       onSuccess(sessionId, rating, feedback);
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Failed to submit review.');
-      } else {
-        toast.error('Failed to submit review.');
-      }
+      const message =
+        err instanceof Error ? err.message : 'Failed to submit review.';
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
