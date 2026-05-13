@@ -13,7 +13,7 @@ const useAuthStore = create<TAuthStore>((set) => ({
   isAuthReady: false,
   setAccessToken: (token) => set({ accessToken: token }),
   setAuthReady: (ready) => set({ isAuthReady: ready }),
-  clearAuth: () => set({ accessToken: null }),
+  clearAuth: () => set({ accessToken: null, isAuthReady: false }),
 }));
 
 export default useAuthStore;

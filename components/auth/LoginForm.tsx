@@ -5,7 +5,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,10 +27,9 @@ const inputBase =
 const inputNormal = `${inputBase} border-gray-200 focus:border-indigo-500 focus:shadow-[0_0_0_3px_rgba(79,70,229,0.08)]`;
 const inputError = `${inputBase} border-red-400 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.08)]`;
 
-const LoginForm = () => {
+const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [showPw, setShowPw] = useState(false);
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect');
+
   const safeRedirect =
     redirect && redirect.startsWith('/') ? redirect : '/dashboard/learner';
   const router = useRouter();
@@ -58,10 +57,9 @@ const LoginForm = () => {
         router.replace(safeRedirect);
       }
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || 'Something went wrong';
-        toast.error(message);
-      }
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong.';
+      toast.error(message);
     }
   };
 

@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/axios';
+import { api } from '../lib/api';
 
 type TRole = 'learner' | 'mentor' | 'admin';
 
@@ -80,66 +80,41 @@ export type ResetPasswordResponse = {
 const register = async (
   payload: RegisterPayload,
 ): Promise<RegisterResponse> => {
-  const response = await axiosInstance.post<RegisterResponse>(
-    '/auth/register',
-    payload,
-  );
-  return response.data;
+  return api.post<RegisterResponse>('/auth/register', payload);
 };
 
 const login = async (payload: LoginPayload): Promise<LoginResponse> => {
-  const response = await axiosInstance.post<LoginResponse>(
-    '/auth/login',
-    payload,
-  );
-  return response.data;
+  return api.post<LoginResponse>('/auth/login', payload);
 };
 
 const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => {
-  const response = await axiosInstance.post<GoogleLoginResponse>(
-    '/auth/google-Login',
-    {
-      idToken,
-    },
-  );
-  return response.data;
+  return api.post<GoogleLoginResponse>('/auth/google-Login', { idToken });
 };
 
 const setRole = async (
   role: 'learner' | 'mentor',
 ): Promise<SetRoleResponse> => {
-  const response = await axiosInstance.patch<SetRoleResponse>('/auth/setRole', {
-    role,
-  });
-  return response.data;
+  return api.patch<SetRoleResponse>('/auth/setRole', { role });
 };
 
 const forgotPassword = async (
   email: string,
 ): Promise<ForgotPasswordResponse> => {
-  const response = await axiosInstance.post<ForgotPasswordResponse>(
-    '/auth/forgot-password',
-    {
-      email,
-    },
-  );
-  return response.data;
+  return api.post<ForgotPasswordResponse>('/auth/forgot-password', { email });
 };
 
 const resetPassword = async (
   token: string,
   password: string,
 ): Promise<ResetPasswordResponse> => {
-  const response = await axiosInstance.post<ResetPasswordResponse>(
-    '/auth/reset-password',
-    { token, password },
-  );
-  return response.data;
+  return api.post<ResetPasswordResponse>('/auth/reset-password', {
+    token,
+    password,
+  });
 };
 
 const logout = async () => {
-  const response = await axiosInstance.post('/auth/logout');
-  return response.data;
+  return api.post('/auth/logout');
 };
 
 export const authService = {
