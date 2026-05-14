@@ -10,7 +10,7 @@ Route handler       → calls Express + sets cookie + redirects back
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const from = searchParams.get('from') || '/dashboard';
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/refreshToken`,
