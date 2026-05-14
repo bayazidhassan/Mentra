@@ -285,18 +285,21 @@ const ProfilePage = () => {
   ]);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-4">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16">
+        <div className="relative w-20 h-20">
           {preview || user?.profileImage ? (
-            <Image
-              src={preview || user!.profileImage!}
-              alt={user!.name}
-              width={64}
-              height={64}
-              className="rounded-2xl object-cover"
-            />
+            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
+              <Image
+                src={preview || user!.profileImage!}
+                alt={user!.name}
+                width={80}
+                height={80}
+                loading="eager"
+                className="w-full h-full object-cover"
+              />
+            </div>
           ) : (
             <div className="w-16 h-16 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold">
               {user?.name?.[0]?.toUpperCase() ?? 'U'}
