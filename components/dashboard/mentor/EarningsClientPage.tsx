@@ -126,23 +126,26 @@ const EarningsClientPage = ({
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-gray-400 mt-0.5">
                     {payment.session?.scheduledAt && (
                       <span>
-                        {new Date(payment.session.scheduledAt).toLocaleString(
-                          undefined,
-                          {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          },
-                        )}
+                        {new Date(
+                          payment.session.scheduledAt,
+                        ).toLocaleDateString(undefined, {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                        {' · '}
+                        {new Date(
+                          payment.session.scheduledAt,
+                        ).toLocaleTimeString(undefined, {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}
                       </span>
                     )}
                     {payment.session?.durationMinutes && (
-                      <>
-                        <span className="text-gray-300">|</span>
-                        <span>{payment.session.durationMinutes} min</span>
-                      </>
+                      <span>· {payment.session.durationMinutes} min</span>
                     )}
                   </div>
 

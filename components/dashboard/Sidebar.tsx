@@ -98,6 +98,11 @@ const adminNav: TNavItem[] = [
     icon: <Calendar size={18} />,
   },
   {
+    label: 'Revenue',
+    href: '/dashboard/admin/revenue',
+    icon: <Wallet size={18} />,
+  },
+  {
     label: 'Settings',
     href: '/dashboard/admin/settings',
     icon: <Settings size={18} />,

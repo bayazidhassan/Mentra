@@ -58,6 +58,39 @@ type EarningsResponse = {
   };
 };
 
+export type TRevenue = {
+  _id: string;
+  amount: number;
+  currency: string;
+  createdAt: string;
+  session: {
+    title: string;
+    scheduledAt: string;
+    durationMinutes: number;
+  } | null;
+  learner: {
+    name: string;
+    email: string;
+    profileImage?: string;
+  } | null;
+  mentor: {
+    name: string;
+    email: string;
+    profileImage?: string;
+  } | null;
+};
+
+type RevenueResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    payments: TRevenue[];
+    totalRevenue: number;
+    adminProfit: number;
+    totalPayments: number;
+  };
+};
+
 // ─── Service ──────────────────────────────────────────────────────────────────
 
 const createCheckoutSession = async (sessionId: string): Promise<string> => {
@@ -86,8 +119,14 @@ const getEarnings = async (): Promise<{
   return response.data;
 };
 
+const getRevenue = async () => {
+  const res = await api.get<RevenueResponse>('/payment/revenue');
+  return res.data;
+};
+
 export const paymentService = {
   createCheckoutSession,
   getPaymentStatus,
   getEarnings,
+  getRevenue,
 };
