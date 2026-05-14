@@ -288,14 +288,14 @@ const ProfilePage = () => {
     <div className="max-w-3xl mx-auto space-y-4">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="relative w-20 h-20">
+        <div className="relative w-16 h-16">
           {preview || user?.profileImage ? (
-            <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0">
               <Image
                 src={preview || user!.profileImage!}
                 alt={user!.name}
-                width={80}
-                height={80}
+                width={64}
+                height={64}
                 loading="eager"
                 className="w-full h-full object-cover"
               />
