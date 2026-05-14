@@ -439,6 +439,9 @@ const LearnerDashboard = ({
             <p className="text-sm font-medium text-gray-700 mb-1">
               No mentors available
             </p>
+            <p className="text-xs text-gray-400">
+              No mentors have joined yet. Check back later.
+            </p>
           </div>
         )}
       </div>
