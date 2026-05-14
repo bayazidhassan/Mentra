@@ -57,7 +57,11 @@ const AdminDashboardClientPage = ({ stats, recentSessions }: Props) => {
           {
             label: 'Total users',
             value: stats?.totalUsers ?? 0,
-            sub: `${stats?.totalLearners ?? 0} learners · ${stats?.totalMentors ?? 0} mentors`,
+            sub: `${stats?.totalLearners ?? 0} ${
+              (stats?.totalLearners ?? 0) === 1 ? 'learner' : 'learners'
+            } · ${stats?.totalMentors ?? 0} ${
+              (stats?.totalMentors ?? 0) === 1 ? 'mentor' : 'mentors'
+            }`,
             icon: <Users size={18} />,
             iconBg: 'bg-indigo-50',
             iconColor: 'text-indigo-600',
