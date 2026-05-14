@@ -1,3 +1,4 @@
+import { disconnectSocket } from '../hooks/useSocket';
 import authStore from '../store/authStore';
 import userStore from '../store/userStore';
 
@@ -12,6 +13,7 @@ export const silentRefresh = async (): Promise<boolean> => {
     );
 
     if (!res.ok) {
+      disconnectSocket();
       authStore.getState().clearAuth();
       userStore.getState().clearUser();
       return false;
@@ -21,6 +23,7 @@ export const silentRefresh = async (): Promise<boolean> => {
     authStore.getState().setAccessToken(data.accessToken);
     return true;
   } catch {
+    disconnectSocket();
     authStore.getState().clearAuth();
     userStore.getState().clearUser();
     return false;
