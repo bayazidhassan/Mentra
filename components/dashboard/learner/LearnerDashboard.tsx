@@ -3,14 +3,6 @@
 import { TMentor } from '@/lib/services/mentor';
 import { TRoadmap } from '@/lib/services/roadmap';
 import { TSession } from '@/lib/services/session';
-
-type Props = {
-  sessions: TSession[];
-  roadmap: TRoadmap | null;
-  completedRoadmaps: TRoadmap[];
-  mentors: TMentor[];
-};
-
 import userStore from '@/store/userStore';
 import {
   Calendar,
@@ -25,6 +17,13 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+
+type Props = {
+  sessions: TSession[];
+  roadmap: TRoadmap | null;
+  completedRoadmaps: TRoadmap[];
+  mentors: TMentor[];
+};
 
 const LearnerDashboard = ({
   sessions,
