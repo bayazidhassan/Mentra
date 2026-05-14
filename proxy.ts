@@ -66,8 +66,8 @@ export const proxy = async (req: NextRequest) => {
       role = payload.role as string;
     } catch {
       /*
-      Middleware cannot call Express directly and set cookies at the same time in Next.js — it can only redirect or pass through. So it hands off to the route handler which can both call Express AND set cookies in the response.
-      Middleware          → only redirects
+      Middleware/Proxy cannot call Express directly and set cookies at the same time in Next.js — it can only redirect or pass through. So it hands off to the route handler which can both call Express AND set cookies in the response.
+      Middleware/Proxy    → only redirects
       Route handler       → calls Express + sets cookie + redirects back
       */
       const refreshUrl = new URL('/api/auth/refreshToken', req.url);

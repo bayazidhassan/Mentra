@@ -2,8 +2,8 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 /*
-Middleware cannot call Express directly and set cookies at the same time in Next.js — it can only redirect or pass through. So it hands off to the route handler which can both call Express AND set cookies in the response.
-Middleware          → only redirects
+Middleware/Proxy cannot call Express directly and set cookies at the same time in Next.js — it can only redirect or pass through. So it hands off to the route handler which can both call Express AND set cookies in the response.
+Middleware/Proxy    → only redirects
 Route handler       → calls Express + sets cookie + redirects back
 */
 
