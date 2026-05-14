@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import MentorProfileClientPage from '../../../../../../components/dashboard/learner/MentorProfileClientPage';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -22,13 +21,7 @@ const MentorProfilePage = async ({
 }) => {
   const { id } = await params;
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get('accessToken')?.value;
-
   const res = await fetch(`${BASE_URL}/api/v1/mentor/${id}`, {
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
     next: { revalidate: 60 * 60 },
   }).catch(() => null);
 
