@@ -676,7 +676,7 @@ const SessionsPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="grid grid-cols-2 md:flex gap-1 mx-auto bg-gray-100 p-1 rounded-xl w-fit">
+        <div className="grid grid-cols-2 md:flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
           {tabs.map((tab) => (
             <button
               key={tab.key}

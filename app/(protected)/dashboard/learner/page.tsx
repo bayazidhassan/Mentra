@@ -3,7 +3,7 @@ import LearnerDashboard from '../../../../components/dashboard/learner/LearnerDa
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const getAuthHeader = async () => {
+const getAuthHeader = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
   const token = cookieStore.get('accessToken')?.value;
   return token ? { Authorization: `Bearer ${token}` } : {};
