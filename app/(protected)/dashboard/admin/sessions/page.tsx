@@ -126,8 +126,8 @@ const AdminSessionsPage = () => {
       {!loading && sessions.length > 0 && (
         <>
           <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-            {/* Table header */}
-            <div className="grid grid-cols-12 gap-3 px-5 py-3 bg-gray-50 border-b border-gray-100">
+            {/* Table header — desktop only */}
+            <div className="hidden md:grid grid-cols-12 gap-3 px-5 py-3 bg-gray-50 border-b border-gray-100">
               <p className="col-span-3 text-xs font-medium text-gray-500">
                 Session
               </p>
@@ -151,74 +151,119 @@ const AdminSessionsPage = () => {
                 const cfg =
                   statusConfig[session.status] ?? statusConfig.pending;
                 return (
-                  <div
-                    key={session._id}
-                    className="grid grid-cols-12 gap-3 px-5 py-4 hover:bg-gray-50 transition-colors items-center"
-                  >
-                    {/* Title + duration */}
-                    <div className="col-span-3 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">
-                        {session.title}
-                      </p>
-                      <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
-                        <Clock size={11} />
-                        {session.durationMinutes} min
-                        {session.paymentStatus === 'paid' && (
-                          <>
-                            <span className="text-gray-300 mx-1">·</span>
-                            <span className="text-green-600">Paid</span>
-                          </>
+                  <div key={session._id}>
+                    {/* Mobile card */}
+                    <div className="md:hidden p-4 space-y-3 border-b border-gray-100 last:border-b-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">
+                            {session.title}
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+                            <Clock size={11} />
+                            {session.durationMinutes} min
+                            {session.paymentStatus === 'paid' && (
+                              <>
+                                <span className="text-gray-300 mx-1">·</span>
+                                <span className="text-green-600">Paid</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <span
+                          className={`shrink-0 text-xs font-medium px-2 py-1 rounded-full ${cfg.bg} ${cfg.color}`}
+                        >
+                          {cfg.label}
+                        </span>
+                      </div>
+
+                      <div className="text-xs text-gray-500 space-y-0.5">
+                        <p className="truncate">
+                          {session.learnerName} · {session.learnerEmail}
+                        </p>
+                        <p className="truncate text-gray-400">
+                          → {session.mentorName} · {session.mentorEmail}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-gray-400">
+                          {new Date(session.scheduledAt).toLocaleDateString(
+                            undefined,
+                            {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            },
+                          )}
+                        </p>
+                        {session.price !== undefined && (
+                          <div className="flex items-center gap-0.5 text-xs font-medium text-gray-700">
+                            <DollarSign size={11} />
+                            {session.price}
+                          </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Learner → Mentor */}
-                    <div className="col-span-4 min-w-0">
-                      <p className="text-xs text-gray-700 truncate">
-                        {session.learnerName}
-                        {' . '}
-                        {session.learnerEmail}
-                      </p>
-                      <p className="text-xs text-gray-400 truncate">
-                        → {session.mentorName}
-                        {' . '}
-                        {session.mentorEmail}
-                      </p>
-                    </div>
-
-                    {/* Date */}
-                    <div className="col-span-2">
-                      <p className="text-xs text-gray-600">
-                        {new Date(session.scheduledAt).toLocaleDateString(
-                          undefined,
-                          {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          },
-                        )}
-                      </p>
-                    </div>
-
-                    {/* Price */}
-                    <div className="col-span-1">
-                      {session.price !== undefined ? (
-                        <div className="flex items-center gap-0.5 text-xs font-medium text-gray-700">
-                          <DollarSign size={11} />
-                          {session.price}
+                    {/* Desktop table row */}
+                    <div className="hidden md:grid grid-cols-12 gap-3 px-5 py-4 hover:bg-gray-50 transition-colors items-center">
+                      <div className="col-span-3 min-w-0">
+                        <p className="text-sm font-medium text-gray-800 truncate">
+                          {session.title}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+                          <Clock size={11} />
+                          {session.durationMinutes} min
+                          {session.paymentStatus === 'paid' && (
+                            <>
+                              <span className="text-gray-300 mx-1">·</span>
+                              <span className="text-green-600">Paid</span>
+                            </>
+                          )}
                         </div>
-                      ) : (
-                        <p className="text-xs text-gray-400">—</p>
-                      )}
-                    </div>
+                      </div>
 
-                    {/* Status */}
-                    <div className="col-span-2">
-                      <span
-                        className={`text-xs font-medium px-2 py-1 rounded-full ${cfg.bg} ${cfg.color}`}
-                      >
-                        {cfg.label}
-                      </span>
+                      <div className="col-span-4 min-w-0">
+                        <p className="text-xs text-gray-700 truncate">
+                          {session.learnerName} · {session.learnerEmail}
+                        </p>
+                        <p className="text-xs text-gray-400 truncate">
+                          → {session.mentorName} · {session.mentorEmail}
+                        </p>
+                      </div>
+
+                      <div className="col-span-2">
+                        <p className="text-xs text-gray-600">
+                          {new Date(session.scheduledAt).toLocaleDateString(
+                            undefined,
+                            {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            },
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="col-span-1">
+                        {session.price !== undefined ? (
+                          <div className="flex items-center gap-0.5 text-xs font-medium text-gray-700">
+                            <DollarSign size={11} />
+                            {session.price}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-gray-400">—</p>
+                        )}
+                      </div>
+
+                      <div className="col-span-2">
+                        <span
+                          className={`text-xs font-medium px-2 py-1 rounded-full ${cfg.bg} ${cfg.color}`}
+                        >
+                          {cfg.label}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
