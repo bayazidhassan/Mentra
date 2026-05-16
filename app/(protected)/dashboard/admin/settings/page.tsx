@@ -15,7 +15,7 @@ const AdminSettingsPage = () => {
         </p>
       </div>
 
-      <div className="flex flex-col items-center justify-center py-24 text-center bg-white border border-gray-200 rounded-2xl">
+      <div className="flex flex-col items-center justify-center px-4 py-24 text-center bg-white border border-gray-200 rounded-2xl">
         <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
           <Settings size={28} className="text-gray-300" />
         </div>
