@@ -90,6 +90,7 @@ export const proxy = async (req: NextRequest) => {
     if (!redirectPath) {
       const res = NextResponse.redirect(new URL('/login', req.url));
       res.cookies.delete('accessToken');
+      res.cookies.delete('refreshToken');
       return res;
     }
 
@@ -103,6 +104,7 @@ export const proxy = async (req: NextRequest) => {
     if (!allowedRoutes) {
       const res = NextResponse.redirect(new URL('/login', req.url));
       res.cookies.delete('accessToken');
+      res.cookies.delete('refreshToken');
       return res;
     }
 
