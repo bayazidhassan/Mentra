@@ -264,7 +264,7 @@ const Sidebar = () => {
       {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-40 w-9 h-9 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+        className="md:hidden fixed top-4 left-4 z-40 w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
       >
         <Menu size={18} />
       </button>
