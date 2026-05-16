@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { disconnectSocket } from '../hooks/useSocket';
-import { authService } from '../lib/services/auth';
 import authStore from '../store/authStore';
 import userStore from '../store/userStore';
 
@@ -14,12 +13,14 @@ const useLogout = () => {
 
   const logout = async () => {
     try {
-      const response = await authService.logout();
+      //const response = await authService.logout(); // tell Express to invalidate refresh token in DB -> but now I do not store refresh token in db
+      await fetch('/api/auth/logout', { method: 'POST' }); // clear both cookies from browser
       disconnectSocket();
       clearUser();
       clearAuth();
-      toast.success(response.message || 'Logged out successfully.');
-      router.push('/login');
+      //toast.success(response.message || 'Logged out successfully.');
+      toast.success('Logged out successfully.');
+      router.replace('/login');
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Something went wrong.';
