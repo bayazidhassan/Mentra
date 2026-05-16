@@ -102,7 +102,7 @@ const AdminDashboardClientPage = ({ stats, recentSessions }: Props) => {
             </div>
             <div className="flex flex-col items-center">
               <p
-                className="text-2xl font-bold text-gray-900"
+                className="text-lg md:text-2xl font-bold text-gray-900"
                 style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}
               >
                 {stat.value}
@@ -164,13 +164,13 @@ const AdminDashboardClientPage = ({ stats, recentSessions }: Props) => {
               return (
                 <div
                   key={session._id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100"
+                  className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">
                       {session.title}
                     </p>
-                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-0.5">
                       <p className="text-xs text-gray-400">
                         {session.learnerName} → {session.mentorName}
                       </p>
@@ -180,9 +180,9 @@ const AdminDashboardClientPage = ({ stats, recentSessions }: Props) => {
                           undefined,
                           {
                             weekday: 'short',
-                            year: 'numeric',
                             month: 'short',
                             day: 'numeric',
+                            year: 'numeric',
                           },
                         )}
                       </p>
@@ -192,16 +192,20 @@ const AdminDashboardClientPage = ({ stats, recentSessions }: Props) => {
                       </p>
                     </div>
                   </div>
-                  {session.price !== undefined && (
-                    <span className="text-sm font-semibold text-gray-700 shrink-0">
-                      ${session.price}
+
+                  {/* Price + status — inline on mobile, right-aligned on desktop */}
+                  <div className="flex items-center gap-2 sm:shrink-0">
+                    {session.price !== undefined && (
+                      <span className="text-sm font-semibold text-gray-700">
+                        ${session.price}
+                      </span>
+                    )}
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.color}`}
+                    >
+                      {cfg.label}
                     </span>
-                  )}
-                  <span
-                    className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${cfg.bg} ${cfg.color}`}
-                  >
-                    {cfg.label}
-                  </span>
+                  </div>
                 </div>
               );
             })}
@@ -227,13 +231,13 @@ const AdminDashboardClientPage = ({ stats, recentSessions }: Props) => {
           },
           {
             label: 'Mentors',
-            desc: 'Approve and manage mentors',
+            desc: 'Approve and manage mentor accounts',
             href: '/dashboard/admin/mentors',
             icon: <UserCheck size={20} className="text-amber-500" />,
           },
           {
             label: 'Sessions',
-            desc: 'View all platform sessions',
+            desc: 'View all sessions',
             href: '/dashboard/admin/sessions',
             icon: <Calendar size={20} className="text-purple-500" />,
           },
