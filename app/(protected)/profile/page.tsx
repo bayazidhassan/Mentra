@@ -176,6 +176,10 @@ const ProfilePage = () => {
         if (hourlyRate !== (initialData.hourlyRate?.toString() ?? '')) {
           formData.append('hourlyRate', hourlyRate);
         }
+        const oldMentorSkills = JSON.stringify(initialData.skills ?? []);
+        const newMentorSkills = JSON.stringify(skills);
+        if (oldMentorSkills !== newMentorSkills)
+          formData.append('skills', newMentorSkills);
         const oldAvailability = JSON.stringify(initialData.availability ?? []);
         const newAvailability = JSON.stringify(availability);
         if (oldAvailability !== newAvailability) {
@@ -259,6 +263,8 @@ const ProfilePage = () => {
     if (isMentor) {
       if (bio !== (initialData.bio ?? '')) return true;
       if (experience !== (initialData.experience ?? '')) return true;
+      if (JSON.stringify(skills) !== JSON.stringify(initialData.skills ?? []))
+        return true;
       if (hourlyRate !== (initialData.hourlyRate?.toString() ?? '')) {
         return true;
       }
@@ -491,6 +497,55 @@ const ProfilePage = () => {
                   placeholder="e.g. 5 years of full-stack development"
                   className={inputClass}
                 />
+              </div>
+
+              {/* Skills */}
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                  Skills
+                </label>
+                <div className="flex gap-2 mb-3">
+                  <input
+                    value={skillInput}
+                    onChange={(e) => setSkillInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addSkill()}
+                    placeholder="e.g. React, Node.js..."
+                    className={`${inputClass} flex-1`}
+                  />
+                  <button
+                    onClick={addSkill}
+                    className="px-4 h-11 text-sm font-medium text-white rounded-xl cursor-pointer hover:opacity-90 transition-all shrink-0 flex items-center gap-1.5"
+                    style={{
+                      background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
+                    }}
+                  >
+                    <Plus size={14} /> Add
+                  </button>
+                </div>
+                {skills.length > 0 ? (
+                  <div className="flex flex-wrap gap-2 p-3 border border-gray-200 rounded-xl bg-gray-50 min-h-12">
+                    {skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="flex items-center gap-1.5 text-xs font-semibold bg-white border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-lg shadow-sm"
+                      >
+                        {skill}
+                        <button
+                          onClick={() => removeSkill(skill)}
+                          className="text-indigo-300 hover:text-red-400 cursor-pointer transition-colors"
+                        >
+                          <X size={11} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center p-4 border border-dashed border-gray-200 rounded-xl bg-gray-50">
+                    <p className="text-xs text-gray-400">
+                      No skills added yet. Type a skill and press Add.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Hourly rate */}
